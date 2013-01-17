@@ -1,0 +1,8 @@
+<header>
+  <% logo = image_tag("logo.png", :alt => "Application exemple", :class => "round") %>
+  <nav id="navprincipale">
+  	<ul>
+  		<li><%= link_to "Categories", :controller => "categories", :action => "index" %></li>
+  		<li><%= link_to "Users", :controller => "users", :action => "index" %></li>
+  </nav>
+</header>
