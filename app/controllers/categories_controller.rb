@@ -3,7 +3,6 @@ class CategoriesController < ApplicationController
   # GET /categories
   # GET /categories.json
   def index
-    @titre = "Categories"
     @categories = Category.all
 
     respond_to do |format|
@@ -12,22 +11,9 @@ class CategoriesController < ApplicationController
     end
   end
 
-  # GET /categories/1
-  # GET /categories/1.json
-  def show
-    @titre = "Category - show"
-    @category = Category.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render :json => @category }
-    end
-  end
-
   # GET /categories/new
   # GET /categories/new.json
   def new
-    @titre = "Category - new"
     @category = Category.new
 
     respond_to do |format|
@@ -38,7 +24,6 @@ class CategoriesController < ApplicationController
 
   # GET /categories/1/edit
   def edit
-    @titre = "Category - edit"
     @category = Category.find(params[:id])
   end
 
@@ -49,9 +34,11 @@ class CategoriesController < ApplicationController
 
     respond_to do |format|
       if @category.save
-        format.html { redirect_to @category, :notice => 'Category was successfully created.' }
+        flash[:success] = "Category was successfully created!"
+        format.html { redirect_to :action => "index", :notice => 'Category was successfully created.' }
         format.json { render :json => @category, :status => :created, :location => @category }
       else
+        flash[:error] = "Category was not successfully created!"
         format.html { render :action => "new" }
         format.json { render :json => @category.errors, :status => :unprocessable_entity }
       end
@@ -65,9 +52,11 @@ class CategoriesController < ApplicationController
 
     respond_to do |format|
       if @category.update_attributes(params[:category])
-        format.html { redirect_to @category, :notice => 'Category was successfully updated.' }
+        flash[:success] = "Category was successfully updated!"
+        format.html { redirect_to :action => "index", :notice => 'Category was successfully updated.' }
         format.json { head :no_content }
       else
+        flash[:error] = "Category was successfully updated!"
         format.html { render :action => "edit" }
         format.json { render :json => @category.errors, :status => :unprocessable_entity }
       end
@@ -81,6 +70,7 @@ class CategoriesController < ApplicationController
     @category.destroy
 
     respond_to do |format|
+      flash[:success] = "Category was successfully deleted!"
       format.html { redirect_to categories_url }
       format.json { head :no_content }
     end

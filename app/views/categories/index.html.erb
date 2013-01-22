@@ -1,9 +1,10 @@
-<h1>Listing categories</h1>
-
-<table>
+<% @title="Categories list" %>
+<div class="page-header">
+  <h1>Listing categories</h1>
+</div>
+<table class="table table-bordered">
   <tr>
     <th>Name</th>
-    <th></th>
     <th></th>
     <th></th>
   </tr>
@@ -11,9 +12,8 @@
 <% @categories.each do |category| %>
   <tr>
     <td><%= category.name %></td>
-    <td><%= link_to 'Show', category %></td>
-    <td><%= link_to 'Edit', edit_category_path(category) %></td>
-    <td><%= link_to 'Destroy', category, :method => :delete, :data => { :confirm => 'Are you sure?' } %></td>
+    <td><%= link_to "Edit", {:controller => "categories", :action => "edit", :id => category.id}, :class => 'btn' %></td>
+    <td><%= button_to( 'Destroy', category, :confirm => 'Are you sure?', :method => :delete, :class => "btn btn-danger")%></td>
   </tr>
 <% end %>
 </table>

@@ -1,0 +1,42 @@
+<% content_for :javascript_includes do %>
+  <%= javascript_include_tag "/javascripts/events_form.js" %>
+<% end %>
+
+<% if @event.errors.any? %>
+    <% content_for :form_errors do %>
+      <ul>
+        <% @event.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+        </ul>
+    <% end %>
+  <% end %>
+<%= form_for(@event,:html => { :class => "form-horizontal" }) do |f| %>
+<fieldset>
+  <div class="control-group">
+    <%= f.label :name, :class => "control-label" %>
+    <div class="controls">
+      <%= f.text_field :name %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :allCategories, "All Categories", :class => "control-label" %>
+    <div class="controls">
+      <%= f.check_box :allCategories, :id => "form-events-all-categories" %>
+    </div>
+  </div>
+  <div class="control-group" id="form-events-categories">
+     <label class="control-label">Categories</label>
+     <div class="controls">
+    <% Category.all.each do |category| %>
+      <label>
+      <%= check_box_tag "event[category_ids][]", category.id, @event.categories.include?(category) %> <%= category.name %>
+    </label>
+    <% end %>
+  </div>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+  </fieldset>
+<% end %>

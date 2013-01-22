@@ -1,0 +1,4 @@
+<h1>Tag dreams</h1>
+<% @files.each do |file| %>
+	<img src="file://<%= PATH_TO_DREAMS + File.basename(file) %>" alt="<%= File.basename(file, DREAM_EXTENSION) %>" />
+<% end%>

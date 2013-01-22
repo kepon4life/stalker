@@ -1,8 +1,9 @@
-<div class= "Sign_Form">
-	<h1>Log in</h1>
-	<%= form_tag(:action => 'login_attempt') do %>
-		<p>Username :</br> <%= text_field_tag(:username) %></p> 
-		<p>Password:</br> <%= password_field_tag :login_password %></p> 
-		<%= submit_tag("Log In") %>
-	<% end %>
-</div>
+<% @title="Login" %>
+
+
+<%= form_tag({:action => 'login_attempt'}, :class => 'form-signin') do %>
+	<h2 class="form-signin-heading">Log in</h2>
+	<p>Username :</br> <%= text_field_tag(:username) %></p> 
+	<p>Password:</br> <%= password_field_tag :login_password %></p> 
+	<%= submit_tag("Log In") %>
+<% end %>

@@ -1,5 +1,5 @@
 class SessionsController < ApplicationController
-	#before_filter :authenticate_user, :only => [:home, :profile, :setting]
+
 	before_filter :save_login_state, :only => [:login, :login_attempt]
 
 
@@ -13,16 +13,17 @@ class SessionsController < ApplicationController
   		authorized_user = User.authenticate(params[:username],params[:login_password])
 		if authorized_user
 			session[:user_id] = authorized_user.id
-			flash[:notice] = "Wow Welcome again, you logged in as #{authorized_user.username}"
+			flash[:success] = "Welcome #{authorized_user.username}"
 			redirect_to(:root)
 		else
-			flash[:notice] = "Invalid Username or Password"
-			flash[:color]= "invalid"
+			flash[:error] = "Invalid Username or Password"
 			render "login"	
 		end
 	end
 
+
 	def logout
+		flash[:success] = "Logout success"
 		session[:user_id] = nil
 		redirect_to :action => 'login'
 	end

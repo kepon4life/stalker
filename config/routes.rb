@@ -1,6 +1,8 @@
 StalkerBackend::Application.routes.draw do
 
-  resources :categories, :users
+  match '/dreams/tag', :controller => 'dreams', :action => 'tag'
+
+  resources :categories, :users, :dreams, :events
 
   root :to => 'categories#new'
 

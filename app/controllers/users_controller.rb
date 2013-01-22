@@ -7,17 +7,16 @@ class UsersController < ApplicationController
 
 
 	def new
-		@titre = "New user"
 		@user = User.new 
 	end
 
 	def create
 		@user = User.new(params[:user])
 		if @user.save
+			flash[:success] = "User was successfully created!"
 			redirect_to(:action => 'index')
 		else
-			flash[:notice] = "Form is invalid"
-			flash[:color]= "invalid"
+			flash[:error] = "User was not successfully created!"
 			render "new"
 		end
 	

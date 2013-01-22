@@ -1,17 +1,27 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= @titre %></title>
+    <title><%= @title %></title>
     <%= csrf_meta_tag %>
-    <%= render 'layouts/stylesheets' %>
+    <%= stylesheet_link_tag 'bootstrap/bootstrap.min.css' %>
+    <%= stylesheet_link_tag 'bootstrap/bootstrap-responsive.min.css' %>
+    <%= stylesheet_link_tag 'application' %>
+
   </head>
   <body>
-    <div class="container">
       <%= render 'layouts/header' %>
-      <section class="round">
-        <%= yield %>
-      </section>
-      <%= render 'layouts/footer' %>
+
+    
+    
+    <div id="content" class="container"> 
+      <div id="messages">
+          <%= render 'layouts/messages' %> 
+      </div>    
+          <%= yield %>
     </div>
+    <%= javascript_include_tag 'jquery-1.9.0.min.js' %>
+    <%= javascript_include_tag 'bootstrap/bootstrap.min.js' %>
+    <%= javascript_include_tag 'application' %>
+    <%= yield :javascript_includes %>
   </body>
 </html>
