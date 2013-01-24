@@ -2,21 +2,29 @@
 <div class="page-header">
   <h1>Listing categories</h1>
 </div>
-<table class="table table-bordered">
-  <tr>
-    <th>Name</th>
-    <th></th>
-    <th></th>
-  </tr>
 
-<% @categories.each do |category| %>
-  <tr>
-    <td><%= category.name %></td>
-    <td><%= link_to "Edit", {:controller => "categories", :action => "edit", :id => category.id}, :class => 'btn' %></td>
-    <td><%= button_to( 'Destroy', category, :confirm => 'Are you sure?', :method => :delete, :class => "btn btn-danger")%></td>
-  </tr>
+<% if not @categories.empty? %>
+
+
+  <table class="table table-bordered">
+    <tr>
+      <th>Name</th>
+      <th></th>
+      <th></th>
+    </tr>
+
+  <% @categories.each do |category| %>
+    <tr>
+      <td><%= category.name %></td>
+      <td><%= link_to "Edit", {:controller => "categories", :action => "edit", :id => category.id}, :class => 'btn' %></td>
+      <td><%= button_to( 'Destroy', category, :confirm => 'Are you sure?', :method => :delete, :class => "btn btn-danger")%></td>
+    </tr>
+  <% end %>
+  </table>
+
+<% else %>
+  No categories
 <% end %>
-</table>
 
 <br />
 

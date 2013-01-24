@@ -1,28 +1,38 @@
 <h1>Listing events</h1>
 
-<table class="table table-bordered">
-  <tr>
-    <th>Name</th>
-    <th>Categories</th>
-    <th></th>
-    <th></th>
-  </tr>
+<% if not @events.empty?  %>
 
-<% @events.each do |event| %>
-  <tr>
-    <td><%= event.name %></td>
-    <td>
-      <ul>
-        <%  event.categories.each do |category| %>
-            <li><%= category.name %></li>
+  <table class="table table-bordered">
+    <tr>
+      <th>Name</th>
+      <th>Categories</th>
+      <th></th>
+      <th></th>
+    </tr>
+
+  <% @events.each do |event| %>
+    <tr>
+      <td><%= event.name %></td>
+      <td>
+        <% if event.categories.empty? %>
+        All categories
+        <% else %>
+          <ul>
+            <%  event.categories.each do |category| %>
+                <li><%= category.name %></li>
+            <% end %>
+          </ul>
         <% end %>
-      </ul>
-    </td>
-    <td><%= link_to "Edit", {:controller => "events", :action => "edit", :id => event.id}, :class => 'btn' %></td>
-    <td><%= button_to( 'Destroy', event, :confirm => 'Are you sure?', :method => :delete, :class => "btn btn-danger")%></td>
-  </tr>
- <% end %>
-</table>
+      </td>
+      <td><%= link_to "Edit", {:controller => "events", :action => "edit", :id => event.id}, :class => 'btn' %></td>
+      <td><%= button_to( 'Destroy', event, :confirm => 'Are you sure?', :method => :delete, :class => "btn btn-danger")%></td>
+    </tr>
+   <% end %>
+  </table>
+
+<% else %>
+  No events
+<% end %>
 
 <br />
 

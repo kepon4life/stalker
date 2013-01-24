@@ -71,6 +71,7 @@ class DreamsController < ApplicationController
   # PUT /dreams/1
   # PUT /dreams/1.json
   def update
+    params[:dream][:category_ids] ||= [] #fix l'update en déselectionnant tout
     @dream = Dream.find(params[:id])
 
     respond_to do |format|

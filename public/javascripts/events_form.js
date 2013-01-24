@@ -1,6 +1,14 @@
 $(document).ready(function () {
 
-	alert("modifier publi/events_form.js - si all cat check masquer les cat et inversément")
+	showOrHideCategories();
+
+	$('#form-events-all-categories').change(function(){
+		showOrHideCategories();
+	});
+
+
+
+	
 
 
 
@@ -9,3 +17,17 @@ $(document).ready(function () {
 
 
 });
+
+
+function showOrHideCategories(){
+
+	if($('#form-events-all-categories').is(':checked')){
+
+		$("#form-events-categories input[type=checkbox]").attr('checked', false);
+
+
+		$("#form-events-categories").hide();
+	} else{
+		$("#form-events-categories").show();
+	}
+}
