@@ -1,5 +1,5 @@
 class DreamsController < ApplicationController
-
+  require 'fileutils'
   before_filter :authenticate_user
 
 
@@ -14,16 +14,6 @@ class DreamsController < ApplicationController
     end
   end
 
-  # GET /dreams/new
-  # GET /dreams/new.json
-  def new
-    @dream = Dream.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render :json => @dream }
-    end
-  end
 
   # GET /dreams/1/edit
   def edit
@@ -35,38 +25,30 @@ class DreamsController < ApplicationController
   # GET /dreams/tag
   # GET /dreams/tag.json
   def tag
-    
+    @categories = Category.all
+    @files = Dir["public" + PATH_TO_DREAMS_UNTREATED + '*' + DREAM_EXTENSION] # PATH_TO_DREAMS & DREAM_EXTENSION : constant defined in config/initializers/constants.rb
 
-    @files = Dir[PATH_TO_DREAMS + '*' + DREAM_EXTENSION] # PATH_TO_DREAMS & DREAM_EXTENSION : constant defined in config/initializers/constants.rb
-
-    
-    
     respond_to do |format|
       format.html # tag.html.erb
       format.json { render :json => @dream }
     end
-
-
   end
 
 
-  # POST /dreams
-  # POST /dreams.json
-  def create
-    @dream = Dream.new(params[:dream])
-
+  def tagDream
+    @dream = Dream.new(:file_name => params[:file_name], :is_valid => params[:is_valid], :category_ids => params[:category_ids] )
     respond_to do |format|
       if @dream.save
-        flash[:success] = "Dream was successfully created!"
-        format.html { redirect_to  :action => "index", :notice => 'Dream was successfully created.' }
+        FileUtils.mv("public" + PATH_TO_DREAMS_UNTREATED + @dream.file_name , "public" + PATH_TO_DREAMS_TREATED + @dream.file_name)
         format.json { render :json => @dream, :status => :created, :location => @dream }
       else
-        flash[:error] = "Dream was not successfully created!"
-        format.html { render :action => "new" }
         format.json { render :json => @dream.errors, :status => :unprocessable_entity }
       end
     end
   end
+
+
+
 
   # PUT /dreams/1
   # PUT /dreams/1.json

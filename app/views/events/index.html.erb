@@ -19,7 +19,7 @@
         <% else %>
           <ul>
             <%  event.categories.each do |category| %>
-                <li><%= category.name %></li>
+              <li><%= link_to "#{category.name}", :controller => "categories", :action => "show", :id => category %></li>
             <% end %>
           </ul>
         <% end %>

@@ -1,22 +1,15 @@
 <h1>Listing dreams</h1>
 
 <% if not @dreams.empty?  %>
-
   <table class="table table-bordered">
-    <tr>
-      <th>File name</th>
-      <th>Is valid</th>
-      <th>Categories</th>
-      <th></th>
-      <th></th>
-    </tr>
-
-
-
   <% @dreams.each do |dream| %>
-    <tr>
-      <td><%= dream.file_name %></td>
-      <td><%= dream.is_valid %></td>
+  <% if dream.is_valid? %>
+    <tr class="success">
+  <% else %>
+    <tr class="error">
+  <% end %>
+      <td>
+        <img class="dream" class src="<%= PATH_TO_DREAMS_TREATED + dream.file_name %>" alt="<%= dream.file_name %>" />
       <td>
         <ul>
           <%  dream.categories.each do |category| %>
@@ -33,7 +26,3 @@
 <% else %>
   No dreams
 <% end %>
-
-<br />
-
-<%= link_to 'New Dream', new_dream_path %>

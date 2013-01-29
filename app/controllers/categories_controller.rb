@@ -63,6 +63,19 @@ class CategoriesController < ApplicationController
     end
   end
 
+
+  # PUT /categories/1
+  # PUT /categories/1.json
+  def show
+    @category = Category.find(params[:id])
+
+    respond_to do |format|
+      format.html # show.html.erb
+      format.xml  { render :xml => @user }
+    end
+  end
+
+
   # DELETE /categories/1
   # DELETE /categories/1.json
   def destroy

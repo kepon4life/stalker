@@ -1,3 +1,11 @@
-PATH_TO_DREAMS = "/Users/RFR/RailsProjects/stalker_dreams/"
+PATH_TO_DREAMS_UNTREATED = "/dreams/untreated/"
+PATH_TO_DREAMS_TREATED = "/dreams/treated/"
 DREAM_EXTENSION = ".jpg"
 DREAM_EXTENSION_REGEX = /^[A-Z0-9_-]+.(jpg)$/i
+PUSHER_API_APP_ID = "33358"
+PUSHER_API_KEY = "2608f7fc5798192ced83"
+PUSHER_API_SECRET = "84ea3665c265dc91d1ba"
+#PUSHER_CHANEL = "my-channel"
+#PUSHER_EVENT = "my-event"
+PUSHER_CHANEL = "private-mychannel"
+PUSHER_EVENT = "client-myevent"

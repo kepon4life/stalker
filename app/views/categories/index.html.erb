@@ -9,6 +9,7 @@
   <table class="table table-bordered">
     <tr>
       <th>Name</th>
+      <th>Dream(s)</th>
       <th></th>
       <th></th>
     </tr>
@@ -16,6 +17,13 @@
   <% @categories.each do |category| %>
     <tr>
       <td><%= category.name %></td>
+      <% if category.dreams.count == 0 %>
+        <td>No dreams</td>
+      <% elsif category.dreams.count == 1  %>
+        <td><%= link_to "#{category.dreams.count}  dream", :controller => "categories", :action => "show", :id => category %></td>
+      <% else %>
+        <td><%= link_to "#{category.dreams.count}  dreams", :controller => "categories", :action => "show", :id => category %></td>
+      <% end %>
       <td><%= link_to "Edit", {:controller => "categories", :action => "edit", :id => category.id}, :class => 'btn' %></td>
       <td><%= button_to( 'Destroy', category, :confirm => 'Are you sure?', :method => :delete, :class => "btn btn-danger")%></td>
     </tr>

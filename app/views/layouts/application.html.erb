@@ -3,8 +3,7 @@
   <head>
     <title><%= @title %></title>
     <%= csrf_meta_tag %>
-    <%= stylesheet_link_tag 'bootstrap/bootstrap.min.css' %>
-    <%= stylesheet_link_tag 'bootstrap/bootstrap-responsive.min.css' %>
+    <%= stylesheet_link_tag '/bootstrap/css/bootstrap.min.css' %>
     <%= stylesheet_link_tag 'application' %>
 
   </head>
@@ -20,8 +19,16 @@
           <%= yield %>
     </div>
     <%= javascript_include_tag 'jquery-1.9.0.min.js' %>
-    <%= javascript_include_tag 'bootstrap/bootstrap.min.js' %>
-    <%= javascript_include_tag 'application' %>
+    <script src="http://js.pusher.com/1.12/pusher.min.js"></script>
+    <script>
+      var PUSHER_CHANEL = '<%= PUSHER_CHANEL %>'
+      var PUSHER_EVENT = '<%= PUSHER_EVENT %>'
+      var PUSHER_API_KEY = '<%= PUSHER_API_KEY %>';
+      var DREAM_EXTENSION = '<%= DREAM_EXTENSION %>';
+    </script>
+    <%= javascript_include_tag '/javascripts/stalker.js' %>
+    <%= javascript_include_tag 'rails.js' %>
+    <%= javascript_include_tag '/bootstrap/js/bootstrap.min.js' %>
     <%= yield :javascript_includes %>
   </body>
 </html>

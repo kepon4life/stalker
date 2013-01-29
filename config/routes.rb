@@ -1,10 +1,16 @@
 StalkerBackend::Application.routes.draw do
 
   match '/dreams/tag', :controller => 'dreams', :action => 'tag'
+  match '/dreams/tagDream', :controller => 'dreams', :action => 'tagDream'
 
   resources :categories, :users, :dreams, :events
 
-  root :to => 'categories#new'
+  root :to => 'dreams#tag'
+
+  match "pusher", :to => "pusher#test"
+  match '/pusher/auth', :controller => 'pusher', :action => 'auth'
+
+  match '/services/nbdreams', :controller => 'services', :action => 'get_number_of_dreams_to_treat'
 
   match "signup", :to => "users#new"
   match "login", :to => "sessions#login"
