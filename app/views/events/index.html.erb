@@ -6,6 +6,7 @@
     <tr>
       <th>Name</th>
       <th>Categories</th>
+      <th>Service</th>
       <th></th>
       <th></th>
     </tr>
@@ -24,6 +25,7 @@
           </ul>
         <% end %>
       </td>
+      <td><%= link_to "Link", {:controller => "services", :action => "get_dreams_for_event", :id => event.id} %></td>
       <td><%= link_to "Edit", {:controller => "events", :action => "edit", :id => event.id}, :class => 'btn' %></td>
       <td><%= button_to( 'Destroy', event, :confirm => 'Are you sure?', :method => :delete, :class => "btn btn-danger")%></td>
     </tr>

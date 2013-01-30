@@ -11,6 +11,8 @@ StalkerBackend::Application.routes.draw do
   match '/pusher/auth', :controller => 'pusher', :action => 'auth'
 
   match '/services/nbdreams', :controller => 'services', :action => 'get_number_of_dreams_to_treat'
+  match '/services/dreamsevent', :controller => 'services', :action => 'get_dreams_for_event'
+
 
   match "signup", :to => "users#new"
   match "login", :to => "sessions#login"

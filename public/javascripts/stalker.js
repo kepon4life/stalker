@@ -5,7 +5,7 @@ $(document).ready(function () {
 	$.ajax({
 	    dataType: 'jsonp',
 	    type: "GET",
-		url: "/services/nbdreams.js",
+		url: "/services/nbdreams",
 	    success: function(response) {
 	    	incrementNbDreams(parseInt(response.nbImg));
 	    }
