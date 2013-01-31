@@ -2,10 +2,10 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
 	
 	def is_admin_user
-		user = User.find(session[:user_id])
+		user = @current_user
 		if(user.group.id != 1)
 			flash[:error] = "You have not permissions to access this funcion"
-			redirect_to(:root)
+			redirect_to("/401.html")
 			return false
 		else
 			return true
@@ -13,10 +13,10 @@ class ApplicationController < ActionController::Base
 	end
 
 	def is_frontend_user
-		user = User.find(session[:user_id])
-		if(user.group.id != 2 || user.group.id != 1)
+		user = @current_user
+		if(user.group.id != 2 && user.group.id != 1)
 			flash[:error] = "You have not permissions to access this funcion"
-			redirect_to(:root)
+			redirect_to("/401.html")
 			return false
 		else
 			return true
@@ -24,10 +24,10 @@ class ApplicationController < ActionController::Base
 	end
 
 	def is_service_user
-		user = User.find(session[:user_id])
-		if(user.group.id != 3 || user.group.id != 1)
+		user = @current_user
+		if(user.group.id != 3 && user.group.id != 1)
 			flash[:error] = "You have not permissions to access this funcion"
-			redirect_to(:root)
+			redirect_to("/401.html")
 			return false
 		else
 			return true

@@ -1,6 +1,7 @@
 class DreamsController < ApplicationController
   require 'fileutils'
   before_filter :authenticate_user
+  before_filter :is_admin_user
 
 
   # GET /dreams

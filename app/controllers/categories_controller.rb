@@ -1,5 +1,6 @@
 class CategoriesController < ApplicationController
   before_filter :authenticate_user, :only => [:index, :show, :new]
+  before_filter :is_admin_user
   # GET /categories
   # GET /categories.json
   def index
