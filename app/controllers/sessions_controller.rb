@@ -14,7 +14,12 @@ class SessionsController < ApplicationController
 		if authorized_user
 			session[:user_id] = authorized_user.id
 			flash[:success] = "Welcome #{authorized_user.username}"
-			redirect_to(:root)
+			if authorized_user.group.id == 1
+				redirect_to :controller => "dreams", :action => "tag"
+			else
+				redirect_to(:root)
+			end
+			
 		else
 			flash[:error] = "Invalid Username or Password"
 			render "login"	

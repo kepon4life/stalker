@@ -76,6 +76,8 @@ class DreamsController < ApplicationController
     @dream = Dream.find(params[:id])
     @dream.destroy
 
+    FileUtils.remove_file("public" + PATH_TO_DREAMS_TREATED + @dream.file_name)
+
     respond_to do |format|
       flash[:success] = "Dream was successfully deleted!"
       format.html { redirect_to dreams_url }

@@ -8,8 +8,13 @@
 
   </head>
   <body>
-      <%= render 'layouts/header' %>
-
+      <% if @current_user %>
+        <% if @current_user.group.id == 1 %>
+          <%= render 'layouts/header_admin' %>
+        <% elsif @current_user.group.id == 2 %>
+          <%= render 'layouts/header_frontend' %>
+        <% end %>
+      <% end %>
     
     
     <div id="content" class="container"> 

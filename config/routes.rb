@@ -3,9 +3,11 @@ StalkerBackend::Application.routes.draw do
   match '/dreams/tag', :controller => 'dreams', :action => 'tag'
   match '/dreams/tagDream', :controller => 'dreams', :action => 'tagDream'
 
+  match '/frontend/index', :controller =>"frontend", :action => "index"
+
   resources :categories, :users, :dreams, :events
 
-  root :to => 'dreams#tag'
+  root :to => 'frontend#index'
 
   match "pusher", :to => "pusher#test"
   match '/pusher/auth', :controller => 'pusher', :action => 'auth'

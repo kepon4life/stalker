@@ -1,7 +1,6 @@
 class ServicesController < ApplicationController  
 	
 	before_filter :authenticate_for_api, :only => [:get_dreams_for_event]
-	#before_filter :is_service_user, :only => [:get_dreams_for_event]
 
 	def get_number_of_dreams_to_treat
 		render :json => {:nbImg => Dir["public" + PATH_TO_DREAMS_UNTREATED + '*' + DREAM_EXTENSION].count}, :callback => params[:callback]
