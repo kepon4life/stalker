@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+admin:
+  id: 1
+  name: Admin
+
+frontend:
+  id: 2
+  name: Frontend user
+
+service:
+  id: 3
+  name: Service

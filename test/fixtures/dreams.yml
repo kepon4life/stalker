@@ -1,11 +1,1 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
-
-one:
-  file_name: MyString
-  is_valid: false
-  category_id: 1
-
-two:
-  file_name: MyString
-  is_valid: false
-  category_id: 1

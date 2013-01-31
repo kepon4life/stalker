@@ -16,10 +16,40 @@
 
 <div class= "form">
 	<%= form_for(:user, :url => {:controller => 'users', :action => 'create'}) do |f| %>
-		<p> Username:</br> <%= f.text_field :username%> </p>
-		<p> Email:</br> <%= f.text_field :email%> </p>
-		<p> Password:</br> <%= f.password_field :password%></p>
-		<p> Password Confirmation:</br> <%= f.password_field :password_confirmation%> </p>
-		<%= f.submit :Signup %>
+		<fieldset>
+			<div class="control-group">
+    			<%= f.label :group, :class => "control-label" %>
+    			<div class="controls">
+    				<%= collection_select(:user, :group_id, Group.all, :id, :name) %>
+    			</div>
+  			</div>
+  			<div class="control-group">
+    			<%= f.label :username, :class => "control-label" %>
+    			<div class="controls">
+      				<%= f.text_field :username %>
+    			</div>
+  			</div>
+  			<div class="control-group">
+    			<%= f.label :email, :class => "control-label" %>
+    			<div class="controls">
+      				<%= f.text_field :email %>
+    			</div>
+  			</div>
+  			<div class="control-group">
+    			<%= f.label :password, :class => "control-label" %>
+    			<div class="controls">
+      				<%= f.password_field :password %>
+    			</div>
+  			</div>
+  			<div class="control-group">
+    			<%= f.label :password_confirmation, :class => "control-label" %>
+    			<div class="controls">
+      				<%= f.password_field :password_confirmation %>
+    			</div>
+  			</div>
+  			<div class="actions">
+    			<%= f.submit :Signup %>
+  			</div>
+		</fieldset>
 	<% end %>
 </div>

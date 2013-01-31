@@ -1,5 +1,6 @@
 class UsersController < ApplicationController  
 	before_filter :authenticate_user, :only => [:new, :index]
+	before_filter :is_admin_user
 
 	def index
 		@users = User.all
