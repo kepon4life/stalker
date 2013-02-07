@@ -11,10 +11,11 @@ class FrontendController < ApplicationController
 	end
 
 	def save
-		if params[:imgColor]
-			img = Base64.decode64(params[:imgColor].gsub("data:image/png;base64", ""));
+		if params[:imgColor] && params[:imgNormal]
+			imgColor = Base64.decode64(params[:imgColor].gsub("data:image/png;base64", ""));
+			imgNormal = Base64.decode64(params[:imgColor].gsub("data:image/png;base64", ""));
 			newImg = Time.now.to_i.to_s + DREAM_EXTENSION
-			if file_put_contents("public" + PATH_TO_DREAMS_UNTREATED + newImg, img)
+			if file_put_contents("public" + PATH_TO_DREAMS_UNTREATED + newImg, imgNormal) && file_put_contents("public" + PATH_TO_DREAMS_SENDED + newImg, imgColor)
 				render:json => {:imgUrl => newImg}
 			else
 				render:json => {:imgUrl => "PAS OK"}

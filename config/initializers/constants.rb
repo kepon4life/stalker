@@ -1,5 +1,6 @@
 PATH_TO_DREAMS_UNTREATED = "/dreams/untreated/"
 PATH_TO_DREAMS_TREATED = "/dreams/treated/"
+PATH_TO_DREAMS_SENDED = "/dreams/sended/"
 DREAM_EXTENSION = ".png"
 DREAM_EXTENSION_REGEX = /^[A-Z0-9_-]+.(jpg)$/i
 PUSHER_API_APP_ID = "33358"

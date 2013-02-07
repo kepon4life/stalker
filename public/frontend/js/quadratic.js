@@ -180,7 +180,7 @@ function sendTosave(){
       url: '/frontend/save',
       data: {imgColor : imgBgColor, imgNormal : imgBgWhite},
       success: function(data){
-        triggered = privateChannel.trigger('client-myevent', { imgUrl: data });
+        triggered = privateChannel.trigger('client-myevent', data);
             //Efface le contenu du canvas
             ctx.clearRect(0, 0,canvaswidth,canvasheight);  
             //Rétablissement de la couleur de dessin par défaut
