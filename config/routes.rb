@@ -4,6 +4,7 @@ StalkerBackend::Application.routes.draw do
   match '/dreams/tagDream', :controller => 'dreams', :action => 'tagDream'
 
   match '/frontend/index', :controller =>"frontend", :action => "index"
+  match '/frontend/save', :controller =>"frontend", :action => "save"
 
   resources :categories, :users, :dreams, :events
 

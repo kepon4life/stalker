@@ -1,1 +1,20 @@
-Mais kikou
+<% content_for :stylesheet_includes do %>
+  <%= stylesheet_link_tag '/frontend/css/style.css'  %>
+<% end %>
+<% content_for :javascript_includes do %>
+  <%= javascript_include_tag "/frontend/js/libs/tuiojs.js" %>
+  <%= javascript_include_tag "/frontend/js/libs/connect.js" %>
+  <%= javascript_include_tag "/frontend/js/libs/pusher.min.js" %>
+  <%= javascript_include_tag "/frontend/js/quadratic.js" %>
+<% end %>
+
+<!--<h1>Test d'envoi</h1>-->
+<canvas id="mycanvas"></canvas>
+<!--<canvas id="mycanvasbis" width="600" height="600"></canvas>-->
+<div id="controls">
+	<a href="#" id="draw"><img src="/frontend/img/pencil-icon.png"></a>
+	<!--<a href="#" id="erase"><img src="img/eraser-icon.png"></a>-->
+	<!--<a href="#" id="test">Change Color</a>-->
+	<a href="#" id="erase">Efface Tout</a>
+	<a href="#" id="send">Envoyer</a>
+</div>
