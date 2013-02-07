@@ -12,19 +12,6 @@
 
 ActiveRecord::Schema.define(:version => 20130131065022) do
 
-  create_table "categories", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  create_table "categories_dreams", :id => false, :force => true do |t|
-    t.integer "dream_id"
-    t.integer "category_id"
-  end
-
-  add_index "categories_dreams", ["dream_id", "category_id"], :name => "index_dreams_categories_on_dream_id_and_category_id"
-
   create_table "categories_events", :id => false, :force => true do |t|
     t.integer "category_id"
     t.integer "event_id"
