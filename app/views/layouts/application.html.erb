@@ -12,13 +12,14 @@
       <% if @current_user %>
         <% if @current_user.group.id == 1 %>
           <%= render 'layouts/header_admin' %>
+          <div id="content" class="container"> 
         <% elsif @current_user.group.id == 2 %>
-          <%= render 'layouts/header_frontend' %>
+          <div> 
         <% end %>
       <% end %>
     
     
-    <div id="content" class="container"> 
+    
       <div id="messages">
           <%= render 'layouts/messages' %> 
       </div>    

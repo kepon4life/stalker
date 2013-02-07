@@ -292,7 +292,7 @@ privateChannel.bind('pusher:subscription_succeeded', function() {
         $.ajax({
           type: 'POST',
           url: '/frontend/save',
-          data: {id : img},
+          data: {imgColor : img},
             success: function(data){
                 triggered = privateChannel.trigger('client-myevent', { imgUrl: data.imgUrl });
                 //Efface le contenu du canvas

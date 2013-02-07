@@ -11,8 +11,8 @@ class FrontendController < ApplicationController
 	end
 
 	def save
-		if params[:id]
-			img = Base64.decode64(params[:id].gsub("data:image/png;base64", ""));
+		if params[:imgColor]
+			img = Base64.decode64(params[:imgColor].gsub("data:image/png;base64", ""));
 			newImg = Time.now.to_i.to_s + DREAM_EXTENSION
 			if file_put_contents("public" + PATH_TO_DREAMS_UNTREATED + newImg, img)
 				render:json => {:imgUrl => newImg}
