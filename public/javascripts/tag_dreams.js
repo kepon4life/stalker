@@ -94,7 +94,7 @@ function saveDream(id, is_valid, category_ids){
 	$.ajax({
 		  type: "GET",
 		  url: "/dreams/tagDream",
-		  data: { file_name: id+".jpg", is_valid: is_valid, category_ids: category_ids }
+		  data: { file_name: id+DREAM_EXTENSION, is_valid: is_valid, category_ids: category_ids }
 		}).done(function( msg ) {
 		  //alert( "Data Saved: ");
 		});

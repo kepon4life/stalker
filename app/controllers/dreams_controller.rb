@@ -37,6 +37,8 @@ class DreamsController < ApplicationController
 
 
   def tagDream
+    #render:json => {:file_name => params[:file_name], :is_valid => params[:is_valid], :category_ids => params[:category_ids]}
+
     @dream = Dream.new(:file_name => params[:file_name], :is_valid => params[:is_valid], :category_ids => params[:category_ids] )
     respond_to do |format|
       if @dream.save
