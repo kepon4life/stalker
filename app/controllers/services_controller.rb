@@ -27,6 +27,17 @@ class ServicesController < ApplicationController
 		render:json => {:dreams => dreams}
 	end
 
+	def get_categories
+		categories = Category.all
+		cat = {}
+
+		categories.each do |category|
+			c = category.name
+			cat[category.id] = c
+		end
+		render:json => cat
+	end
+
 	private 
 		def authenticate_for_api
 			authenticate_or_request_with_http_basic do |user_name, password|

@@ -1,5 +1,7 @@
 $(document).ready(function () {
 
+	//on charge les categories
+	getCategoriesCheckboxes();
 
 	//Buble with dreams number initialization
 	$.ajax({
@@ -68,9 +70,19 @@ function addImgToTagg(imgUrl){
 	if($("div#tag_dreams img.dream").length == 0){
 		$("div#tag_dreams").empty();
 	}
-	$("div#tag_dreams").append("<div class='dream' id='dream_"+imgName+"'><img class='dream' src='/dreams/untreated/"+imgUrl+"' alt='"+imgName+"' /><div class='btn-toolbar'><div class='btn-group'><a href='#myModal_"+imgName+"' data-toggle='modal' class='btn'><i class='icon-search'></i></a><a class='btn dream-accept' rel='popover' href='#' data-original-title=''><i class='icon-ok'></i></a><a class='btn dream-refuse' href='#''><i class='icon-remove'></i></a></div></div><div id='myModal_"+imgName+"' class='modal hide fade' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'><img src='/dreams/untreated/"+imgUrl+"' alt='"+imgName+"'></div></div><div class='form_categories' id='popover_"+imgName+"'><form><div class='form_categories_inputs'>"+$("div.form_categories_inputs").parent().first().children().html()+"</div><a class='btn btn-mini btn-success dream-accept-save' id='dream-accept-save-"+imgName+"'>Save</a></form></div>");
+	$("div#tag_dreams").append("<div class='dream' id='dream_"+imgName+"'><img class='dream' src='/dreams/untreated/"+imgUrl+"' alt='"+imgName+"' /><div class='btn-toolbar'><div class='btn-group'><a href='#myModal_"+imgName+"' data-toggle='modal' class='btn'><i class='icon-search'></i></a><a class='btn dream-accept' rel='popover' href='#' data-original-title=''><i class='icon-ok'></i></a><a class='btn dream-refuse' href='#''><i class='icon-remove'></i></a></div></div><div id='myModal_"+imgName+"' class='modal hide fade' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'><img src='/dreams/untreated/"+imgUrl+"' alt='"+imgName+"'></div></div><div class='form_categories' id='popover_"+imgName+"'><form><div class='form_categories_inputs'>"+$("div#cat_for_add").html()+"</div><a class='btn btn-mini btn-success dream-accept-save' id='dream-accept-save-"+imgName+"'>Save</a></form></div>");
 	
 	initPopover();
+}
+
+function getCategoriesCheckboxes(){
+	$.getJSON("/services/categories", function(data) {
+		var c = "";
+   		$.each(data, function(id,name){
+      		c = c + "<input type='checkbox' value='"+id+"' name='category_ids[]'> "+name+"<br>";
+    	});
+   		$("#content").append("<div id='cat_for_add' style='display:none;'>" + c + "<br></div>");
+ 	});
 }
 
 
