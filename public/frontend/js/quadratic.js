@@ -6,14 +6,16 @@ var color = defaultcolor;
 var savedCurves = [];
 //Le nombre de courbes sauvrgardées et dessinées
 var indexPoints = 0;
-var tab = [];
-tab[1] = 0;
 var stockpoints = [];
-var nw;
-var nh;
+var nw; //Screen width
+var nh; // Screnn Height
+/*var imagebg = document.createElement('img'); // Si on utilise pas un dégradé mais une background image 
+imagebg.src = "todraw.png"*/
+var controlPanelWidth = 200; // Largeur de la bande qui contient les boutons envoyer et effacer
 $(document).ready(function(){
     nw = window.innerWidth;
     nh = window.innerHeight;
+
 
 //Pusher
 Pusher.channel_auth_endpoint = 'pusher/auth';
@@ -47,9 +49,9 @@ privateChannel.bind('pusher:subscription_error', function(status) {
         //Délimitation
         ctx.strokeStyle="#000"
         ctx.beginPath();
-        ctx.moveTo(nw-200,0);
+        ctx.moveTo(nw-controlPanelWidth,0);
         ctx.lineWidth = 3;
-        ctx.lineTo(nw-200,nh);
+        ctx.lineTo(nw-controlPanelWidth,nh);
         ctx.stroke();
 
         //Bouttons
@@ -111,7 +113,7 @@ privateChannel.bind('pusher:subscription_error', function(status) {
             var px = tuio.cursors[i].x;
             var py = tuio.cursors[i].y;
             
-            if (px*nw < nw-200){
+            if (px*nw < nw-controlPanelWidth){
                 started=true;
                 points = stockpoints[i];
                 points.push({
@@ -126,8 +128,14 @@ privateChannel.bind('pusher:subscription_error', function(status) {
     });
 
     function drawPoints(ctx, points) {
-        ctx.beginPath(), ctx.moveTo(points[0].x, points[0].y);
+        
         ctx.strokeStyle = color;
+        if (points.length < 6) {
+            var b = points[0];
+            ctx.beginPath(), ctx.arc(b.x, b.y, ctx.lineWidth / 2, 0, Math.PI * 2, !0), ctx.closePath(), ctx.fill();
+            return
+        }
+        ctx.beginPath(), ctx.moveTo(points[0].x, points[0].y);
         // draw a bunch of quadratics, using the average of two points as the control point
         for (i = 1; i < points.length - 2; i++) {
             var c = (points[i].x + points[i + 1].x) / 2,
@@ -193,15 +201,19 @@ privateChannel.bind('pusher:subscription_error', function(status) {
     function drawColorBg(){
         //Background color du canvas à envoyer
         var gradient1 = ctx.createLinearGradient(0, 0, canvaswidth,canvasheight);
-        gradient1.addColorStop(0,   '#f00'); // red
-        gradient1.addColorStop(0.5, '#ff0'); // yellow
-        gradient1.addColorStop(1,   '#00f'); // blue
+        gradient1.addColorStop(0,'#330936'); // red
+        gradient1.addColorStop(0.25,'#7b52ab'); // yellow
+        gradient1.addColorStop(0.5,'#850062'); // blue
+        gradient1.addColorStop(0.75,'#9a1551'); // blue
+        gradient1.addColorStop(1,'#ffef24'); // blue
         ctx.stroke();
+
+        
 
         //Permet de remplacer la couleur des courbes dessinées
         //Efface le contenu du canvas (context) puis redessine chaque courbe avec la nouvelle couleur   
         //La nouvelle couleur
-        color = "#F0A";
+        color = "#000";
         //On efface le contenu du canvas (context)
         ctx.clearRect(0,0,canvaswidth,canvasheight);
         clickColor = [];
@@ -222,12 +234,13 @@ privateChannel.bind('pusher:subscription_error', function(status) {
         ctx.globalCompositeOperation = "destination-over";
         //set background color
         ctx.fillStyle = gradient1;
+        //ctx.drawImage(imagebg,0,0,canvaswidth,canvasheight); // Si on utilise pas une dégradé mais une image en background
         //draw background / rect on entire canvas
         ctx.fillRect(0,0,canvaswidth,canvasheight);
 
-        var imgData = ctx.getImageData(0,0,nw-200,nh);
+        var imgData = ctx.getImageData(0,0,nw-controlPanelWidth,nh);
         var pngCanvas = document.createElement('canvas');
-        pngCanvas.width = nw-200;
+        pngCanvas.width = nw-controlPanelWidth;
         pngCanvas.height = nh;
         var pngCtx = pngCanvas.getContext('2d');
         pngCtx.putImageData(imgData,0,0);
@@ -253,9 +266,9 @@ privateChannel.bind('pusher:subscription_error', function(status) {
         ctx.fillStyle = "FFF";
         ctx.fillRect(0,0,canvaswidth,canvasheight);
 
-        var imgData = ctx.getImageData(0,0,nw-200,nh);
+        var imgData = ctx.getImageData(0,0,nw-controlPanelWidth,nh);
         var pngCanvas = document.createElement('canvas');
-        pngCanvas.width = nw-200;
+        pngCanvas.width = nw-controlPanelWidth;
         pngCanvas.height = nh;
         var pngCtx = pngCanvas.getContext('2d');
         pngCtx.putImageData(imgData,0,0);
