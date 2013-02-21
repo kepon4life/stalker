@@ -4,6 +4,7 @@ var canvasheight;
 var color = defaultcolor;
 //permet de sauvegarder les courbes dessinées
 var savedCurves = [];
+var nbdoigts = 0;
 //Le nombre de courbes sauvrgardées et dessinées
 var indexPoints = 0;
 var stockpoints = [];
@@ -11,7 +12,13 @@ var nw; //Screen width
 var nh; // Screnn Height
 /*var imagebg = document.createElement('img'); // Si on utilise pas un dégradé mais une background image 
 imagebg.src = "todraw.png"*/
+var envoyerimg = document.getElementById('envoyer');
+var effacerimg = document.getElementById('effacer');
+
 var controlPanelWidth = 200; // Largeur de la bande qui contient les boutons envoyer et effacer
+//Permet de stocker la couleur de chaque point dessiné
+var clickColor = [];
+
 $(document).ready(function(){
     nw = window.innerWidth;
     nh = window.innerHeight;
@@ -30,6 +37,7 @@ privateChannel.bind('pusher:subscription_error', function(status) {
 
 //Canvas
     // Bind canvas to listeners 
+    // Le canvas prend la taille de l'écran
     var canvas = document.getElementById('mycanvas');
     canvas.style.width = nw+'px';
     canvas.style.height = nh+'px';
@@ -39,11 +47,17 @@ privateChannel.bind('pusher:subscription_error', function(status) {
     canvasheight = nh;
 
     var ctx = canvas.getContext('2d');
-  
-    //Permet de stocker la couleur de chaque point dessiné
-    var clickColor = [];
+
+
 
     initControls();
+    envoyerimg.onload = function(){
+        ctx.drawImage(envoyerimg,nw-190,210);
+    }
+    effacerimg.onload = function(){
+        ctx.drawImage(effacerimg,nw-182,40);
+    }
+
     function initControls(){
 
         //Délimitation
@@ -54,17 +68,18 @@ privateChannel.bind('pusher:subscription_error', function(status) {
         ctx.lineTo(nw-controlPanelWidth,nh);
         ctx.stroke();
 
-        //Bouttons
+        //Bouttons rose et vert. Certainement à supprimer pour la mise en prod.
         ctx.fillStyle="#CCAABB";
         ctx.fillRect(nw-198,0,200,160)
         ctx.fillStyle="#AAFFBB";
         ctx.fillRect(nw-198,160,200,160)
+        var imgbo = $("#envoyer")
+        ctx.drawImage(envoyerimg,nw-190,210);
+        ctx.drawImage(effacerimg,nw-182,40);
     }
 
 
     var started = false;
-    var lastx = 0;
-    var lasty = 0;
 
     // create an in-memory canvas
     var memCanvas = document.createElement('canvas');
@@ -85,27 +100,31 @@ privateChannel.bind('pusher:subscription_error', function(status) {
 
     tuio.start();
 
-
-
-    tuio.cursor_remove(function(){
-        if (started) {
+    //Tuio.cursor_remove == plus aucun doigts sur la surface
+    tuio.cursor_remove(function(data){
+        nbdoigts -= nbdoigts;
+        if (started && nbdoigts == 0) {
             started = false;
             // When the pen is done, save the resulting context
             // to the in-memory canvas
             memCtx.clearRect(0, 0, canvaswidth,canvasheight);
             memCtx.drawImage(canvas, 0, 0);
             indexPoints++;
-            savedCurves.push(points)
+            for (var i = 0; i < stockpoints.length; i++) {
+                console.log(stockpoints)
+                savedCurves.push(stockpoints[i])
+            };
             points = [];
             clickColor = [];
             stockpoints = [];
         }
     })
+    //Tuio.cursor_update == déplacement du doigts sur la surface
     tuio.cursor_update(function(data) {
-        ctx.clearRect(0, 0, canvaswidth,canvasheight);
-        ctx.drawImage(memCanvas, 0, 0);
+        // ctx.clearRect(0, 0, canvaswidth,canvasheight);
+        // ctx.drawImage(memCanvas, 0, 0);
         initControls();
-
+        //Pour chaque doigts on détecte son déplacement
         for (var i = 0; i < tuio.cursors.length; i++){
             if(stockpoints[i] == null){
                 stockpoints[i] = []
@@ -116,33 +135,108 @@ privateChannel.bind('pusher:subscription_error', function(status) {
             if (px*nw < nw-controlPanelWidth){
                 started=true;
                 points = stockpoints[i];
-                points.push({
-                    x: px*nw,
-                    y: py*nh
-                })
-                stockpoints.splice(i, 1, points);
+                
+                    // stockpoints[i].push({
+                    //     x: px*nw,
+                    //     y: py*nh
+                    // });
+                
+                 points.push({
+                     x: px*nw,
+                     y: py*nh
+                 })
+                 stockpoints.splice(i, 1, points);
                 clickColor.push(color)           
             }
-            drawPoints(ctx,stockpoints[i])
+
+            // (function(arg1, arg2){
+            //     drawPoints(ctx,arg1, arg2)
+            // }(stockpoints[i], i))
+            if (stockpoints[i].length > 3) {
+                // (function(arg1, arg2){
+                    drawLastSegment(ctx,stockpoints[i], i);
+                // }(stockpoints[i], i))
+            }
         }
     });
+    function drawLastSegment(ctx, points, index) {
+        ctx.strokeStyle = color;
+        // if (points.length < 2) {
+        //     return;
+        // }
+        var current = points.length - 1;
+        var previous = current - 1;
+        var pprevious = previous - 1;
+
+
+        var prevInter = {
+            x: (points[pprevious].x + points[previous].x) / 2,
+            y: (points[pprevious].y + points[previous].y) / 2
+        }
+
+        var curInter = {
+            x: (points[previous].x + points[current].x) / 2,
+            y: (points[previous].y + points[current].y) / 2
+        }
+
+
+        // //draw a circle
+        // ctx.beginPath();
+        // ctx.arc(points[current].x, points[current].y, 0.5, true, Math.PI*2, false); 
+        // ctx.closePath();
+        // ctx.fill();
+        ctx.lineWidth = 7;
+        ctx.lineCap = 'round';
+        // // ctx.strokeStyle = '#003300';
+        // ctx.stroke();
+        // ctx.closePath();
+
+        ctx.beginPath(); 
+
+
+
+        ctx.moveTo(prevInter.x, prevInter.y);
+        ctx.quadraticCurveTo(points[previous].x, points[previous].y, curInter.x, curInter.y);
+        ctx.stroke();
+        ctx.closePath();
+
+        /*ctx.moveTo(points[pprevious].x, points[pprevious].y);
+        
+        var c = (points[previous].x + points[current].x) / 2,
+        d = (points[previous].y + points[current].y) / 2;
+        // ctx.quadraticCurveTo(points[current].x, points[current].y, c, d)
+
+        ctx.quadraticCurveTo(points[previous].x, points[previous].y, points[current].x, points[current].y)
+        // ctx.lineTo(points[current].x, points[current].y);
+        // ctx.moveTo(points[current].x, points[current].y);
+        ctx.stroke();
+        ctx.closePath();
+
+        */
+    };
 
     function drawPoints(ctx, points) {
-        
+        // console.log("-> Drawing points for " + index);
         ctx.strokeStyle = color;
         if (points.length < 6) {
             var b = points[0];
             ctx.beginPath(), ctx.arc(b.x, b.y, ctx.lineWidth / 2, 0, Math.PI * 2, !0), ctx.closePath(), ctx.fill();
             return
         }
-        ctx.beginPath(), ctx.moveTo(points[0].x, points[0].y);
+        ctx.beginPath(); 
+        ctx.moveTo(points[0].x, points[0].y);
         // draw a bunch of quadratics, using the average of two points as the control point
         for (i = 1; i < points.length - 2; i++) {
+            // console.log("-> Drawing point " + i +" for " + index);
+        
             var c = (points[i].x + points[i + 1].x) / 2,
                 d = (points[i].y + points[i + 1].y) / 2;
             ctx.quadraticCurveTo(points[i].x, points[i].y, c, d)
         }
-        ctx.quadraticCurveTo(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y), ctx.stroke();
+
+        // ctx.quadraticCurveTo(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
+
+        ctx.stroke();
         ctx.closePath();
     }
 
@@ -153,16 +247,18 @@ privateChannel.bind('pusher:subscription_error', function(status) {
         tuio.cursor_add(function(e){         
         var x = e.x;
         var y = e.y;
+        nbdoigts++;
 
-        //Efface (bouton rose)
+        //Efface (bouton rose) --> Zone à redéfinir pour la mise en prod 
         if( x*nw<(nw) && x*nw>(nw-200) && y*nh>0 && y*nh<160){
             clear();  
         }
-        //Envoie (bouton verre)
+        //Envoie (bouton verre) --> Zone à redéfinir pour la mise en prod
         if( x*nw<(nw) && x*nw>(nw-200) && y*nh>160 && y*nh<320){
             console.log('send!!!') 
             sendTosave();
-            clear();
+
+            
         }
     })
     });
@@ -172,40 +268,41 @@ privateChannel.bind('pusher:subscription_error', function(status) {
     var compositeOperation;
 
     function sendTosave(){
-    //Sauvegarde l'état actuel du canvas (permettra de rétablir l'état du canvas après les modifications/inversions pour l'envoi)
-    var myImageData = ctx.getImageData(0,0,canvaswidth,canvasheight);
-    
-    drawColorBg();
-    drawWhiteBg();
+        //Sauvegarde l'état actuel du canvas (permettra de rétablir l'état du canvas après les modifications/inversions pour l'envoi)
+        var myImageData = ctx.getImageData(0,0,canvaswidth,canvasheight);
+        
+        drawColorBg();
+        drawWhiteBg();
+        $.ajax({
+          type: 'POST',
+          url: '/frontend/save',
+          data: {imgColor : imgBgColor, imgNormal : imgBgWhite},
+          success: function(data){
+            triggered = privateChannel.trigger('client-myevent', data);
+                //Efface le contenu du canvas
+                //ctx.clearRect(0, 0,canvaswidth,canvasheight);  
+                //Rétablissement de la couleur de dessin par défaut
+                // color=defaultcolor
+                // //restore it with original / cached ImageData
+                // ctx.putImageData(myImageData, 0,0);        
 
-    $.ajax({
-      type: 'POST',
-      url: '/frontend/save',
-      data: {imgColor : imgBgColor, imgNormal : imgBgWhite},
-      success: function(data){
-        triggered = privateChannel.trigger('client-myevent', data);
-            //Efface le contenu du canvas
-            ctx.clearRect(0, 0,canvaswidth,canvasheight);  
-            //Rétablissement de la couleur de dessin par défaut
-            color=defaultcolor
-            //restore it with original / cached ImageData
-            ctx.putImageData(myImageData, 0,0);        
-
-            //reset the globalCompositeOperation to what it was
-            ctx.globalCompositeOperation = compositeOperation;                 
-        }
-    });
-}
+                // //reset the globalCompositeOperation to what it was
+                // ctx.globalCompositeOperation = compositeOperation;   
+                clear();
+            }
+        });
+        
+    }
 
     //Permet d'ajouter un fond coloré à l'image envoyée au server
     function drawColorBg(){
         //Background color du canvas à envoyer
         var gradient1 = ctx.createLinearGradient(0, 0, canvaswidth,canvasheight);
-        gradient1.addColorStop(0,'#330936'); // red
-        gradient1.addColorStop(0.25,'#7b52ab'); // yellow
-        gradient1.addColorStop(0.5,'#850062'); // blue
-        gradient1.addColorStop(0.75,'#9a1551'); // blue
-        gradient1.addColorStop(1,'#ffef24'); // blue
+        gradient1.addColorStop(0,'#330936');
+        gradient1.addColorStop(0.25,'#7b52ab');
+        gradient1.addColorStop(0.5,'#850062');
+        gradient1.addColorStop(0.75,'#9a1551');
+        gradient1.addColorStop(1,'#ffef24'); 
         ctx.stroke();
 
         
@@ -217,14 +314,15 @@ privateChannel.bind('pusher:subscription_error', function(status) {
         //On efface le contenu du canvas (context)
         ctx.clearRect(0,0,canvaswidth,canvasheight);
         clickColor = [];
-
+        
         //Pour chaque courbe sauvegardées (savedCurves[indexPoints]), on attribue la nouvelle couleur (clickcolor[]) à chacun des points de la courbe. 
-        for (var j = 0; j < indexPoints; j++) {
+        for (var j = 0; j < savedCurves.length; j++) {
             var curvestodraw = savedCurves[j];
             for (var i = 0; i < curvestodraw.length; i++) {
                 clickColor.push(color)
             };
             drawPoints(ctx,curvestodraw)
+            
         };
 
         //Permet de modifier le backgroudColor du canvas qui est transparant par défaut
@@ -247,6 +345,8 @@ privateChannel.bind('pusher:subscription_error', function(status) {
 
         imgBgColor = pngCanvas.toDataURL("image/png");
         pngCtx.clearRect(0, 0, canvaswidth,canvasheight);
+
+        ctx.globalCompositeOperation = "source-over";
     }
 
         //Permet d'ajouter un fond blanc à l'image envoyée au server
@@ -254,7 +354,7 @@ privateChannel.bind('pusher:subscription_error', function(status) {
         color = "#000";
         ctx.clearRect(0,0,canvaswidth,canvasheight);
         clickColor = [];
-        for (var j = 0; j < indexPoints; j++) {
+        for (var j = 0; j < savedCurves.length; j++) {
             var curvestodraw = savedCurves[j];
             for (var i = 0; i < curvestodraw.length; i++) {
                 clickColor.push(color)
@@ -275,6 +375,8 @@ privateChannel.bind('pusher:subscription_error', function(status) {
 
         imgBgWhite = pngCanvas.toDataURL("image/png");
         pngCtx.clearRect(0, 0, canvaswidth,canvasheight);
+
+        ctx.globalCompositeOperation = "source-over";
     }
 
 })
