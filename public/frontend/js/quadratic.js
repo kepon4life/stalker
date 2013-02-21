@@ -2,10 +2,12 @@ var defaultcolor = '#000'
 var canvaswidth;
 var canvasheight;
 var color = defaultcolor;
-//permet de sauvegarder les courbes dessinées
+//permet de sauvegarder toutes les courbes dessinées
 var savedCurves = [];
-var nbdoigts = 0; //Permet de connaître combien de doigts sont actuellement sur la surface
-//Le nombre de courbes sauvrgardées et dessinées
+//Permet de connaître combien de doigts sont actuellement sur la surface
+var nbdoigts = 0; 
+//Le nombre de courbes sauvrgardées et dessinées en live. Cela signifie que dans ce tableau on ne stock que les courbes
+//que l'on est en train de dessiner, celles pour lesquelles on a encore le doigts posé sur l'écran
 var stockpoints = [];
 var nw; //Screen width
 var nh; // Screnn Height
@@ -20,13 +22,11 @@ $(document).ready(function(){
     nw = window.innerWidth;
     nh = window.innerHeight;
 
-
 //Pusher
 Pusher.channel_auth_endpoint = 'pusher/auth';
 var pusher = new Pusher(PUSHER_API_KEY); 
 var privateChannel = pusher.subscribe(PUSHER_CHANEL);
 var triggered;
-
 
 privateChannel.bind('pusher:subscription_error', function(status) {
     console.log("error "+status);
@@ -46,6 +46,7 @@ privateChannel.bind('pusher:subscription_error', function(status) {
     var ctx = canvas.getContext('2d');
 
     initControls();
+
     envoyerimg.onload = function(){
         ctx.drawImage(envoyerimg,nw-190,210);
     }
@@ -70,25 +71,13 @@ privateChannel.bind('pusher:subscription_error', function(status) {
         ctx.fillRect(nw-198,0,200,160)
         ctx.fillStyle="#AAFFBB";
         ctx.fillRect(nw-198,160,200,160)
-        var imgbo = $("#envoyer")
         ctx.drawImage(envoyerimg,nw-190,210);
         ctx.drawImage(effacerimg,nw-182,40);
     }
 
-
-    var started = false;
-
-    // create an in-memory canvas
-    var memCanvas = document.createElement('canvas');
-    memCanvas.width = canvaswidth;
-    memCanvas.height = canvasheight;
-    //in-memory context
-    var memCtx = memCanvas.getContext('2d');
-
     // clear both canvases!
     function clear() {
         ctx.clearRect(0, 0, canvaswidth,canvasheight);
-        memCtx.clearRect(0, 0, canvaswidth,canvasheight);
         savedCurves = [];
         initControls();
     };
@@ -98,12 +87,8 @@ privateChannel.bind('pusher:subscription_error', function(status) {
     //Tuio.cursor_remove == plus aucun doigts sur la surface
     tuio.cursor_remove(function(data){
         nbdoigts -= nbdoigts;
-        if (started && nbdoigts == 0) {
-            started = false;
-            // When the pen is done, save the resulting context
-            // to the in-memory canvas
-            memCtx.clearRect(0, 0, canvaswidth,canvasheight);
-            memCtx.drawImage(canvas, 0, 0);
+        if (nbdoigts == 0) {
+
             for (var i = 0; i < stockpoints.length; i++) {
                 savedCurves.push(stockpoints[i])
             };
@@ -127,7 +112,6 @@ privateChannel.bind('pusher:subscription_error', function(status) {
             
             //On contrôle si on se trouve à l'intérieur ou non de la surface de dessin. (Pour interdire à l'utilisateur de dessiner ailleurs)
             if (px*nw < nw-controlPanelWidth){
-                started=true;
                 
                 stockpoints[i].push({
                     x: px*nw,
