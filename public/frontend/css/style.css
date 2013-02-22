@@ -17,3 +17,6 @@ body{
 	margin-right: auto;
 	margin-left: auto;
 }
+.controls{
+	display: none;
+}
