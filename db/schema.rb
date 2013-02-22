@@ -10,7 +10,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130131065022) do
+ActiveRecord::Schema.define(:version => 20130222122301) do
+
+  create_table "categories_dreams", :id => false, :force => true do |t|
+    t.integer "dream_id"
+    t.integer "category_id"
+  end
+
+  add_index "categories_dreams", ["dream_id", "category_id"], :name => "index_dreams_categories_on_dream_id_and_category_id"
 
   create_table "categories_events", :id => false, :force => true do |t|
     t.integer "category_id"
@@ -22,8 +29,9 @@ ActiveRecord::Schema.define(:version => 20130131065022) do
   create_table "dreams", :force => true do |t|
     t.string   "file_name"
     t.boolean  "is_valid"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
+    t.boolean  "secret_room", :default => false
   end
 
   create_table "events", :force => true do |t|

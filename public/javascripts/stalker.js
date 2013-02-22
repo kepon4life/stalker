@@ -57,7 +57,7 @@ function initPopover(){
 	    $pElem.popover(
 	        {
 	        	html:true,
-	          	title: "Categories",
+	          	title: "<input type='checkbox' name='in_secret_room' id='in_secret_room' /> In secret room",
 	          	trigger: "manual",
 	          	content: $("#popover_" + id).html()
 	        }

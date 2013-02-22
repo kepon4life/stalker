@@ -38,6 +38,9 @@ $(document).ready(function () {
 
 	$(document).on('click',"a.dream-accept-save", function(){
 
+
+		alert($(this).parent().parent().parent().children("h3.popover-title").children("input[type=checkbox]").is(':checked'));
+
 		var id = $(this).attr("id");
 		id = id.replace("dream-accept-save-",'');
 
