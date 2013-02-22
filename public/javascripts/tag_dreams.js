@@ -39,9 +39,10 @@ $(document).ready(function () {
 	$(document).on('click',"a.dream-accept-save", function(){
 
 
-		alert($(this).parent().parent().parent().children("h3.popover-title").children("input[type=checkbox]").is(':checked'));
+		var in_secret_room = $(this).parent().parent().parent().children("h3.popover-title").children("input[type=checkbox]").is(':checked');
 
 		var id = $(this).attr("id");
+
 		id = id.replace("dream-accept-save-",'');
 
 		var is_valid = true;
@@ -57,8 +58,8 @@ $(document).ready(function () {
 
 
 
-		if(category_ids.length > 0){
-			saveDream(id, is_valid, category_ids);
+		if(category_ids.length > 0 || in_secret_room){
+			saveDream(id, is_valid, category_ids, in_secret_room);
 			$('a[rel=popover].popover_on').popover('hide');
 			removeImgInDom(id);
 		}
@@ -93,11 +94,11 @@ function removeImgInDom(id){
 
 
 
-function saveDream(id, is_valid, category_ids){
+function saveDream(id, is_valid, category_ids, in_secret_room){
 	$.ajax({
 		  type: "GET",
 		  url: "/dreams/tagDream",
-		  data: { file_name: id+DREAM_EXTENSION, is_valid: is_valid, category_ids: category_ids }
+		  data: { file_name: id+DREAM_EXTENSION, is_valid: is_valid, category_ids: category_ids, in_secret_room: in_secret_room }
 		}).done(function( msg ) {
 		  //alert( "Data Saved: ");
 		});
