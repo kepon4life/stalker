@@ -5,6 +5,7 @@ StalkerBackend::Application.routes.draw do
 
   match '/frontend/index', :controller =>"frontend", :action => "index"
   match '/frontend/save', :controller =>"frontend", :action => "save"
+
   match '/slider', :controller =>"frontend", :action => "slider"
 
   resources :categories, :users, :dreams, :events
@@ -17,6 +18,7 @@ StalkerBackend::Application.routes.draw do
   match '/services/nbdreams', :controller => 'services', :action => 'get_number_of_dreams_to_treat'
   match '/services/dreamsevent', :controller => 'services', :action => 'get_dreams_for_event'
   match '/services/categories', :controller => 'services', :action => 'get_categories'
+  match '/services/dreamssecretroom' , :controller => 'services', :action => 'get_dreams_for_secret_room'
 
 
   match "signup", :to => "users#new"

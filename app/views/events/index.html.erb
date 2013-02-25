@@ -1,40 +1,45 @@
 <h1>Listing events</h1>
 
-<% if not @events.empty?  %>
-
   <table class="table table-bordered">
-    <tr>
-      <th>Name</th>
-      <th>Categories</th>
-      <th>Service</th>
-      <th></th>
-      <th></th>
-    </tr>
-
-  <% @events.each do |event| %>
-    <tr>
-      <td><%= event.name %></td>
-      <td>
-        <% if event.categories.empty? %>
-        All categories
-        <% else %>
-          <ul>
-            <%  event.categories.each do |category| %>
-              <li><%= link_to "#{category.name}", :controller => "categories", :action => "show", :id => category %></li>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Categories</th>
+        <th>Service</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Secret room</td>
+        <td>No categories for this event</td>
+        <td>Link</td>
+        <td>Can't edit this event</td>
+        <td>Can't destroy this event</td>
+      </tr>
+      <% @events.each do |event| %>
+        <tr>
+          <td><%= event.name %></td>
+          <td>
+            <% if event.categories.empty? %>
+            All categories
+            <% else %>
+              <ul>
+                <%  event.categories.each do |category| %>
+                  <li><%= link_to "#{category.name}", :controller => "categories", :action => "show", :id => category %></li>
+                <% end %>
+              </ul>
             <% end %>
-          </ul>
-        <% end %>
-      </td>
-      <td><%= link_to "Link", {:controller => "services", :action => "get_dreams_for_event", :id => event.id} %></td>
-      <td><%= link_to "Edit", {:controller => "events", :action => "edit", :id => event.id}, :class => 'btn' %></td>
-      <td><%= button_to( 'Destroy', event, :confirm => 'Are you sure?', :method => :delete, :class => "btn btn-danger")%></td>
-    </tr>
-   <% end %>
+          </td>
+          <td><%= link_to "Link", {:controller => "services", :action => "get_dreams_for_event", :id => event.id} %></td>
+          <td><%= link_to "Edit", {:controller => "events", :action => "edit", :id => event.id}, :class => 'btn' %></td>
+          <td><%= button_to( 'Destroy', event, :confirm => 'Are you sure?', :method => :delete, :class => "btn btn-danger")%></td>
+        </tr>
+       <% end %>
+    </tbody>
   </table>
 
-<% else %>
-  No events
-<% end %>
 
 <br />
 
