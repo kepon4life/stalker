@@ -305,9 +305,27 @@ function jsonFlickrApi(flickr){
 
 function localSearch(search){
     $('#status').html('Searching '+search);
-    $.getScript("frontend/nucleal/pictures.js");
+    //$.getScript("frontend/nucleal/pictures.js");
+    $.getJSON("services/dreamssecretroom", function(data) {
+        var status=data.length+" photos found.";
+        $('#status').html(status);
+        for(var i=0;i<data.length;i++){
+        photo=data[i];
+        dreamAlbum.push({
+            name:PATH_TO_DREAMS_TREATED + photo.file_name,
+            thumbnail_url: PATH_TO_DREAMS_TREATED + photo.file_name,
+            photo_url:PATH_TO_DREAMS_TREATED + photo.file_name
+        });
+    }
 
+    populateAlbum(dreamAlbum);
+    $('#preview-strip>ul>li>img')[0].click();
+    startSlideshow();
+
+    });
 }
+
+
 
 function localResultP(results){
     var photos=results.photos;

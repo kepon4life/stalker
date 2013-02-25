@@ -1,6 +1,6 @@
 class ServicesController < ApplicationController  
 	
-	before_filter :authenticate_for_api, :only => [:get_dreams_for_event, :get_dreams_for_secret_room]
+	before_filter :authenticate_for_api, :only => [:get_dreams_for_event]
 
 	def get_number_of_dreams_to_treat
 		render :json => {:nbImg => Dir["public" + PATH_TO_DREAMS_UNTREATED + '*' + DREAM_EXTENSION].count}, :callback => params[:callback]
@@ -24,12 +24,12 @@ class ServicesController < ApplicationController
 			end
 		end
 
-		render:json => {:dreams => dreams}
+		render:json => dreams.to_json(:only => [:file_name])
 	end
 
 	def get_dreams_for_secret_room
 		dreams = Dream.where(:secret_room => true)
-		render:json => {:dreams => dreams}
+		render:json => dreams.to_json(:only => [:file_name])
 	end
 
 
@@ -51,7 +51,7 @@ class ServicesController < ApplicationController
 				if user
 					user.group.id==1 || user.group.id == 3
 				end
-        	end
+	    	end
 		end
 
 
