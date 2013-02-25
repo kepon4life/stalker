@@ -90,16 +90,17 @@ privateChannel.bind('pusher:subscription_error', function(status) {
         if (nbdoigts == 0) {
 
             for (var i = 0; i < stockpoints.length; i++) {
-                savedCurves.push(stockpoints[i])
+                if(stockpoints[i].length > 0){
+                    savedCurves.push(stockpoints[i])
+                }
             };
             stockpoints = [];
         }
     })
     //Tuio.cursor_update == déplacement du doigts sur la surface
     tuio.cursor_update(function(data) {
-
         initControls();
-
+        
         //Pour chaque doigts on détecte son déplacement
         for (var i = 0; i < tuio.cursors.length; i++){
             //Pour chaque nouveau doigt on crée un nouveau tableau dans lequel on va stocker la courbe que le doigt dessine
@@ -117,12 +118,12 @@ privateChannel.bind('pusher:subscription_error', function(status) {
                     x: px*nw,
                     y: py*nh
                 });
-           
+                
             }
 
             if (stockpoints[i].length > 3) {
-                drawLastSegment(ctx,stockpoints[i], i);
-            }
+                    drawLastSegment(ctx,stockpoints[i], i);
+                }
         }
     });
 
@@ -181,7 +182,6 @@ privateChannel.bind('pusher:subscription_error', function(status) {
             sendTosave();
         });
     tuio.cursor_add(function(e){         
-        
         var x = e.x;
         var y = e.y;
         nbdoigts++;
