@@ -316,14 +316,14 @@ function localSearch(search){
             name:PATH_TO_DREAMS_TREATED + photo.file_name,
             thumbnail_url: PATH_TO_DREAMS_TREATED + photo.file_name,
             photo_url:PATH_TO_DREAMS_TREATED + photo.file_name
-        });*/
+        });
     }
 
     populateAlbum(dreamAlbum);
     $('#preview-strip>ul>li>img')[0].click();
     startSlideshow();
 
-    });
+    });*/
 }
 
 
