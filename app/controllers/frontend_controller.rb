@@ -24,17 +24,17 @@ class FrontendController < ApplicationController
 			FileUtils.rm Dir.glob("public" + PATH_TO_DREAMS_SENDED+"*")
 			newImg = Time.now.to_i.to_s + DREAM_EXTENSION
 			if file_put_contents("public" + PATH_TO_DREAMS_UNTREATED + newImg, imgNormal) && file_put_contents("public" + PATH_TO_DREAMS_SENDED + newImg, imgColor)
-				render:json => {:imgUrl => newImg}
+				render :json => {:imgUrl => newImg}
 			else
-				render:json => {:imgUrl => "PAS OK"}
+				render :json => {:imgUrl => "PAS OK"}
 			end
 		else
-			render:json => {:imgUrl => "PAS OK"}
+			render :json => {:imgUrl => "PAS OK"}
 		end
 	end
 
 	def file_put_contents( name, *contents )
-		File.open( name, "a" ){ |file|
+		File.open( name, "a:binary" ){ |file|
 			contents.each{ |item|
 				file << item
 			}

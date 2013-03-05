@@ -305,7 +305,8 @@ function jsonFlickrApi(flickr){
 
 function localSearch(search){
     $('#status').html('Searching '+search);
-    //$.getScript("frontend/nucleal/pictures.js");
+    $.getScript("frontend/nucleal/pictures.js");
+    /*
     $.getJSON("services/dreamssecretroom", function(data) {
         var status=data.length+" photos found.";
         $('#status').html(status);
@@ -315,7 +316,7 @@ function localSearch(search){
             name:PATH_TO_DREAMS_TREATED + photo.file_name,
             thumbnail_url: PATH_TO_DREAMS_TREATED + photo.file_name,
             photo_url:PATH_TO_DREAMS_TREATED + photo.file_name
-        });
+        });*/
     }
 
     populateAlbum(dreamAlbum);
