@@ -17,3 +17,9 @@
 # Ignore dreams
 /public/dreams/
 /public/dreams/
+
+# OS generated files 
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db

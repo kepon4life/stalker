@@ -1,16 +1,16 @@
 <% @title="Stalker - Slider" %>
 <% content_for :stylesheet_includes do %>
-  <%= stylesheet_link_tag '/frontend/nucleal/style.less' ,:rel => 'stylesheet/less', :media => "print", :id => "less:style" %>
-  <%= stylesheet_link_tag '/frontend/nucleal/nucleal.css'  %>
+  <%= stylesheet_link_tag '/frontend/css/slider/style.less' ,:rel => 'stylesheet/less', :media => "print", :id => "less:style" %>
+  <%= stylesheet_link_tag '/frontend/css/slider/nucleal.css'  %>
 <% end %>
 <% content_for :javascript_includes_in_head do %>
-  <%= javascript_include_tag "/frontend/nucleal/less.min.js" %>
+  <%= javascript_include_tag "/frontend/js/libs/less.min.js" %>
   <script>window["_GOOG_TRANS_EXT_VER"] = "1";</script>
 <% end %>
 <% content_for :javascript_includes do %>
-  <%= javascript_include_tag "/frontend/nucleal/three.min.js" %>
+  <%= javascript_include_tag "/frontend/js/libs/three.min.js" %>
   <script src="http://js.pusher.com/1.12/pusher.min.js"></script>
-  <%= javascript_include_tag "/frontend/nucleal/saved_resource(2).js" %>
+  <%= javascript_include_tag "/frontend/js/slider.js" %>
 <% end %>
 
 <script id="texture_vertex_simulation_shader" type="x-shader/x-vertex">
@@ -397,7 +397,7 @@
         <div id="nav-bar">
 
             <button id="play" class="controls">Start Slideshow</button>
-            <img id="spinner" src="/frontend/nucleal/loading.gif">
+            <img id="spinner" src="/frontend/img/loading.gif">
             <select id="albums" style="display: inline-block; "></select>
             <select id="explosion-type">
                 <optgroup label="Physics">
