@@ -1,0 +1,24 @@
+{
+    "photos": {
+        "page": 1,
+        "pages": 1,
+        "perpage": 100,
+        "total": "269",
+        "photo": [{
+                "url": "img/slider/test-whiteonblack-1.png"
+            }, {
+                "url": "img/slider/img1.png"
+            }, {
+                "url": "img/slider/img3.png"
+            }, {
+                "url": "img/slider/img4.png"
+            }, {
+                "url": "img/slider/img5.png"
+            }, {
+                "url": "img/slider/img6.png"
+            }, {
+                "url": "img/slider/img7.png"
+            }]
+    },
+    "stat": "ok"
+}
