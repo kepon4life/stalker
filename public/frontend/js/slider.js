@@ -3,7 +3,10 @@
  *
  */
 YUI.add("stalker-slider", function(Y) {
-    var ALBUMPATH = "data/pictures.json",
+    YUI_config.stalkerbase  = YUI_config.stalkerbase || "";
+
+    var ALBUMPATH = YUI_config.stalkerbase + "data/pictures.json",
+        SHADERPATH = YUI_config.stalkerbase + "shader/",
             //TIME_FOR_FADING = 3 + 1, // 3 + 2
             timeoutExplosion,
             slideshow_running = false,
@@ -120,8 +123,8 @@ YUI.add("stalker-slider", function(Y) {
                             photo = photos.photo[i];
                             dreamAlbum.push({
                                 name: photo.url,
-                                thumbnail_url: photo.url,
-                                photo_url: photo.url
+                                thumbnail_url: YUI_config.stalkerbase + photo.url,
+                                photo_url: YUI_config.stalkerbase + photo.url
                             });
                         }
                         populateAlbum(dreamAlbum);
@@ -303,7 +306,7 @@ YUI.add("stalker-slider", function(Y) {
             this.counter = SHADERS.length;
             this.shaders = {};
             for (i = 0; i < SHADERS.length; i += 1) {
-                Y.io("shader/" + SHADERS[i] + ".c", {
+                Y.io(SHADERPATH + SHADERS[i] + ".c", {
                     context: this,
                     arguments: SHADERS[i],
                     on: {

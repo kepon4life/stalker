@@ -235,16 +235,34 @@ a:hover {
     color: white !important;
     z-index: 10000;
 }*/
+#nav-bar legend {
+    margin: 0;
+    padding: 0;
+    border: none;
+    font-size: 15px;
+    line-height: 21px;
+}
 #nav-bar legend.inputEx-Group-legend,
 #nav-bar div.inputEx-fieldWrapper > div.inputEx-label label {
     color: white !important;
+}
+#nav-bar div.inputEx-fieldWrapper input,
+#nav-bar div.inputEx-fieldWrapper select {
+    padding: 0 1px 0 2px;
+    height: auto;
+    margin: 0;
 }
 #nav-bar div.inputEx-fieldWrapper > div.inputEx-label {
     width: 120px;
 }
 #nav-bar .inputEx-CombineField div.inputEx-fieldWrapper > div.inputEx-label {
     width: auto;
+    width: 26px;
     margin-left: 3px;
+}
+
+#nav-bar .inputEx-CombineField div.inputEx-fieldWrapper input {
+    width: 26px;
 }
 
 /** Stats.js styles **/
