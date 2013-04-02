@@ -61,11 +61,11 @@ void main() {
     vec3 next_particle_color = texture2D(next_color_texture, color_lookup).xyz;
 
     if (afterEffects == 1) {
-        //  particle_color = cross_process(particle_color);
-        //  next_particle_color = cross_process(next_particle_color);
+          particle_color = cross_process(particle_color);
+          next_particle_color = cross_process(next_particle_color);
     } else if (afterEffects == 2) {
-        // particle_color = Desaturate(particle_color, 0.8).xyz;
-        //   next_particle_color = Desaturate(next_particle_color, 0.2).xyz;
+         particle_color = Desaturate(particle_color, 0.8).xyz;
+           next_particle_color = Desaturate(next_particle_color, 0.2).xyz;
     } else if (afterEffects == 3) {
 
     }

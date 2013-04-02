@@ -242,6 +242,10 @@ a:hover {
 #nav-bar div.inputEx-fieldWrapper > div.inputEx-label {
     width: 120px;
 }
+#nav-bar .inputEx-CombineField div.inputEx-fieldWrapper > div.inputEx-label {
+    width: auto;
+    margin-left: 3px;
+}
 
 /** Stats.js styles **/
 #stats {

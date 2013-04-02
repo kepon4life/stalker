@@ -382,8 +382,11 @@ YUI.add("stalker-slider", function(Y) {
         /**
          * Generate the sprite used for particles
          */
-        generateSprite: function() {
-            var canvas = document.createElement('canvas');
+        generateParticle: function(gradientCfg) {
+            var i, g, texture, context, gradient,
+                    canvas = document.createElement('canvas');
+
+            gradientCfg = gradientCfg || this.get("particleTexture");
             canvas.width = 128;
             canvas.height = 128;
             var context = canvas.getContext('2d');
@@ -393,14 +396,19 @@ YUI.add("stalker-slider", function(Y) {
             context.lineWidth = 0.5;
             context.stroke();
             context.restore();
-            var gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
-            gradient.addColorStop(0, 'rgba(255,255,255,1)');
-            gradient.addColorStop(0.2, 'rgba(255,255,255,1)');
-            gradient.addColorStop(0.4, 'rgba(200,200,200,1)');
-            gradient.addColorStop(1, 'rgba(0,0,0,1)');
+            var gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0,
+                    canvas.width / 2, canvas.height / 2, canvas.width / 2);
+
+            for (i = 0; i < gradientCfg.length; i += 1) {
+                g = gradientCfg[i];
+                gradient.addColorStop(+g[0], 'rgba(' + g[1] + ',' + g[2] + ',' + g[3] + ',' + g[4] + ')');
+            }
             context.fillStyle = gradient;
             context.fill();
-            return canvas;
+
+            texture = new THREE.Texture(canvas);
+            texture.needsUpdate = true;
+            return texture;
         },
         loadingImage: function() {
             var ctx, t,
@@ -453,8 +461,6 @@ YUI.add("stalker-slider", function(Y) {
             effectsComposer = new PostComposer(window.innerWidth, window.innerHeight, renderer, scene, shadowCamera);
             this.initRTT();
 
-            texture = new THREE.Texture(this.generateSprite());
-            texture.needsUpdate = true;
             var attributes = {
                 size: {
                     type: 'f',
@@ -481,7 +487,7 @@ YUI.add("stalker-slider", function(Y) {
                 particle_texture: {
                     type: "t",
                     value: 1,
-                    texture: texture
+                    texture: this.generateParticle()
                 },
                 color_texture: {
                     type: "t",
@@ -655,7 +661,7 @@ YUI.add("stalker-slider", function(Y) {
 
             var params = new Y.inputEx.Group({
                 parentEl: Y.one("#nav-bar"),
-                legend: "Options",
+                legend: "Options (press § to toogle)",
                 collapsible: true,
                 fields: [{
                         type: "select",
@@ -739,11 +745,28 @@ YUI.add("stalker-slider", function(Y) {
                         name: "particleSize",
                         label: "Particle size"
                     }, {
-                        name: "particle_texture",
+                        name: "particleTexture",
                         label: "Particle gradient",
                         type: "list",
+                        useButtons: true,
                         elementType: {
-                            label: "test"
+                            type: "combine",
+                            fields: [{
+                                    label: "pos",
+                                    size: 2
+                                }, {
+                                    label: "r",
+                                    size: 2
+                                }, {
+                                    label: "g",
+                                    size: 2
+                                }, {
+                                    label: "b",
+                                    size: 2
+                                }, {
+                                    label: "a",
+                                    size: 2
+                                }]
                         }
                     }]
             });
@@ -777,11 +800,25 @@ YUI.add("stalker-slider", function(Y) {
                     return val;
                 }
             },
-            particleTexture: function(val) {
-                if (shaderMaterial) {
-                    shaderMaterial.uniforms['particle_texture'].value = val;
+            particleTexture: {
+//                value: [
+//                    [0, 255, 255, 255, 1],
+//                    [0.2, 255, 255, 255, 1],
+//                    [0.4, 200, 200, 200, 1],
+//                    [1, 0, 0, 0, 1]
+//                ],
+                value: [
+                    [0, 255, 255, 255, 1],
+                    [0.2, 255, 255, 255, 1],
+                    [0.4, 100, 100, 200, 1],
+                    [1, 0, 0, 255, 1]
+                ],
+                setter: function(val) {
+                    if (shaderMaterial) {
+                        shaderMaterial.uniforms['particle_texture'].texture = this.generateParticle(val);
+                    }
+                    return val;
                 }
-                return val;
             },
             afterEffects: {
                 value: 0,
