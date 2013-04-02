@@ -8,428 +8,64 @@
   <script>window["_GOOG_TRANS_EXT_VER"] = "1";</script>
 <% end %>
 <% content_for :javascript_includes do %>
-  <%= javascript_include_tag "/frontend/js/libs/three.min.js" %>
-  <script src="http://js.pusher.com/1.12/pusher.min.js"></script>
-  <%= javascript_include_tag "/frontend/js/slider.js" %>
+
+    <%= javascript_include_tag "/frontend/js/libs/three.min.js" %>
+    <%= javascript_include_tag "/frontend/js/libs/stats.min.js" %>
+    <!--<script src="http://yui.yahooapis.com/3.9.0/build/yui/yui-min.js"></script>-->
+    <%= javascript_include_tag "/frontend/js/libs/yui3/build/yui/yui-min.js" %>
+    <%= javascript_include_tag "/frontend/js/libs/inputex/src/loader.js" %>
+
+    <script src="http://js.pusher.com/1.12/pusher.min.js"></script>
+    <%= javascript_include_tag "/frontend/js/slider.js" %>
 <% end %>
 
-<script id="texture_vertex_simulation_shader" type="x-shader/x-vertex">
 
-            varying vec2 vUv;
 
-            void main() {
+<div class="overlay" id="welcome">
+    <div class="wrap">
+        <div class="messagebox">
 
-            vUv = vec2(uv.x, 1.0 - uv.y);
-            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+            <p class="loading" style="">Loading...</p>
 
-            }
+            <p class="fail" style="display: none; ">
+                Unfortunately, it seems that your system is currently unable to run WebGL required for this experiment. You may try installing the latest version of <a href="https://www.google.com/chrome">Chrome</a> or <a href="http://www.getfirefox.net/">Firefox</a> browsers. Visit this <a href="http://www.khronos.org/webgl/wiki/Getting_a_WebGL_Implementation">page</a> for more details on obtaining WebGL.
+            </p>
 
-        </script>
-        <script id="texture_fragment_simulation_shader" type="x-shader/x-fragment">
-
-            // simulation
-            varying vec2 vUv;
-
-            uniform sampler2D tPositions;
-            uniform sampler2D tPositions2;
-            uniform float time;
-            uniform float delta;
-            uniform int implode;
-            uniform int home;
-            uniform float transition;
-
-            uniform sampler2D photoTexture;
-            uniform vec2 photoDimensions;
-            uniform float fboWidth;
-            uniform int explosionType;
-
-
-            ==NOISE==
-
-            float noiseMul = 0.1;
-            float offset = 0.5;
-            const float PI = 3.141592653589793;
-            const float PI_2 = 6.283185307179586;
-            float slowness = 4.0; // 1.0/delta;
-            float width = 1024.0 / 4.0; // <== noise width
-            // if multiply by factor big, will be bigger
-
-            float damping = 0.977;
-
-            /// Converts FBO dimensions -> Texture size
-            vec3 getInitialTexturePos(vec2 uvcoords, float fboWidth, vec2 textureDimension) {
-
-            // Do a simple bilinear interpolation
-            vec2 stretch = (0.5 - uvcoords ) * 1000.0 ;
-            stretch.x *= textureDimension.x/textureDimension.y;
-
-            return vec3(stretch, -300.0); // -200 -510.0
-
-            }
-
-
-            float exp_ease_out(float k) {
-
-            // Clamp the edge,
-            // Do a quadratic ease in
-            // Do a exponential ease out
-
-            if (k>1.0) return 1.0;
-            if ( ( k *= 2.0 ) < 1.0 ) return 0.5 * k * k;
-            return 0.5 * ( - pow( 2.0, - 10.0 * ( k - 1.0 ) ) + 2.0 );
-            }
-
-
-            vec3 attractor(vec3 particle_pos, vec3 attractor_pos, float strength) {
-
-
-            const float attractor_mass = 800.0;
-            const float particle_mass = 50.05;
-
-            // vec from particle to target
-            vec3 delta = attractor_pos - particle_pos;
-            float dist_sq = delta.x * delta.x + delta.y * delta.y + delta.z * delta.z;
-
-            vec3 force = vec3(0);
-            float radius_sq = attractor_mass * attractor_mass * 1.0;
-            // applying limits
-            const float inner_radius_sq = 1000.000001;
-            if (strength<0.0 || dist_sq> inner_radius_sq && dist_sq<radius_sq) {
-            force = attractor_mass * particle_mass * normalize(delta)  / dist_sq;
-            }
-
-            force *= strength ;
-            return force;
-
-            }
-
-            vec3 sphere(vec2 uv) {
-            float u = uv.x * PI;
-            float v = uv.y * PI_2;
-
-            float x = sin(u) * cos(v);
-            float y = sin(u) * sin(v);
-            float z = cos(u);
-
-            return vec3(x, y, z) * 300.0;
-            }
-
-            vec3 cone(vec2 uv) {
-            float u = uv.x * PI;
-            float v = uv.y * PI_2;
-
-            float x = u;
-            float y = u * cos (v);
-            float z = u * sin (v);
-
-            return vec3(x, y, z) * 300.0;
-            }
-
-
-            vec3 supershape(vec2 uv) { //supershape1
-            float u = uv.x * PI;
-            float v = uv.y * PI_2;
-
-            float a = 1.0;
-            float b = 1.0;
-            float m = 12.0;
-            float n1 = 5.5;
-            float n2 = 6.7;
-            float n3 = 48.7;
-
-            float r = pow(
-            (pow(abs(cos(m*u/4.0)/a),n2) + pow(abs(sin(m*u/4.0)/b), n3)),
-            -(1.0/n1));
-
-            float a2 = 1.0;
-            float b2 = 1.0;
-            float m2 = 12.0;
-            float n12 = 5.0;
-            float n22 = 6.0;
-            float n32 = 48.0;
-
-            float r2 = pow(
-            (pow(abs(cos(m2*u/4.0)/a2),n22) + pow(abs(sin(m2*u/4.0)/b2), n32)),
-            -(1.0/n12));
-
-            float x = r * cos (u) * r2 * cos(v);
-            float y = r * sin (u) * r2 * cos(v);
-            float z = r2 * sin(v);
-
-            return vec3(x, y, z) * 150.0;
-            }
-
-            void main() {
-
-
-            vec4 pos = texture2D( tPositions, vUv );
-            vec4 pos_prev = texture2D( tPositions2, vUv );
-
-            // derive velocity
-            vec3 velocity =  pos_prev.xyz - pos.xyz;
-
-            vec3 pos_new;
-
-            if ( home > 0 || explosionType > 2 ) {
-
-            // HOME MODE
-
-            if (explosionType==3) {
-            pos_new = velocity * damping +  pos_prev.xyz ;
-            } else if (explosionType==5) {
-            pos_new = sphere(vUv);
-            } else if (explosionType==6) {
-            pos_new = cone(vUv);
-            } else if (explosionType==7) {
-            pos_new = supershape(vUv);
-            }  else {
-            pos_new = getInitialTexturePos( vUv, fboWidth, photoDimensions);
-            }
-
-            if ( implode == 1 ) {
-
-            pos_new  = pos_prev.xyz + (pos_new - pos_prev.xyz) * clamp(exp_ease_out(transition / 0.8), 0.0, 1.0);
-
-            }
-
-            } else {
-
-            // EXPLOSION MODE
-
-            if ( explosionType == 0 ) {
-            velocity.x += SimplexPerlin3D( vec3( pos_prev.x / width, pos_prev.y / width, time )  ) / slowness ; //
-            velocity.y += SimplexPerlin3D( vec3( pos_prev.x / width + offset, pos_prev.y / width + offset, time ) ) / slowness;
-            velocity.z += SimplexPerlin3D( vec3( pos_prev.x / width * 4.0 + 2.0 * offset, pos_prev.y / width * 4.0 + 2.0 * offset, time ) ) / slowness / 4.0;
-
-            // DAMPING
-            velocity.xyz *= damping;
-
-            } else {
-
-            vec4 pixel_color = texture2D( photoTexture, vUv);
-
-            vec3 r_attractor_pos =
-            vec3(-600.0, -200.0, -340.0);
-
-            vec3 g_attractor_pos =
-            vec3(-100.0, 400, -350.0);
-
-            vec3 b_attractor_pos =
-            vec3(400.0, -100.0, -300.0);
-
-            float d = (explosionType == 2) ? -delta : delta;
-
-            velocity += attractor(pos_prev.xyz, r_attractor_pos, pixel_color.r * d);
-
-            velocity += attractor(pos_prev.xyz, g_attractor_pos, pixel_color.g * d);
-
-            velocity += attractor(pos_prev.xyz, b_attractor_pos, pixel_color.b * d);
-
-            // speed limit
-            float speed_limit = 9.0 ;
-            if (length(velocity) > speed_limit) {
-            velocity = normalize(velocity) * speed_limit;
-            }
-
-            }
-
-            pos_new = pos_prev.xyz + velocity;
-
-            }
-
-
-            // Write new position out
-            gl_FragColor = vec4(pos_new, 1.0);
-
-
-            }
-
-
-    </script>
-    <script type="x-shader/x-vertex" id="particles_vertex">
-
-        attribute float size;
-        attribute vec3 customColor;
-        attribute vec2 aPoints;
-
-        uniform sampler2D position_texture;
-        uniform sampler2D color_texture; // photo's texture
-        uniform sampler2D next_color_texture;
-
-        varying vec3 vColor;
-
-        attribute float opacity;
-        varying float vOpacity;
-
-        uniform vec2 photoDimensions;
-        uniform float fboWidth;
-        uniform float transition;
-        uniform int afterEffects;
-
-        ==PHOTOSHOP==
-
-        const float fa = ( 4.0/9.0);
-        const float fb = (17.0/9.0);
-        const float fc = (22.0/9.0);
-
-        float s_curve(float x) {
-        // blinnWyvillCosineApproximation
-        float x2 = x*x;
-        float x4 = x2*x2;
-        float x6 = x4*x2;
-        return  fa*x6 - fb*x4 + fc*x2;
-        }
-
-
-        float inverse_s_curve(float x) {
-        return s_curve(2.0 * x - s_curve(x));
-        }
-
-
-        vec3 cross_process(vec3 color) {
-        return vec3(
-        s_curve(color.r),
-        s_curve(color.g),
-        inverse_s_curve(color.b)
-        );
-
-        // color.r = s_curve(color.r);
-        // color.g = s_curve(color.g);
-        // color.b = inverse_s_curve(color.b);
-        }
-
-
-
-        void main() {
-
-        vec4 pos = vec4( texture2D(position_texture, aPoints).xyz, 1.0 );
-
-        vOpacity = opacity;
-        vec2 color_lookup = vec2(1.0 - aPoints.x, aPoints.y);
-
-        vec3 particle_color = texture2D(color_texture, color_lookup).xyz;
-        vec3 next_particle_color = texture2D(next_color_texture, color_lookup).xyz;
-
-        if (afterEffects==1) {
-        particle_color = cross_process( particle_color );
-        next_particle_color = cross_process( next_particle_color );
-        } else if (afterEffects==2) {
-        particle_color = Desaturate(particle_color, 0.8).xyz;
-        next_particle_color = Desaturate( next_particle_color, 0.2 ).xyz;
-        } else if (afterEffects==3) {
-
-        }
-
-        particle_color = (1.0 - transition) * particle_color + transition * next_particle_color;
-
-        vColor = particle_color;
-
-        vec4 mvPosition = modelViewMatrix * pos;
-
-
-        gl_PointSize = 10.0 * 512.0 / fboWidth * 200.0 / length( mvPosition.xyz );
-        gl_Position = projectionMatrix * mvPosition;
-
-        }
-
-    </script>
-    <script type="x-shader/x-fragment" id="particles_fragment">
-        #ifdef GL_ES
-        precision highp float;
-        #endif
-
-        uniform vec3 color;
-        uniform sampler2D particle_texture;
-
-        varying vec3 vColor;
-        varying float vOpacity;
-
-        void main() {
-        vec4 outColor = vec4( vColor, 1.0 );
-        gl_FragColor = outColor * texture2D( particle_texture, gl_PointCoord );
-
-        }
-
-    </script>
-    <div class="overlay" id="welcome">
-        <div class="wrap">
-            <div class="messagebox">
-                <p></p><h2>Nucleal - A Mega Photo Particle Experiment</h2><p></p>
-
-                <p>Hello!</p>
-
-                <p>
-                    Welcome to Nucleal, a WebGL experiment that explores particles birthed by photos, transformed by physics. Powered by the graphics unit, this experiment can drive an insane number of particles at neck breaking speeds. An updated browser with WebGL and decent graphics support is recommended.
-                </p>
-
-                <p class="loading" style="display: none; ">Loading...</p>
-
-                <p class="success" style="display: block; "><b>Please pick a particle size / quality to continue.</b></p>
-
-
-                <p class="success" style="display: block; ">
-                    <button onclick="init(64);">4K (64x64) particles - Lowest quality</button>
-                    <button onclick="init(128);">16K particles (128x128) - Low quality</button>
-
-                    <button onclick="init(256);">64K particles (256x256) - Acceptable quality </button>
-                    <button onclick="init(512);">256k particles (512x512) - Great quality (recommended)</button>
-                    <button onclick="init(1024);">1M particles (1024x1024) - Superb quality</button>
-                    <button onclick="init(2048);">4M particles (2048x2048) - Awesome quality!</button>
-                </p>
-
-                <p class="success" style="display: block; ">
-                    If your browser hangs after a long while, simply pick a less demanding quality on system (eg. Please pick 4 million particles only if you have a reasonably fast machine).
-                </p>
-
-                <p class="fail" style="display: none; ">
-                    Unfortunately, it seems that your system is currently unable to run WebGL required for this experiment. You may try installing the latest version of <a href="https://www.google.com/chrome">Chrome</a> or <a href="http://www.getfirefox.net/">Firefox</a> browsers. Visit this <a href="http://www.khronos.org/webgl/wiki/Getting_a_WebGL_Implementation">page</a> for more details on obtaining WebGL.
-                </p>
-
-
-            </div><!-- end message box-->
-        </div><!-- end wrap-->
-        <div id="credits">Supported by <a href="http://yvoschaap.com/">Yvo Schaap</a> code by <a href="http://www.lab4games.net/zz85/blog">Joshua Koo</a>.</div>
-
-    </div><!-- end overlay -->
-
-    <div id="sink">
-
-        <div id="nav-bar">
-
-            <button id="play" class="controls">Start Slideshow</button>
-            <img id="spinner" src="/frontend/img/loading.gif">
-            <select id="albums" style="display: inline-block; "></select>
-            <select id="explosion-type">
-                <optgroup label="Physics">
-                    <option value="0">Noise Wave</option>
-                    <option value="1">Orb Attractors</option>
-                    <option value="2">Orb Repellers</option>
-                    <option value="3">Air Brakes</option>
-                </optgroup>
-                <optgroup label="Shapes">
-                    <option value="4">Plain</option>
-                    <option value="5">Sphere</option>
-                    <option value="6">Cone</option>
-                    <option value="7">Supershape</option>
-                </optgroup>
-            </select>
-
-            <select id="after-effects">
-                <optgroup label="Color Effects">
-                    <option value="0">Normal</option>
-                    <option value="1">XPro</option>
-                    <option value="2">Vintage</option>
-                </optgroup>
-            </select>
-
-            <input id="search-flickr" type="text" placeholder="Search Flickr">
-            <div id="status">error getting album[object Object]</div>
-        </div>
-
-        <div id="preview-image">
-        </div>
-
-        <div id="preview-strip">
-            <!-- prev next -->
         </div>
     </div>
+</div>
+
+<div id="sink">
+    <div id="nav-bar">
+        <div id="status"></div>
+    </div>
+    <div id="preview-image"></div>
+    <div id="preview-strip"><!-- prev next --></div>
+</div>
+
+<script type="text/javascript">
+    YUI_config.groups.inputex.base = "js/libs/inputex/src/";
+    YUI_config.groups.inputex.filter = "raw";
+
+    YUI().use("io", "json", "widget", "base", "event-resize",
+            "inputex-string", "inputex-select", "inputex-group",
+            "inputex-list", "inputex-combine",
+            "stalker-slider", function(Y) {
+
+        Y.on("domready", function() {
+            if (Y.hasWebgl()) {
+                Y.one('#welcome').hide();
+
+                var hash = window.location.hash,
+                        slider = new Y.Stalker.Slider({
+                            textureWidth: (hash.length > 1) ? +hash.substring(1) : 256, // 64, 128, 256, 512, 1024, 2048
+                            particleSize: 13  // default: 10
+                        });
+                slider.render();                                        // Render slider
+            } else {
+                Y.one('.loading').hide();
+                Y.one('.fail').show();
+            }
+        });
+    });
+</script>
