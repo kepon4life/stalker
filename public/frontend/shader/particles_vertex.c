@@ -44,11 +44,7 @@ float inverse_s_curve(float x) {
 }
 
 vec3 cross_process(vec3 color) {
-    return vec3(
-            s_curve(color.r),
-            s_curve(color.g),
-            inverse_s_curve(color.b)
-            );
+    return vec3(s_curve(color.r), s_curve(color.g), inverse_s_curve(color.b));
 
     // color.r = s_curve(color.r);
     // color.g = s_curve(color.g);
@@ -73,7 +69,9 @@ void main() {
     } else if (afterEffects == 3) {
 
     }
+
     particle_color = (1.0 - transition) * particle_color + transition * next_particle_color;
+
     vColor = particle_color;
     vec4 mvPosition = modelViewMatrix * pos;
 

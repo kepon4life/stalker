@@ -24,9 +24,6 @@ body {
 html {
     width: 100%;
 }
-.fb-login-button {
-    margin-top: 5px;
-}
 #sink {
     z-index: 10;
     position: absolute;
@@ -164,8 +161,8 @@ a:hover {
     width: 100%;
     height: 100%;
     display: table;
-/*    background: -webkit-radial-gradient(rgba(119, 106, 127, 0.15) 0, rgba(220, 127, 178, 0.15) 23%, transparent 66%, rgba(127, 18, 148, 0.2) 78%);
-    background: -moz-radial-gradient(rgba(119, 106, 127, 0.15) 0, rgba(220, 127, 178, 0.15) 23%, transparent 66%, rgba(127, 18, 148, 0.2) 78%);*/
+    /*    background: -webkit-radial-gradient(rgba(119, 106, 127, 0.15) 0, rgba(220, 127, 178, 0.15) 23%, transparent 66%, rgba(127, 18, 148, 0.2) 78%);
+        background: -moz-radial-gradient(rgba(119, 106, 127, 0.15) 0, rgba(220, 127, 178, 0.15) 23%, transparent 66%, rgba(127, 18, 148, 0.2) 78%);*/
     bottom: 0;
     left: 0;
     right: 0;
@@ -243,5 +240,12 @@ a:hover {
     color: white !important;
 }
 #nav-bar div.inputEx-fieldWrapper > div.inputEx-label {
-    width: 100px;
+    width: 120px;
+}
+
+/** Stats.js styles **/
+#stats {
+    position: fixed;
+    right: 19px;
+    top: 14px;
 }

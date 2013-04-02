@@ -4,10 +4,7 @@
  */
 YUI.add("stalker-slider", function(Y) {
     var ALBUMPATH = "data/pictures.json",
-            SLIDESHOW_INTERVAL = 8 * 2000, //14*2000
-            TIME_FOR_IMPLOSION = 4,
-            TIME_FOR_EXPLOSION = 8 + 2,
-            TIME_FOR_FADING = 3 + 1, // 3 + 2
+            //TIME_FOR_FADING = 3 + 1, // 3 + 2
             timeoutExplosion,
             slideshow_running = false,
             slideshow_timer,
@@ -15,10 +12,10 @@ YUI.add("stalker-slider", function(Y) {
             strip_width,
             photo_album,
             currently_playing = -1,
-            spinner = $('#spinner'),
             shaderMaterial,
             savedState,
-            SHADERS = ["optimized_noise", "particles_fragment", // Shaders that will be loaded on startup
+            // Shaders that will be loaded on startup
+            SHADERS = ["optimized_noise", "particles_fragment",
         "particles_vertex", "texture_fragment_simulation_shader",
         "texture_vertex_simulation_shader", "texture_cpu_to_gpu_vertex_shader",
         "texture_cpu_to_gpu_fragment_shader"],
@@ -30,7 +27,6 @@ YUI.add("stalker-slider", function(Y) {
             debugScene, startExplodingTime, renderCanvas,
             last = Date.now(),
             start = Date.now(),
-            explode = false,
             implode = false,
             home = false,
             resizeCanvas = document.createElement('canvas'),
@@ -41,13 +37,9 @@ YUI.add("stalker-slider", function(Y) {
          *
          */
         initializer: function() {
-            var hash = window.location.hash;
-            if (hash.length > 1) { // Set up global var
-                this.set("textureWidth", +hash.substring(1));
-            } else {
-                this.set("textureWidth", this.get("textureWidth"));             // Force update
-            }
-            textureWidth = this.get("textureWidth");
+            this.set("textureWidth", this.get("textureWidth"));             // Force update
+
+            //textureWidth = this.get("textureWidth");
             Y.Stalker.slider = this;                                            // Set up singleton
         },
         /**
@@ -55,11 +47,17 @@ YUI.add("stalker-slider", function(Y) {
          * @returns {undefined}
          */
         renderUI: function() {
-            this.loadShaders(function() {
+            this.renderStats();
+
+            this.loadShaders(function() {                                       // After shaders are retrieved
                 this.initScene();                                               // Init Webgl scene
                 this.animate();                                                 // Start animation
-                this.explosion();                                               // Set animation to explode mode
+
+                start = Date.now();                                             // Set noicse animation start time
+                last = start;                                                   // Activate explosion
+
                 this.gohome();                                                  // Paricles should go to initial position
+
                 this.loadAlbum(ALBUMPATH);                                      // Load the album json final
                 this.renderCustomization();                                     // Render side panel
             });
@@ -99,6 +97,13 @@ YUI.add("stalker-slider", function(Y) {
                     renderer.setSize(w, h);
                 }
             });
+
+            Y.one('doc').
+                    on('keypress', function(e) {                           // Debug mode on § click
+                if (e.charCode === 167 /*&& e.target === this*/) {
+                    $("#sink").toggle();
+                }
+            }, '176', this);
 
             //$('#play').on('click', this.toggleSlideshow);                     // play/pause
         },
@@ -156,7 +161,7 @@ YUI.add("stalker-slider", function(Y) {
                 slideshow_timer.cancel();
             }
             if (slideshow_running) {
-                slideshow_timer = Y.later(SLIDESHOW_INTERVAL, this, this.selectNextPicture);
+                slideshow_timer = Y.later(this.get("totalDuration") * 1000, this, this.selectNextPicture);
             }
         },
         stopSlideshow: function() {
@@ -169,14 +174,12 @@ YUI.add("stalker-slider", function(Y) {
         loadPicture: function(cfg) {
             //Y.log("loadPicture(" + info.photo_url + ")");
             var info = cfg;
-            spinner.show();
 
             this.loadTexture(info.photo_url, new THREE.UVMapping(), Y.bind(function(texture) {
                 Y.log("loadPicture.onLoadTexture");
                 currently_playing = info.index;
                 this.showPicture(texture);
                 this.advanceSlideshow();
-                spinner.hide();
             }, this));
         },
         // *******************
@@ -199,29 +202,21 @@ YUI.add("stalker-slider", function(Y) {
                 this.gohome();
             }
             if (timeoutExplosion) {
-                clearTimeout(timeoutExplosion);
+                timeoutExplosion.cancel();
             }
             implode = true;
-            setTimeout(function() {
+            Y.later(1000 * this.get("implosionDuration"), this, function() {
+                Y.log("implosionTimeout();");
                 implode = false;
                 renderer.deallocateTexture(particles.material.uniforms.color_texture.texture);
                 particles.material.uniforms['color_texture'].texture = texture;
-            }, 1000 * TIME_FOR_IMPLOSION);
-
-            timeoutExplosion = Y.later(1000 * TIME_FOR_EXPLOSION, this, function() {
+            });
+            timeoutExplosion = Y.later(1000 * this.get("explosionDuration"), this, function() {
+                Y.log("explosionTimeout();");
                 if (home) {
                     this.gohome();
                 }
             });
-        },
-        animate: function() {
-            requestAnimationFrame(Y.bind(this.animate, this));
-            this.renderScene();
-        },
-        explosion: function() {
-            start = Date.now();
-            last = start;
-            explode = true;
         },
         gohome: function() {
             home = !home;
@@ -233,44 +228,47 @@ YUI.add("stalker-slider", function(Y) {
                 positionShader.uniforms.tPositions2.texture = savedState;
             }
         },
-        simulate: function() {
-            var now = Date.now();
-            lapsed = now - last;
-            last = now;
-            if (explode) {
-                positionShader.uniforms.delta.value = lapsed / 1000;
-                positionShader.uniforms.time.value = (now - start) / 1000;
-                positionShader.uniforms.implode.value = implode ? 1 : 0;
-                positionShader.uniforms.home.value = home ? 1 : 0;
-                renderer.render(sceneRTTPos, cameraRTT, positionShader.uniforms.tPositions.texture, false);
-                if (!home) {
-                    var tmp = positionShader.uniforms.tPositions.texture;
-                    positionShader.uniforms.tPositions.texture = positionShader.uniforms.tPositions2.texture;
-                    positionShader.uniforms.tPositions2.texture = tmp;
-                    particles.material.uniforms.position_texture.texture = positionShader.uniforms.tPositions.texture;
-                }
-            }
+        animate: function() {
+            requestAnimationFrame(Y.bind(this.animate, this));
+            this.step();
         },
-        renderScene: function() {
-            //Y.log("render()");
-            var now = Date.now();
+        step: function() {
+            //Y.log("step()");
+
+            this.stats.begin();
+
+            var now = Date.now(),
+                    lapsed = now - last;
+            last = now;
+
             if (startExplodingTime) {
-                var implosionLapse = (now - startExplodingTime) / 1000;
-                var transition;
-                if (implosionLapse <= TIME_FOR_IMPLOSION) {
-                    transition = implosionLapse / TIME_FOR_IMPLOSION;
-                } else {
-                    transition = 0;
-                }
-                particles.material.uniforms['transition'].value = transition;
+                var implosionLapse = (now - startExplodingTime) / 1000,
+                        transition = (implosionLapse <= this.get("implosionDuration")) ?
+                        implosionLapse / this.get("implosionDuration") : 0,
+                        fadeTransition = (implosionLapse <= this.get("fadingDuration")) ?
+                        implosionLapse / this.get("fadingDuration") : 1;
+
+                particles.material.uniforms['transition'].value = fadeTransition;
                 positionShader.uniforms['transition'].value = transition;
-                var elapsed = (now - startExplodingTime) / 1000;
-                if (elapsed <= TIME_FOR_FADING) {
-                }
             }
+
+            // Simulation
+            positionShader.uniforms.delta.value = lapsed / 1000;
+            positionShader.uniforms.time.value = (now - start) / 1000;
+            positionShader.uniforms.implode.value = implode ? 1 : 0;
+            positionShader.uniforms.home.value = home ? 1 : 0;
+            renderer.render(sceneRTTPos, cameraRTT, positionShader.uniforms.tPositions.texture, false);
+            if (!home) {
+                var tmp = positionShader.uniforms.tPositions.texture;
+                positionShader.uniforms.tPositions.texture = positionShader.uniforms.tPositions2.texture;
+                positionShader.uniforms.tPositions2.texture = tmp;
+                particles.material.uniforms.position_texture.texture = positionShader.uniforms.tPositions.texture;
+            }
+
             controls.update();
             renderer.render(scene, camera);
-            this.simulate();
+
+            this.stats.end();
         },
         /**
          * Retrieves a texture by url, using THREE.ImageLoader.
@@ -454,8 +452,8 @@ YUI.add("stalker-slider", function(Y) {
             controls = new THREE.TrackballControls(camera, renderCanvas);
             effectsComposer = new PostComposer(window.innerWidth, window.innerHeight, renderer, scene, shadowCamera);
             this.initRTT();
-            var sprite = this.generateSprite();
-            texture = new THREE.Texture(sprite);
+
+            texture = new THREE.Texture(this.generateSprite());
             texture.needsUpdate = true;
             var attributes = {
                 size: {
@@ -474,9 +472,7 @@ YUI.add("stalker-slider", function(Y) {
                     type: 'float',
                     value: []
                 }
-            };
-
-            var uniforms = {
+            }, uniforms = {
                 position_texture: {
                     type: "t",
                     value: 0,
@@ -528,25 +524,25 @@ YUI.add("stalker-slider", function(Y) {
                 depthTest: false,
                 transparent: true
             });
-            var geometry = new THREE.Geometry();
-            var particleCount = textureWidth * textureWidth;
+            var geometry = new THREE.Geometry(),
+                    particleCount = textureWidth * textureWidth;
             for (var i = 0; i < particleCount; i++) {
                 geometry.vertices.push(new THREE.Vector3());
             }
             particles = new THREE.ParticleSystem(geometry, shaderMaterial);
-            var vertices = geometry.vertices;
-            var values_size = attributes.size.value;
-            var values_color = attributes.customColor.value;
-            var values_opacity = attributes.opacity.value;
-            var w = resizeCanvas.width, h = resizeCanvas.height, wh = w * h;
-            var resizeData = resizeCtx.getImageData(0, 0, w, h).data;
-            var i;
+            var vertices = geometry.vertices, i, y, x,
+                    values_size = attributes.size.value,
+                    values_color = attributes.customColor.value,
+                    values_opacity = attributes.opacity.value,
+                    w = resizeCanvas.width, h = resizeCanvas.height,
+                    resizeData = resizeCtx.getImageData(0, 0, w, h).data,
+                    textureCoords = [], d = 1 / textureWidth;
+
             textureColor = this.generateTextureColor(resizeData);
             uniforms.color_texture.texture = textureColor;
-            var square = textureWidth;
-            var textureCoords = [], d = 1 / square;
-            for (var y = d / 2; y < 1; y += d) {
-                for (var x = d / 2; x < 1; x += d) {
+
+            for (y = d / 2; y < 1; y += d) {
+                for (x = d / 2; x < 1; x += d) {
                     textureCoords.push(new THREE.Vector2(x, y));
                 }
             }
@@ -559,7 +555,7 @@ YUI.add("stalker-slider", function(Y) {
                 alert("No OES_texture_float support for float textures!");
                 return;
             }
-            if (gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) == 0) {
+            if (gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) === 0) {
                 alert("No support for vertex shader textures!");
                 return;
             }
@@ -728,14 +724,38 @@ YUI.add("stalker-slider", function(Y) {
                                 label: "Vintage"
                             }]
                     }, {
+                        name: "totalDuration",
+                        label: "Total duration"
+                    }, {
+                        name: "implosionDuration",
+                        label: "Implosion duration"
+                    }, {
+                        name: "explosionDuration",
+                        label: "Explosion duration"
+                    }, {
+                        name: "fadingDuration",
+                        label: "Fading duration"
+                    }, {
                         name: "particleSize",
                         label: "Particle size"
+                    }, {
+                        name: "particle_texture",
+                        label: "Particle gradient",
+                        type: "list",
+                        elementType: {
+                            label: "test"
+                        }
                     }]
             });
             params.setValue(this.getAttrs());
 
             //@fixme
             params.on("updated", this.setAttrs, this);
+        },
+        renderStats: function() {
+            this.stats = new Stats();
+            //this.stats.setMode(1);
+            Y.one("#sink").append(this.stats.domElement);
         },
         status: function(text) {
             Y.one('#status').setHTML(text);
@@ -757,6 +777,12 @@ YUI.add("stalker-slider", function(Y) {
                     return val;
                 }
             },
+            particleTexture: function(val) {
+                if (shaderMaterial) {
+                    shaderMaterial.uniforms['particle_texture'].value = val;
+                }
+                return val;
+            },
             afterEffects: {
                 value: 0,
                 setter: function(val) {
@@ -772,6 +798,18 @@ YUI.add("stalker-slider", function(Y) {
                     positionShader.uniforms['explosionType'].value = val;
                     return val;
                 }
+            },
+            totalDuration: {
+                value: 8 * 2
+            },
+            implosionDuration: {
+                value: 6
+            },
+            explosionDuration: {
+                value: 4 + 2
+            },
+            fadingDuration: {
+                value: 2
             }
         }
     });
@@ -782,7 +820,6 @@ YUI.add("stalker-slider", function(Y) {
         var strip = $('#preview-strip');
         var autofire;
         var laste;
-        spinner.hide();
         currently_playing = -1;
         function mousemove(e) {
             if (!e)
