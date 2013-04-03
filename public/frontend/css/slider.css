@@ -264,10 +264,22 @@ a:hover {
 #nav-bar .inputEx-CombineField div.inputEx-fieldWrapper input {
     width: 26px;
 }
-
+/** QR Styles **/
+.yui3-stalker-slider {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 10px;
+    text-align: right;
+    color: white;
+    z-index: 20000;
+}
+.yui3-stalker-slider-hidden {
+    display: none;
+}
 /** Stats.js styles **/
 #stats {
     position: fixed;
-    right: 19px;
-    top: 14px;
+    right: 180px;
+    top: 15px;
 }

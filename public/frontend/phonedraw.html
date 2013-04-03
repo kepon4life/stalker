@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Enter your dream</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width = device-width, initial-scale = 1.0, user-scalable = no">
+        <link href="css/colorpicker.css" rel="stylesheet">
+        <link href="css/literally.css" rel="stylesheet">
+
+        <style type="text/css">
+            body {
+                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                margin: 0;
+                background: black;
+                color: white;
+                text-align:center;
+                font-size: 34px;
+            }
+            .fs-container {
+                position: fixed;
+                width: 100%;
+                height: 100%;
+            }
+            .literally {
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+                height: 100%;
+            }
+            /* let's make things a bit bigger */
+            .literally .button, .literally .zoom-display {
+                line-height: 28px;
+                font-size: 18px;
+            }
+            .literally .toolbar-row-right {
+                width: 20em;
+            }
+            .literally .button {
+                padding: 5px 15px 5px 15px;
+            }
+            .literally .button.color-square {
+                padding-top: 10px;
+                height: 23px;
+            }
+            .literally .tools .button {
+                padding: 6px 13px 2px 15px;
+                line-height: 24px;
+            }
+            .literally .tools .button img {
+                width: 24px;
+                height: 24px;
+            }
+            .literally input[type=range] {
+                width: 200px;
+            }
+            /* Hide unused buttons */
+            .literally .toolbar .button,
+            .literally .toolbar .tool-options-container,
+            .literally .toolbar .zoom-display{
+                display: none;
+            }
+            .literally .toolbar .clear-button {
+                display: inline-block;
+            }
+
+            .invite {
+                position: fixed;
+                padding-top: 13%;
+                width: 100%;
+                top: 0;
+                left: 0;
+                z-index: 1000;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="invite">Dessinez votre rêve.</div>
+
+        <div class="fs-container">
+
+            <div class="literally"><canvas></canvas></div>
+        </div>
+
+        <script src="js/libs/literallycanvas.fat.js"></script>
+
+        <script type="text/javascript">
+//            var DESTINATION_HEIGHT = 512,
+//                    DESTINATION_WIDTH = 512;
+
+            $(document).ready(function() {
+                // disable scrolling on touch devices so we can actually draw
+                $(document).bind('touchmove', function(e) {
+                    if (e.target === document.documentElement) {
+                        return e.preventDefault();
+                    }
+                });
+
+
+                $('.literally').literallycanvas({
+                    imageURLPrefix: "img/",
+                    backgroundColor: 'rgb(0, 0, 0)',
+                    toolClasses: [LC.Pencil]
+                });
+
+                setTimeout(function() {
+                    $('.invite').fadeOut(3000);
+                }, 1000);
+
+                $('.clear-button').parent().
+                        prepend('<div class="button clear-button">Send</div>').
+                        on("click", function() {
+
+                    var canvas = $('.literally').canvasForExport();
+
+                    //$('body').empty().append(canvas);
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/frontend/save',
+                        data: {
+                            imgColor: canvas.toDataURL("image/png"),
+                            imgNormal: canvas.toDataURL("image/png")
+                        },
+                        success: function(data) {
+                            $('body').empty().
+                                    append("<div style=\"padding-top: 13%;\">Merci votre dessin a été sauvegardé. Maintenant, regardez l'écran.</div>");
+                            //triggered = privateChannel.trigger('client-myevent', data);
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

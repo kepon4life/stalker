@@ -3,10 +3,11 @@
  *
  */
 YUI.add("stalker-slider", function(Y) {
-    YUI_config.stalkerbase  = YUI_config.stalkerbase || "";
+    YUI_config.stalkerbase = YUI_config.stalkerbase || "";
 
     var ALBUMPATH = YUI_config.stalkerbase + "data/pictures.json",
-        SHADERPATH = YUI_config.stalkerbase + "shader/",
+            SHADERPATH = YUI_config.stalkerbase + "shader/",
+            PHONEDRAWPATH = window.location.origin + "/frontend/phonedraw.html",
             //TIME_FOR_FADING = 3 + 1, // 3 + 2
             timeoutExplosion,
             slideshow_running = false,
@@ -40,7 +41,7 @@ YUI.add("stalker-slider", function(Y) {
          *
          */
         initializer: function() {
-            this.set("textureWidth", this.get("textureWidth"));             // Force update
+            this.set("textureWidth", this.get("textureWidth"));                 // Force update
 
             //textureWidth = this.get("textureWidth");
             Y.Stalker.slider = this;                                            // Set up singleton
@@ -103,12 +104,15 @@ YUI.add("stalker-slider", function(Y) {
 
             Y.one('doc').
                     on('keypress', function(e) {                           // Debug mode on § click
-                if (e.charCode === 167 /*&& e.target === this*/) {
+                if (e.charCode === 167 || e.charCode === 32) {
                     $("#sink").toggle();
                 }
-            }, '176', this);
+            });
 
             //$('#play').on('click', this.toggleSlideshow);                     // play/pause
+        },
+        syncUI: function() {
+            this.set("event", this.get("event"));
         },
         loadAlbum: function(url) {
             this.status('Loading album: ' + url);
@@ -174,6 +178,13 @@ YUI.add("stalker-slider", function(Y) {
             }
             $('#play').html("Start Slideshow");
         },
+        // *******************
+        // *** WebGL Scene ***
+        // *******************
+        /**
+         *
+         * @param {type} cfg
+         */
         loadPicture: function(cfg) {
             //Y.log("loadPicture(" + info.photo_url + ")");
             var info = cfg;
@@ -185,9 +196,6 @@ YUI.add("stalker-slider", function(Y) {
                 this.advanceSlideshow();
             }, this));
         },
-        // *******************
-        // *** WebGL Scene ***
-        // *******************
         /**
          *
          * @param {THREE.Texture} texture
@@ -300,6 +308,8 @@ YUI.add("stalker-slider", function(Y) {
         },
         /**
          * Load shaders using io request and then call callback
+         *
+         * @param {function} cb
          */
         loadShaders: function(cb) {
             var i;
@@ -318,7 +328,7 @@ YUI.add("stalker-slider", function(Y) {
                             }
                         }
                     }
-                })
+                });
             }
         },
         /**
@@ -383,7 +393,11 @@ YUI.add("stalker-slider", function(Y) {
             return THREE.FBOUtils.createTextureFromData(textureWidth, textureWidth, colors);
         },
         /**
+         *
          * Generate the sprite used for particles
+         *
+         * @param {type} gradientCfg
+         * @returns {_L5.Anonym$1.generateParticle.texture}
          */
         generateParticle: function(gradientCfg) {
             var i, g, texture, context, gradient,
@@ -664,9 +678,16 @@ YUI.add("stalker-slider", function(Y) {
 
             var params = new Y.inputEx.Group({
                 parentEl: Y.one("#nav-bar"),
-                legend: "Options (press § to toogle)",
+                legend: "Options (space to toogle)",
                 collapsible: true,
                 fields: [{
+                        name: "event",
+                        label: "Event"
+                    }, {
+                        name: "visible",
+                        label: "Show QR",
+                        type: "boolean"
+                    },{
                         type: "select",
                         name: "textureWidth",
                         label: "Grid width",
@@ -788,6 +809,20 @@ YUI.add("stalker-slider", function(Y) {
         }
     }, {
         ATTRS: {
+            event: {
+                value: "Secret room",
+                setter: function(val) {
+                    var url = PHONEDRAWPATH + "?event=" + escape(val);
+                    this.get("contentBox").setHTML('<img src="'
+                            + "http://chart.apis.google.com/chart?cht=qr&chs=130x130&chld=Q&choe=UTF-8&chl="
+//                            + "http://qrickit.com/api/qr?fgdcolor=ffffff&bgdcolor=000000&qrsize=150&t=p&e=m&d="
+                            + encodeURIComponent(url) + '" />'
+                            //+ '<br />scan this QR or go to <br /><a target="_blank" href="' + url + '">' + url + "</a>");
+                            + '<br />Scan this or go to<br /><a href="' + url + '">' + url + "</a> with your mobile to tell us your dream");
+
+                    return val;
+                }
+            },
             textureWidth: {
                 value: 512,
                 setter: function(val) {
@@ -886,7 +921,7 @@ YUI.add("stalker-slider", function(Y) {
             checks();
         });
         function checks() {
-            var ins = [], outs = []
+            var ins = [], outs = [];
             $('#preview-strip>ul>li').each(function(a, b) {
                 var c = $(b);
                 var moo = isInView(c);
@@ -999,7 +1034,7 @@ YUI.add("stalker-slider", function(Y) {
 
         this.setPersistance = function(mix) {
             effectBlend.uniforms['mixRatio'].value = mix;
-        }
+        };
     }
 
     Y.hasWebgl = function() {
