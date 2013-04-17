@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
 	//on charge les categories
 	getCategoriesCheckboxes();
 
@@ -13,10 +12,13 @@ $(document).ready(function () {
 	    }
 	});
 
-
+        // Set up logger
+        Pusher.log = function(msg) {
+            console.log(msg);
+        }
 
 	//Recept pusher notifications
-	var pusher = new Pusher(PUSHER_API_KEY); 
+	var pusher = new Pusher(PUSHER_API_KEY);
 	var channel = pusher.subscribe(PUSHER_CHANEL);
 	//Pusher.channel_auth_endpoint = '/pusher/auth';
 	channel.bind(PUSHER_EVENT, function(data) {
@@ -71,7 +73,7 @@ function addImgToTagg(imgUrl){
 		$("div#tag_dreams").empty();
 	}
 	$("div#tag_dreams").append("<div class='dream' id='dream_"+imgName+"'><img class='dream' src='/dreams/untreated/"+imgUrl+"' alt='"+imgName+"' /><div class='btn-toolbar'><div class='btn-group'><a href='#myModal_"+imgName+"' data-toggle='modal' class='btn'><i class='icon-search'></i></a><a class='btn dream-accept' rel='popover' href='#' data-original-title=''><i class='icon-ok'></i></a><a class='btn dream-refuse' href='#''><i class='icon-remove'></i></a></div></div><div id='myModal_"+imgName+"' class='modal hide fade' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'><img src='/dreams/untreated/"+imgUrl+"' alt='"+imgName+"'></div></div><div class='form_categories' id='popover_"+imgName+"'><form><div class='form_categories_inputs'>"+$("div#cat_for_add").html()+"</div><a class='btn btn-mini btn-success dream-accept-save' id='dream-accept-save-"+imgName+"'>Save</a></form></div>");
-	
+
 	initPopover();
 }
 

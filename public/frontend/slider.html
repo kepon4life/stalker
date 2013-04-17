@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Stalker v1.0</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="css/slider.css" />
+    </head>
+    <body>
+
+        <div class="overlay" id="welcome">
+            <div class="wrap">
+                <div class="messagebox">
+
+                    <p class="loading" style="">Loading...</p>
+
+                    <p class="fail" style="display: none; ">
+                        Unfortunately, it seems that your system is currently unable to run WebGL required for this experiment. You may try installing the latest version of <a href="https://www.google.com/chrome">Chrome</a> or <a href="http://www.getfirefox.net/">Firefox</a> browsers. Visit this <a href="http://www.khronos.org/webgl/wiki/Getting_a_WebGL_Implementation">page</a> for more details on obtaining WebGL.
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="sink">
+            <div id="nav-bar">
+                <div id="status"></div>
+            </div>
+            <div id="preview-image"></div>
+            <div id="preview-strip"><!-- prev next --></div>
+        </div>
+
+        <script src="js/libs/three.min.js" type="text/javascript"></script>
+        <script src="js/libs/jquery-1.8.3.min.js" type="text/javascript"></script>
+        <script src="js/libs/stats.min.js" type="text/javascript"></script>
+        <!--<script src="http://yui.yahooapis.com/3.9.0/build/yui/yui-min.js"></script>-->
+        <script src="js/libs/yui3/build/yui/yui-min.js"></script>
+        <script src="js/libs/inputex/src/loader.js" type="text/javascript"></script>
+        <!--<script src="http://js.pusher.com/1.12/pusher.min.js"></script>-->
+
+        <script src="js/slider.js" type="text/javascript"></script>
+
+        <script type="text/javascript">
+            YUI_config.groups.inputex.base = "js/libs/inputex/src/";
+            YUI_config.groups.inputex.filter = "raw";
+
+            YUI().use("io", "json", "widget", "base", "event-resize",
+                    "inputex-string", "inputex-select", "inputex-group",
+                    "inputex-list", "inputex-combine", "inputex-checkbox",
+                    "stalker-slider", function(Y) {
+
+                Y.on("domready", function() {
+                    if (Y.hasWebgl()) {
+                        Y.one('#welcome').hide();
+
+                        var hash = window.location.hash,
+                                slider = new Y.Stalker.Slider({
+                                    textureWidth: (hash.length > 1) ? +hash.substring(1) : 256, // 64, 128, 256, 512, 1024, 2048
+                                    particleSize: 13  // default: 10
+                                });
+                        slider.render();                                        // Render slider
+                    } else {
+                        Y.one('.loading').hide();
+                        Y.one('.fail').show();
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>

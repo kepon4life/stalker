@@ -7,10 +7,12 @@ StalkerBackend::Application.routes.draw do
   match '/frontend/save', :controller =>"frontend", :action => "save"
 
   match '/slider', :controller =>"frontend", :action => "slider"
+  match '/draw', :controller => "frontend", :action => "draw"
+  match '/drawsmartphone', :controller => "frontend", :action => "drawsmartphone"
 
   resources :categories, :users, :dreams, :events
 
-  root :to => 'frontend#index'
+  root :to => 'frontend#draw'
 
   match "pusher", :to => "pusher#test"
   match '/pusher/auth', :controller => 'pusher', :action => 'auth'
