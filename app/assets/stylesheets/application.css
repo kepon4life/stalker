@@ -55,11 +55,32 @@ ul.nav li {
 
 div.dream{
   float:left;
+  cursor: pointer;
 }
 
 img.dream{
   width:200px;
   margin:10px;
+}
+
+div.dream div.decision{
+  position: absolute;
+  min-width: 30px;
+  min-height: 30px;
+  margin-left:192px;
+  background-image: url("/img/alert.png");
+}
+
+div.dream div.decision.ok{
+  background-image: url("/img/check.png");
+}
+
+div.dream div.decision.nok{
+  background-image: url("/img/delete.png");
+}
+
+div.dream div.decision.okPlus{
+  background-image: url("/img/star.png");
 }
 
 div.modal img{
@@ -68,7 +89,7 @@ div.modal img{
 
 .btn-toolbar {
   margin-top: -43px;
-  margin-left: 55px;
+  margin-left: 30px;
   position: absolute;
 }
 
@@ -165,4 +186,10 @@ a.spch-bub-outside:hover .bubble  {
 div.spch-bub-outside {
   height: 1.5em;
   width: 0;
+}
+
+div#pagination{
+  display: inline-block;
+  width: 100%;
+  text-align: center;
 }

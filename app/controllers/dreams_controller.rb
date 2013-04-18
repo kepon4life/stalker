@@ -1,5 +1,6 @@
 class DreamsController < ApplicationController
   require 'fileutils'
+
   before_filter :authenticate_user
   before_filter :is_admin_user
 
@@ -26,6 +27,18 @@ class DreamsController < ApplicationController
   # GET /dreams/tag
   # GET /dreams/tag.json
   def tag
+    dirContent = Dir["public" + PATH_TO_DREAMS_UNTREATED + '*' + DREAM_EXTENSION] # PATH_TO_DREAMS & DREAM_EXTENSION : constant defined in config/initializers/constants.rb
+    @files = Kaminari.paginate_array(dirContent).page(params[:page]).per(12)
+
+    respond_to do |format|
+      format.html # tag.html.erb
+      format.json { render :json => @dream }
+    end
+  end
+
+  # GET /dreams/tagwithcat
+  # GET /dreams/tagwithcat.json
+  def tagWithCat
     @categories = Category.all
     @files = Dir["public" + PATH_TO_DREAMS_UNTREATED + '*' + DREAM_EXTENSION] # PATH_TO_DREAMS & DREAM_EXTENSION : constant defined in config/initializers/constants.rb
 
@@ -37,6 +50,43 @@ class DreamsController < ApplicationController
 
 
   def tagDream
+    #render:json => {:file_name => params[:file_name], :is_valid => params[:is_valid], :category_ids => params[:category_ids]}
+    datas = params[:images]
+    dreams = Array.new
+
+    datas.each do |data|
+      if data[1] != "0" 
+        @dream = Dream.new(:file_name => data[0] + DREAM_EXTENSION)
+        if data[1] == "1"
+          @dream.is_valid = false
+        elsif data[1] == "2"
+          @dream.is_valid = true
+          @dream.secret_room = false
+        else
+          @dream.is_valid = true
+          @dream.secret_room = true
+        end
+        
+        if @dream.save
+          dreams.push @dream
+          FileUtils.mv("public" + PATH_TO_DREAMS_UNTREATED + @dream.file_name , "public" + PATH_TO_DREAMS_TREATED + @dream.file_name)
+        end
+
+
+      end
+    end
+
+
+    
+
+
+    #@dream = Dream.new(:file_name => params[:file_name], :is_valid => params[:is_valid], :secret_room => params[:in_secret_room] )
+    respond_to do |format|
+        format.json { render :json => dreams, :status => :created, :location => @dream }
+    end
+  end
+
+  def tagDreamWithCat
     #render:json => {:file_name => params[:file_name], :is_valid => params[:is_valid], :category_ids => params[:category_ids]}
 
     @dream = Dream.new(:file_name => params[:file_name], :is_valid => params[:is_valid], :category_ids => params[:category_ids], :secret_room => params[:in_secret_room] )

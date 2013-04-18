@@ -8,7 +8,7 @@ gem "pusher", "~> 0.11.2"
 gem 'bcrypt-ruby', :require => 'bcrypt' 
 gem 'vlad'
 gem 'vlad-git'
-
+gem 'kaminari'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'

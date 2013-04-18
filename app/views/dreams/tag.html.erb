@@ -1,36 +1,39 @@
 <% content_for :javascript_includes do %>
   <%= javascript_include_tag "/javascripts/tag_dreams.js" %>
 <% end %>
-<h1>Tag dreams</h1>
+<div id="header-controls">
+	<h1>Tag dreams</h1>
+	<div class="btn-toolbar" style="margin-left: 300px;">
+		<div class="btn-group">
+			<button class="btn dropdown-toggle" data-toggle="dropdown">Grouped selection <span class="caret"></span></button>
+		    <ul class="dropdown-menu">
+		        <li id="toggleAllOk"><a href="#"><img src="/img/check.png" alt="ok" /> All ok</a></li>
+		        <li class="divider"></li>
+		        <li id="toggleAllOkPlus"><a href="#"><img src="/img/star.png" alt="star" /> All in secret room</a></li>
+		        <li class="divider"></li>
+		        <li id="toggleAllNok"><a href="#"><img src="/img/delete.png" alt="delete" /> All not ok</a></li>
+		        <li class="divider"></li>
+		        <li id="toggleAllUnselected"><a href="#"><img src="/img/alert.png" alt="ok" /> Deselect all</a></li>
+		    </ul>
+		</div>
+		<button id="send" type="button" class="btn disabled">Send</button>
+	</div>              
+</div>
+
 <div id="tag_dreams">
 	<% if not @files.empty?  %>
+	 
 		<% @files.each do |file| %>
 			<div class="dream" id="dream_<%= File.basename(file, DREAM_EXTENSION) %>">
+				<div class="decision"></div>
 				<img  class="dream" src="<%= PATH_TO_DREAMS_UNTREATED + File.basename(file) %>" alt="<%= File.basename(file, DREAM_EXTENSION) %>" />
-				<div class="btn-toolbar">
-					<div class="btn-group">
-			  			<a href="#myModal_<%= File.basename(file, DREAM_EXTENSION) %>" data-toggle="modal" class="btn" href="#"><i class="icon-search"></i></a>
-			  			<a class="btn dream-accept" rel="popover" href="#"><i class="icon-ok"></i></a>
-			    		<a class="btn dream-refuse" href="#"><i class="icon-remove"></i></a>
-			  		</div>
-				</div>
-				<div id="myModal_<%= File.basename(file, DREAM_EXTENSION) %>" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-					<img src="<%= PATH_TO_DREAMS_UNTREATED + File.basename(file) %>" alt="<%= File.basename(file, DREAM_EXTENSION) %>" />
-				</div>
 			</div>
-			<div class="form_categories" id="popover_<%= File.basename(file, DREAM_EXTENSION) %>">
-		    	<form>
-			    	<div class="form_categories_inputs">
-			    		<% @categories.each do |category| %>
-			    			<%= check_box_tag "category_ids[]", category.id %> <%= category.name %> <br />
-			    		<% end %><br />
-		    		</div>
-		  			<a class="btn btn-mini btn-success dream-accept-save" id="dream-accept-save-<%= File.basename(file, DREAM_EXTENSION) %>">Save</a>
-		    	</form>
-			</div>
+			
 		<% end%>
 	<% else %>
 	  No dreams to tag
 	<% end %>
 </div>
-
+<div id="pagination">
+	<%= paginate @files %>
+</div>

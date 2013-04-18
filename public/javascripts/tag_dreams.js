@@ -1,70 +1,94 @@
+// objet (id, val)
+//id = timestamp img
+//val = decision (0:notAttributed, 1:Nok, 2:ok, 3:okPlus)
+var images = new Object();
+
+
 $(document).ready(function () {
 
-	var one_popover_is_visible = false;
-	var clickedAway = false;
-
-	initPopover();
-
-	$(document).on("click", "a[rel=popover]", function(){
-	    	if(one_popover_is_visible){
-	    		$("a[rel=popover].popover_on").popover("hide");
-	    		one_popover_is_visible = false;
-	    	} else{
-	    		$(this).popover("show");
-	    		$(this).addClass("popover_on");
-	    		one_popover_is_visible = true;
-	    		clickedAway = false;
-	    	}  
-	})
-
-
-//prob --> peut pas cliquer ds le form
-/*
-	$(document).click(function(e) {
-  		if(one_popover_is_visible & clickedAway){
-    		$('a[rel=popover].popover_on').popover('hide')
-    		one_popover_is_visible = clickedAway = false
-  		}else{
-  			clickedAway = true
-  		}
+	//on initialise le tableau avec les images 
+	$("div#tag_dreams div.dream").each(function(){
+		images[$(this).attr("id").split("dream_")[1]] = 0;
 	});
-*/
-
-	
-
-	
 
 
+	//toutes les images OK
+	$("li#toggleAllOk").click(function(){
+		$("div#tag_dreams div.dream").each(function(){
+			imgIsOk($(this));
+		});
+		if($("button#send").hasClass("disabled")){
+			$("button#send").removeClass("disabled");
+		}
+	});
 
-	$(document).on('click',"a.dream-accept-save", function(){
+	//toutes les images OK + in secret room
+	$("li#toggleAllOkPlus").click(function(){
+		$("div#tag_dreams div.dream").each(function(){
+			imgIsOkPlus($(this));
+		});
+		if($("button#send").hasClass("disabled")){
+			$("button#send").removeClass("disabled");
+		}
+	});
 
-
-		var in_secret_room = $(this).parent().parent().parent().children("h3.popover-title").children("input[type=checkbox]").is(':checked');
-
-		var id = $(this).attr("id");
-
-		id = id.replace("dream-accept-save-",'');
-
-		var is_valid = true;
-
-		var category_ids = new Array();
-
-
-
-		$.each($(this).parent().children(".form_categories_inputs").children("input[type=checkbox]:checked"), function (key, value) {
-    		category_ids.push($(this).val());
-		}); 
-
-
-
-
-		if(category_ids.length > 0 || in_secret_room){
-			saveDream(id, is_valid, category_ids, in_secret_room);
-			$('a[rel=popover].popover_on').popover('hide');
-			removeImgInDom(id);
+	//toutes les images pas ok
+	$("li#toggleAllNok").click(function(){
+		$("div#tag_dreams div.dream").each(function(){
+			imgIsNok($(this));
+		});
+		if($("button#send").hasClass("disabled")){
+			$("button#send").removeClass("disabled");
 		}
 
+	});
+
+	//toutes les images déselectionnées
+	$("li#toggleAllUnselected").click(function(){
+		$("div#tag_dreams div.dream").each(function(){
+			imgIsUnatributed($(this));
+		});
+		$("button#send").addClass("disabled");
+	});
+
+
+
+	
+
+	//lorsque l'on clique sur une image, son état change
+	$(document).on("click", "div.dream", function(){
+		if($(this).children("div.decision").hasClass("ok")){
+			imgIsOkPlus($(this));
+			toggleSendButton();
+		} else if($(this).children("div.decision").hasClass("nok")){
+			imgIsOk($(this));
+			toggleSendButton();
+		} else if($(this).children("div.decision").hasClass("okPlus")){
+			imgIsUnatributed($(this));
+			toggleSendButton();
+		} else{
+			imgIsNok($(this));
+			toggleSendButton();
+		}
+	});
+
+
+	$("button#send").click(function(){
+		if(!$("button#send").hasClass("disabled")){
+			$.ajax({
+		  		type: "GET",
+		  		url: "/dreams/tagDream",
+		  		data: { images: images}
+			}).done(function( msg ) {
+		 		location.reload();
+			});
+		}
 		
+
+/*
+		
+
+*/
 	});
 
 
@@ -72,34 +96,76 @@ $(document).ready(function () {
 
 
 
-	$(document).on("click","a.btn.dream-refuse",function(){
-		var id = $(this).parent().parent().parent().attr("id");
-		id = id.replace("dream_",'');
-		saveDream(id, false, []);
-		removeImgInDom(id);
-	});
 
 });
 
 
 
+//Recept pusher notifications
+var pusher = new Pusher(PUSHER_API_KEY);
+var channel = pusher.subscribe(PUSHER_CHANEL);
+//Pusher.channel_auth_endpoint = '/pusher/auth';
+channel.bind(PUSHER_EVENT, function(data) {
+	informUserNewImgForReloadingPage();
+});
 
-
-function removeImgInDom(id){
-	$("div#dream_"+id).remove();
-	incrementNbDreams(-1);
-	$("#nb_dream").removeClass("new_img_received");
+//active or unactive the send button
+function toggleSendButton(){
+	var imagesAreDeselected = true;
+	for (var key in images){
+		if(images[key] != 0){
+			imagesAreDeselected = false;
+		}
+	}
+	if($("button#send").hasClass("disabled")){
+		if(!imagesAreDeselected){
+			$("button#send").removeClass("disabled");
+		}
+	}else{
+		if(imagesAreDeselected){
+			$("button#send").addClass("disabled");
+		}
+	}
 }
 
 
+//Changement de l'état de l'image à ok
+function imgIsOk(e){
+	var id = e.attr("id").split("dream_")[1];
+	e.children("div.decision").removeClass().addClass("decision ok");
+	images[id] = 2;
 
-
-function saveDream(id, is_valid, category_ids, in_secret_room){
-	$.ajax({
-		  type: "GET",
-		  url: "/dreams/tagDream",
-		  data: { file_name: id+DREAM_EXTENSION, is_valid: is_valid, category_ids: category_ids, in_secret_room: in_secret_room }
-		}).done(function( msg ) {
-		  //alert( "Data Saved: ");
-		});
 }
+
+//Changement de l'état de l'image à pas ok
+function imgIsNok(e){
+	var id = e.attr("id").split("dream_")[1];
+	e.children("div.decision").removeClass().addClass("decision nok");
+	images[id] = 1;
+}
+
+//Changement de l'état de l'image à ok + secret room
+function imgIsOkPlus(e){
+	var id = e.attr("id").split("dream_")[1];
+	e.children("div.decision").removeClass().addClass("decision okPlus");
+	images[id] = 3;
+}
+
+//changement de l'état de l'image à déselectionnée
+function imgIsUnatributed(e){
+	var id = e.attr("id").split("dream_")[1];
+	e.children("div.decision").removeClass().addClass("decision");
+	images[id] = 0;
+}
+
+
+//add message to the moderator when a new img is created
+function informUserNewImgForReloadingPage(){
+	if($("#messages").is(':empty')){
+		$("#messages").append("<div class='alert fade in'><button type='button' class='close' data-dismiss='alert'>×</button>Hey! there is <strong id='nb_dream'>1</strong> new dream(s)! Reload the page...</div>");
+	}else{
+		nb_dreams = $("#messages #nb_dream").text();
+		$("#messages #nb_dream").text(parseInt(nb_dreams) + 1);
+	}
+}
+

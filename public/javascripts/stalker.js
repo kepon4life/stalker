@@ -17,23 +17,7 @@ $(document).ready(function () {
             console.log(msg);
         }
 
-	//Recept pusher notifications
-	var pusher = new Pusher(PUSHER_API_KEY);
-	var channel = pusher.subscribe(PUSHER_CHANEL);
-	//Pusher.channel_auth_endpoint = '/pusher/auth';
-	channel.bind(PUSHER_EVENT, function(data) {
-	  //alert('An event was triggered with message: ' + data.imgUrl);
-	  incrementNbDreams(1);
-
-	  //Change color of buble to red
-	  $("#nb_dream").addClass("new_img_received");
-
-	  //If we are on tag page
-	  if ($("div#tag_dreams").length > 0){
-	  	addImgToTagg(data.imgUrl);
-	  }
-
-	});
+	
 
 
 
@@ -66,7 +50,7 @@ function initPopover(){
 	    )
 	});
 }
-
+/*
 function addImgToTagg(imgUrl){
 	var imgName = imgUrl.replace(DREAM_EXTENSION ,"");
 	if($("div#tag_dreams img.dream").length == 0){
@@ -76,7 +60,7 @@ function addImgToTagg(imgUrl){
 
 	initPopover();
 }
-
+*/
 function getCategoriesCheckboxes(){
 	$.getJSON("/services/categories", function(data) {
 		var c = "";
