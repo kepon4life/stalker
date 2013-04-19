@@ -8,7 +8,6 @@ Pusher.secret = PUSHER_API_SECRET
 class PusherController < ApplicationController
   protect_from_forgery :except => :auth # stop rails CSRF protection for this action
 
-
   def test
     Pusher[PUSHER_CHANEL].trigger(PUSHER_EVENT, {:imgUrl => "test" + DREAM_EXTENSION})
     render :text => "test pusher"

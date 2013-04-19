@@ -9,6 +9,7 @@ gem 'bcrypt-ruby', :require => 'bcrypt'
 gem 'vlad'
 gem 'vlad-git'
 gem 'kaminari'
+gem 'kaminari-bootstrap'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
