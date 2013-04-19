@@ -162,7 +162,7 @@ function imgIsUnatributed(e){
 //add message to the moderator when a new img is created
 function informUserNewImgForReloadingPage(){
 	if($("#messages").is(':empty')){
-		$("#messages").append("<div class='alert fade in'><button type='button' class='close' data-dismiss='alert'>×</button>Hey! there is <strong id='nb_dream'>1</strong> new dream(s)! Reload the page...</div>");
+		$("#messages").append("<div class='alert fade in'><button type='button' class='close' data-dismiss='alert'>×</button>Hey! there is <strong id='nb_dream'>1</strong> new dream(s)! <a href=''>Reload the page...</a></div>");
 	}else{
 		nb_dreams = $("#messages #nb_dream").text();
 		$("#messages #nb_dream").text(parseInt(nb_dreams) + 1);

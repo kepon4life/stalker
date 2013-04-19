@@ -1,19 +1,20 @@
 body{
 	margin: 0;
+	background-color: black;
 }
 #mycanvas{
 	border-style: solid;
 	border-width: 2px;
-	border-color: black;
-	background-color: white;
+	border-color: white;
+	background-color: black;
 }
 #mycanvasbis{
 	border-style: solid;
 	border-width: 2px;
-	border-color: black;
+	border-color: white;
 	width: 600px;
 	height: 600px;
-	background-color: white;
+	background-color: black;
 	margin-right: auto;
 	margin-left: auto;
 }

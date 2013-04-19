@@ -1,4 +1,4 @@
-var defaultcolor = '#000'
+var defaultcolor = '#fff'
 var canvaswidth;
 var canvasheight;
 var color = defaultcolor;
@@ -59,7 +59,7 @@ privateChannel.bind('pusher:subscription_error', function(status) {
         color = defaultcolor;
 
         //Délimitation
-        ctx.strokeStyle="#000"
+        ctx.strokeStyle="#fff"
         ctx.beginPath();
         ctx.moveTo(nw-controlPanelWidth,0);
         ctx.lineWidth = 3;
@@ -235,7 +235,7 @@ privateChannel.bind('pusher:subscription_error', function(status) {
         //Efface le contenu du canvas (context) puis redessine chaque courbe avec la nouvelle couleur   
         
         //La nouvelle couleur
-        color = "#000";
+        color = "#fff";
         //On efface le contenu du canvas (context)
         ctx.clearRect(0,0,canvaswidth,canvasheight);
         
@@ -275,7 +275,7 @@ privateChannel.bind('pusher:subscription_error', function(status) {
 
         //Permet d'ajouter un fond blanc à l'image envoyée au server
         function drawWhiteBg(){
-        color = "#000";
+        color = "#fff";
         ctx.clearRect(0,0,canvaswidth,canvasheight);
         for (var j = 0; j < savedCurves.length; j++) {
             var curvestodraw = savedCurves[j];
@@ -283,7 +283,7 @@ privateChannel.bind('pusher:subscription_error', function(status) {
         };
         compositeOperation = ctx.globalCompositeOperation;
         ctx.globalCompositeOperation = "destination-over";
-        ctx.fillStyle = "FFF";
+        ctx.fillStyle = "000";
         ctx.fillRect(0,0,canvaswidth,canvasheight);
 
         var imgData = ctx.getImageData(0,0,nw-controlPanelWidth,nh);

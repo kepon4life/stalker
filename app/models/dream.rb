@@ -1,5 +1,5 @@
 class Dream < ActiveRecord::Base
-  attr_accessible :file_name, :is_valid,  :secret_room #, :category_ids
+  attr_accessible :file_name, :is_valid, :secret_room, :category_ids
   has_and_belongs_to_many :categories
 
   validates :file_name, :presence => true

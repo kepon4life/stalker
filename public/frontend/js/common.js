@@ -1,4 +1,4 @@
-	var color = '#000'
+	var color = '#fff'
 	$(document).ready(function(){
 	//Pusher
 	Pusher.channel_auth_endpoint = 'pusher/auth/private_auth.php';
@@ -17,11 +17,11 @@
             });
     //Canvas
     $('#controls').on('click','#draw',function(){
-    	color = '#000';
+    	color = '#fff';
     	paint = false;
     });
     $('#controls').on('click','#erase',function(){
-    	color = '#fff';
+    	color = '#000';
     	paint = false;
     });
 
