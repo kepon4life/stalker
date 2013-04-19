@@ -1,39 +1,44 @@
 <% content_for :javascript_includes do %>
   <%= javascript_include_tag "/javascripts/tag_dreams.js" %>
 <% end %>
-<div id="header-controls">
-	<h1>Tag dreams</h1>
-	<div class="btn-toolbar" style="margin-left: 300px;">
-		<div class="btn-group">
-			<button class="btn dropdown-toggle" data-toggle="dropdown">Grouped selection <span class="caret"></span></button>
-		    <ul class="dropdown-menu">
-		        <li id="toggleAllOk"><a href="#"><img src="/img/check.png" alt="ok" /> All ok</a></li>
-		        <li class="divider"></li>
-		        <li id="toggleAllOkPlus"><a href="#"><img src="/img/star.png" alt="star" /> All in secret room</a></li>
-		        <li class="divider"></li>
-		        <li id="toggleAllNok"><a href="#"><img src="/img/delete.png" alt="delete" /> All not ok</a></li>
-		        <li class="divider"></li>
-		        <li id="toggleAllUnselected"><a href="#"><img src="/img/alert.png" alt="ok" /> Deselect all</a></li>
-		    </ul>
-		</div>
-		<button id="send" type="button" class="btn disabled">Send</button>
-	</div>              
-</div>
-
-<div id="tag_dreams">
-	<% if not @files.empty?  %>
-	 
-		<% @files.each do |file| %>
-			<div class="dream" id="dream_<%= File.basename(file, DREAM_EXTENSION) %>">
-				<div class="decision"></div>
-				<img  class="dream" src="<%= PATH_TO_DREAMS_UNTREATED + File.basename(file) %>" alt="<%= File.basename(file, DREAM_EXTENSION) %>" />
+<% content_for :header_content do %>
+	<%= render 'layouts/header_admin' %>
+<% end %>
+<div id="content" class="container">
+	<div id="header-controls">
+		<h1>Tag dreams</h1>
+		<div class="btn-toolbar" style="margin-left: 300px;">
+			<div class="btn-group">
+				<button class="btn dropdown-toggle" data-toggle="dropdown">Grouped selection <span class="caret"></span></button>
+			    <ul class="dropdown-menu">
+			        <li id="toggleAllOk"><a href="#"><img src="/img/check.png" alt="ok" /> All ok</a></li>
+			        <li class="divider"></li>
+			        <li id="toggleAllOkPlus"><a href="#"><img src="/img/star.png" alt="star" /> All in secret room</a></li>
+			        <li class="divider"></li>
+			        <li id="toggleAllNok"><a href="#"><img src="/img/delete.png" alt="delete" /> All not ok</a></li>
+			        <li class="divider"></li>
+			        <li id="toggleAllUnselected"><a href="#"><img src="/img/alert.png" alt="ok" /> Deselect all</a></li>
+			    </ul>
 			</div>
-			
-		<% end%>
-	<% else %>
-	  No dreams to tag
-	<% end %>
-</div>
-<div id="pagination">
-	<%= paginate @files %>
+			<button id="send" type="button" class="btn disabled">Send</button>
+		</div>              
+	</div>
+
+	<div id="tag_dreams">
+		<% if not @files.empty?  %>
+		 
+			<% @files.each do |file| %>
+				<div class="dream" id="dream_<%= File.basename(file, DREAM_EXTENSION) %>">
+					<div class="decision"></div>
+					<img  class="dream" src="<%= PATH_TO_DREAMS_UNTREATED + File.basename(file) %>" alt="<%= File.basename(file, DREAM_EXTENSION) %>" />
+				</div>
+				
+			<% end%>
+		<% else %>
+		  No dreams to tag
+		<% end %>
+	</div>
+	<div id="pagination">
+		<%= paginate @files %>
+	</div>
 </div>

@@ -1,7 +1,5 @@
 class EventsController < ApplicationController
 
-    before_filter :authenticate_user
-    before_filter :is_admin_user
 
   # GET /events
   # GET /events.json

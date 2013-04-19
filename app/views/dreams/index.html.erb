@@ -1,40 +1,44 @@
-<h1>Listing dreams</h1>
-
-<% if not @dreams.empty?  %>
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>Dream</th>
-        <th>Category/ies</th>
-        <th>In secret room</th>
-        <th></th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @dreams.each do |dream| %>
-      <% if dream.is_valid? %>
-        <tr class="success">
-      <% else %>
-        <tr class="error">
-      <% end %>
-          <td>
-            <img class="dream" class src="<%= PATH_TO_DREAMS_TREATED + dream.file_name %>" alt="<%= dream.file_name %>" />
-          <td>
-            <ul>
-              <%  dream.categories.each do |category| %>
-                  <li><%= category.name %></li>
-              <% end %>
-            </ul>
-          </td>
-          <td><%= dream.secret_room %></td>
-          <td><%= link_to "Edit", {:controller => "dreams", :action => "edit", :id => dream.id}, :class => 'btn' %></td>
-          <td><%= button_to( 'Destroy', dream, :confirm => 'Are you sure?', :method => :delete, :class => "btn btn-danger")%></td>
-        </tr>
-      <% end %>
-  </tbody>
-  </table>
-
-<% else %>
-  No dreams
+<% content_for :header_content do %>
+  <%= render 'layouts/header_admin' %>
 <% end %>
+<div id="content" class="container">
+  <h1>Listing dreams</h1>
+  <% if not @dreams.empty?  %>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Dream</th>
+          <th>Category/ies</th>
+          <th>In secret room</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @dreams.each do |dream| %>
+        <% if dream.is_valid? %>
+          <tr class="success">
+        <% else %>
+          <tr class="error">
+        <% end %>
+            <td>
+              <img class="dream" class src="<%= PATH_TO_DREAMS_TREATED + dream.file_name %>" alt="<%= dream.file_name %>" />
+            <td>
+              <ul>
+                <%  dream.categories.each do |category| %>
+                    <li><%= category.name %></li>
+                <% end %>
+              </ul>
+            </td>
+            <td><%= dream.secret_room %></td>
+            <td><%= link_to "Edit", {:controller => "dreams", :action => "edit", :id => dream.id}, :class => 'btn' %></td>
+            <td><%= button_to( 'Destroy', dream, :confirm => 'Are you sure?', :method => :delete, :class => "btn btn-danger")%></td>
+          </tr>
+        <% end %>
+    </tbody>
+    </table>
+
+  <% else %>
+    No dreams
+  <% end %>
+</div>

@@ -1,6 +1,4 @@
 class ServicesController < ApplicationController  
-	
-	before_filter :authenticate_for_api, :only => [:get_dreams_for_event]
 
 	def get_number_of_dreams_to_treat
 		render :json => {:nbImg => Dir["public" + PATH_TO_DREAMS_UNTREATED + '*' + DREAM_EXTENSION].count}, :callback => params[:callback]
@@ -44,15 +42,7 @@ class ServicesController < ApplicationController
 		render:json => cat
 	end
 
-	private 
-		def authenticate_for_api
-			authenticate_or_request_with_http_basic do |user_name, password|
-				user = User.authenticate(user_name,password)
-				if user
-					user.group.id==1 || user.group.id == 3
-				end
-	    	end
-		end
+
 
 
 

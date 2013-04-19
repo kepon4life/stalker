@@ -2,8 +2,6 @@ require "base64"
 require "fileutils"
 
 class FrontendController < ApplicationController  
-	#before_filter :authenticate_user
-	#before_filter :is_frontend_user
 
 	def slider
 		respond_to do |format|

@@ -1,13 +1,17 @@
 <% @title="Show category" %>
-<div class="page-header">
-  <h1>Category : <%= @category.name %></h1>
-</div>
-
-<% if not @category.dreams.empty?  %>
-	<% @category.dreams.each do |dream| %>
-		<img class="dream" class src="<%= PATH_TO_DREAMS_TREATED + dream.file_name %>" alt="<%= dream.file_name %>" />
-	<% end%>
-<% else %>
-  No dreams for this category
+<% content_for :header_content do %>
+	<%= render 'layouts/header_admin' %>
 <% end %>
+<div id="content" class="container">
+	<div class="page-header">
+	  <h1>Category : <%= @category.name %></h1>
+	</div>
 
+	<% if not @category.dreams.empty?  %>
+		<% @category.dreams.each do |dream| %>
+			<img class="dream" class src="<%= PATH_TO_DREAMS_TREATED + dream.file_name %>" alt="<%= dream.file_name %>" />
+		<% end%>
+	<% else %>
+	  No dreams for this category
+	<% end %>
+</div>

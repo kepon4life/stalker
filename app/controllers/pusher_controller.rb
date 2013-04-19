@@ -6,7 +6,6 @@ Pusher.key = PUSHER_API_KEY
 Pusher.secret = PUSHER_API_SECRET
 
 class PusherController < ApplicationController
-  before_filter :authenticate_user, :only => [:test, :auth]
   protect_from_forgery :except => :auth # stop rails CSRF protection for this action
 
 

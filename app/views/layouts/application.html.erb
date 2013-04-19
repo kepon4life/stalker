@@ -20,20 +20,11 @@
 
   </head>
   <body>
-      <% if @current_user %>
-        <% if @current_user.group.id == 1 %>
-          <%= render 'layouts/header_admin' %>
-          <div id="content" class="container"> 
-        <% elsif @current_user.group.id == 2 %>
-          <div> 
-        <% end %>
-      <% end %>
+    <%= yield :header_content %>
+    <div id="messages"><%= render 'layouts/messages' %></div>    
+    <%= yield %>
+      
     
-    
-    
-      <div id="messages"><%= render 'layouts/messages' %></div>    
-          <%= yield %>
-    </div>
     <%= javascript_include_tag 'jquery-1.9.0.min.js' %>
     <script src="http://js.pusher.com/1.12/pusher.min.js"></script>
     
