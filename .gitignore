@@ -15,9 +15,9 @@
 /tmp
 
 # Ignore dreams
-/public/dreams/treated/*
-/public/dreams/sended/*
-/public/dreams/untreated/*
+/public/dreams/treated/*.png
+/public/dreams/sended/*.png
+/public/dreams/untreated/*.png
 
 # OS generated files 
 .DS_Store*
