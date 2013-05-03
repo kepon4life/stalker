@@ -25,7 +25,11 @@ class DreamsController < ApplicationController
   # GET /dreams/tag.json
   def tag
     dirContent = Dir["public" + PATH_TO_DREAMS_UNTREATED + '*' + DREAM_EXTENSION] # PATH_TO_DREAMS & DREAM_EXTENSION : constant defined in config/initializers/constants.rb
-    @files = Kaminari.paginate_array(dirContent).page(params[:page]).per(12)
+    if(!cookies[:nbImgPerPage])
+      cookies[:nbImgPerPage] = 12
+    end
+    @nbImgPerPage = cookies[:nbImgPerPage].to_i
+    @files = Kaminari.paginate_array(dirContent).page(params[:page]).per(@nbImgPerPage)
 
     respond_to do |format|
       format.html # tag.html.erb

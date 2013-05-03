@@ -60,21 +60,26 @@ ul.nav li {
 }
 
 div.dream{
-  float:left;
-  cursor: pointer;
+float: left;
+cursor: pointer;
+width: 200px;
+height: 130px;
+margin-left: 5px;
+margin-right: 5px;
+margin-bottom: 10px;
+overflow: hidden;
 }
 
 img.dream{
-  width:200px;
-  margin:10px;
+  margin: 0 auto;
 }
 
 div.dream div.decision{
   position: absolute;
   min-width: 30px;
   min-height: 30px;
-  margin-left:192px;
-  background-image: url("/img/alert.png");
+  margin-left:170px;
+  /*background-image: url("/img/alert.png");*/
 }
 
 div.dream div.decision.ok{

@@ -1,4 +1,5 @@
 <% content_for :javascript_includes do %>
+	<%= javascript_include_tag "/javascripts/jquery.cookies.js" %>
   <%= javascript_include_tag "/javascripts/tag_dreams.js" %>
 <% end %>
 <% content_for :header_content do %>
@@ -21,10 +22,17 @@
 			    </ul>
 			</div>
 			<button id="send" type="button" class="btn disabled">Send</button>
-		</div>              
+		</div>
+		<div class="btn-toolbar"  style="margin-left: 600px;">
+				<div class="btn-group">
+					<a class="btn bit" href="#"><i class="icon-th-large"></i></a>
+				    <a class="btn lot" href="#"><i class="icon-th"></i></a>
+				</div>
+			</div>              
 	</div>
 
-	<div id="tag_dreams">
+
+	<div id="tag_dreams" class="<% if (@nbImgPerPage == 12)%>bit<% else %>lot<% end  %>">
 		<% if not @files.empty?  %>
 		 
 			<% @files.each do |file| %>

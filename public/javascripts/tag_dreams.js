@@ -6,6 +6,30 @@ var images = new Object();
 
 $(document).ready(function () {
 
+
+	//on initialise les 2 boutons permettant de modifier le nb de dessins affichés
+	if($("div#tag_dreams").hasClass("bit")){
+			$("a.bit").addClass("active");
+	}else{
+			$("a.lot").addClass("active");
+	}
+
+	$("a.lot").click(function(){
+		//if(!$("a.lot").hasClass("active")){
+			$.cookie("nbImgPerPage", 24);
+			location.reload();
+		//}
+	});
+
+
+	$("a.bit").click(function(){
+		//if(!$("a.bit").hasClass("active")){
+			$.cookie("nbImgPerPage", 12);
+			location.reload();
+		//}
+	});
+
+
 	//on initialise le tableau avec les images 
 	$("div#tag_dreams div.dream").each(function(){
 		images[$(this).attr("id").split("dream_")[1]] = 0;
