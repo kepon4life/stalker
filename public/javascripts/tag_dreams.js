@@ -15,18 +15,16 @@ $(document).ready(function () {
 	}
 
 	$("a.lot").click(function(){
-		//if(!$("a.lot").hasClass("active")){
 			$.cookie("nbImgPerPage", 24);
-			location.reload();
-		//}
+			window.location = window.location.href.split("?")[0];
+			location.location.reload();
 	});
 
 
 	$("a.bit").click(function(){
-		//if(!$("a.bit").hasClass("active")){
 			$.cookie("nbImgPerPage", 12);
-			location.reload();
-		//}
+			window.location = window.location.href.split("?")[0];
+			location.location.reload();
 	});
 
 

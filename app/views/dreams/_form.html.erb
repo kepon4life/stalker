@@ -9,18 +9,23 @@
     </ul>
   <% end %>
 <% end %>
-
 <fieldset>
   <div class="control-group">
-    <%= f.label :file_name, :class => "control-label" %>
+    <label class="control-label" for="dream_is_valid">Dream</label>
     <div class="controls">
-      <%= f.text_field :file_name %>
+      <img class="dream" class src="<%= PATH_TO_DREAMS_TREATED + @dream.file_name %>" alt="<%= @dream.file_name %>" />
     </div>
   </div>
   <div class="control-group">
     <%= f.label :is_valid, :class => "control-label" %>
     <div class="controls">
       <%= f.check_box :is_valid %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :secret_room, :class => "control-label" %>
+    <div class="controls">
+      <%= f.check_box :secret_room %>
     </div>
   </div>
   <div class="control-group">

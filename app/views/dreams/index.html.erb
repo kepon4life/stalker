@@ -3,40 +3,44 @@
 <% end %>
 <div id="content" class="container">
   <h1>Listing dreams</h1>
+  <div style="text-align:center;">
+    <div class="btn-group" style="margin: 0 auto 20px auto;">
+      <a class="btn <%= (@is_valid && @secret_room)? 'active' : '' %>" href="?sort=<%= @sort %>&valid=true&special=true"><img src="/img/star.png" alt="star" /> Special dreams</a>
+      <a class="btn <%= (@is_valid && !@secret_room)? 'active' : '' %>" href="?sort=<%= @sort %>&valid=true&special=false"><img src="/img/check.png" alt="ok" /> Accepted dreams</a>
+      <a class="btn <%= (!@is_valid && !@secret_room)? 'active' : '' %>" href="?sort=<%= @sort %>&valid=false&special=false"><img src="/img/delete.png" alt="delete" /> Unaccepted dreams</a>
+    </div>
+  </div>
   <% if not @dreams.empty?  %>
+  
+
     <table class="table table-bordered">
       <thead>
         <tr>
           <th>Dream</th>
-          <th>Category/ies</th>
-          <th>In secret room</th>
+          <th><a href="?sort=<%= @sort=="asc"? "desc" : "asc" %>&valid=<%= @is_valid %>&special=<%= @secret_room %>"><i class="icon-arrow-<%= @sort=="asc"? "up" : "down" %>"></i>Date</a></th>
           <th></th>
           <th></th>
         </tr>
       </thead>
       <tbody>
         <% @dreams.each do |dream| %>
-        <% if dream.is_valid? %>
-          <tr class="success">
-        <% else %>
-          <tr class="error">
-        <% end %>
+          <tr>
             <td>
               <img class="dream" class src="<%= PATH_TO_DREAMS_TREATED + dream.file_name %>" alt="<%= dream.file_name %>" />
             <td>
               <ul>
-                <%  dream.categories.each do |category| %>
-                    <li><%= category.name %></li>
-                <% end %>
+                <% date =  DateTime.strptime(dream.file_name.split(DREAM_EXTENSION)[0],'%s').in_time_zone(Time.zone) %>
+                <%= date.strftime("%d/%m/%Y - %H:%M") %>
               </ul>
             </td>
-            <td><%= dream.secret_room %></td>
             <td><%= link_to "Edit", {:controller => "dreams", :action => "edit", :id => dream.id}, :class => 'btn' %></td>
-            <td><%= button_to( 'Destroy', dream, :confirm => 'Are you sure?', :method => :delete, :class => "btn btn-danger")%></td>
+            <td><%= button_to( 'Delete', dream, :confirm => 'Are you sure?', :method => :delete, :class => "btn btn-danger")%></td>
           </tr>
         <% end %>
     </tbody>
     </table>
+
+
 
   <% else %>
     No dreams

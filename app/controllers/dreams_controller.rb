@@ -5,7 +5,23 @@ class DreamsController < ApplicationController
   # GET /dreams
   # GET /dreams.json
   def index
-    @dreams = Dream.all
+
+    @sort = "desc"
+    if params[:sort] == "asc"
+      @sort = "asc"
+    end
+
+    @secret_room = true
+    if params[:special] == "false"
+      @secret_room = false
+    end
+
+    @is_valid = true
+    if params[:valid] == "false"
+      @is_valid = false
+    end
+
+    @dreams = Dream.order("file_name "+@sort).where(:is_valid => @is_valid, :secret_room => @secret_room)
 
     respond_to do |format|
       format.html # index.html.erb
