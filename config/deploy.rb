@@ -30,12 +30,20 @@ namespace :vlad do
     run "touch #{current_path}/tmp/restart.txt"
   end
 
+  desc "Add simlink for dreams folders"
+  remote_task :add_simlink_to_dreams_folders do
+    run "ln -s #{shared_path}/dreams/treated/ #{current_path}/public/dreams/treated/"
+    run "ln -s #{shared_path}/dreams/untreated/ #{current_path}/public/dreams/untreated/"
+    run "ln -s #{shared_path}/dreams/sended/ #{current_path}/public/dreams/sended/"
+  end
+
   desc "Full deployment cycle"
   remote_task :deploy => %w(
     vlad:clean_scm_repo
     vlad:update
     vlad:bundle_update
     vlad:precompile_assets
+    vlad:add_simlink_to_dreams_folders
     vlad:refresh_passenger
   )
 end
