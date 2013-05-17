@@ -145,7 +145,7 @@ privateChannel.bind('pusher:subscription_error', function(status) {
             y: (points[previous].y + points[current].y) / 2
         }
 
-        ctx.lineWidth = 7;
+        ctx.lineWidth = 20;
         ctx.lineCap = 'round';
 
         ctx.beginPath(); 

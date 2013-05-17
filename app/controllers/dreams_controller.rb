@@ -59,7 +59,7 @@ class DreamsController < ApplicationController
   # GET /dreams/tagwithcat.json
   def tagWithCat
     @categories = Category.all
-    @files = Dir["public" + PATH_TO_DREAMS_UNTREATED + '*' + DREAM_EXTENSION] # PATH_TO_DREAMS & DREAM_EXTENSION : constant defined in config/initializers/constants.rb
+    @files = Dir["public" + PATH_TO_DREAMS_UNTREATED + '*' + DREAM_EXTENSION].sort.reverse # PATH_TO_DREAMS & DREAM_EXTENSION : constant defined in config/initializers/constants.rb
 
     respond_to do |format|
       format.html # tag.html.erb
