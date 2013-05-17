@@ -40,7 +40,9 @@ class DreamsController < ApplicationController
   # GET /dreams/tag
   # GET /dreams/tag.json
   def tag
-    dirContent = Dir["public" + PATH_TO_DREAMS_UNTREATED + '*' + DREAM_EXTENSION] # PATH_TO_DREAMS & DREAM_EXTENSION : constant defined in config/initializers/constants.rb
+    dirContent = Dir["public" + PATH_TO_DREAMS_UNTREATED + '*' + DREAM_EXTENSION].sort.reverse # PATH_TO_DREAMS & DREAM_EXTENSION : constant defined in config/initializers/constants.rb
+    
+
     if(!cookies[:nbImgPerPage])
       cookies[:nbImgPerPage] = 12
     end
