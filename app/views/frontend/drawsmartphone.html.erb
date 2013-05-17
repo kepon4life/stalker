@@ -57,7 +57,7 @@
             .literally .toolbar .zoom-display{
                 display: none;
             }
-            .literally .toolbar .clear-button {
+            .literally .toolbar .clear-button, .literally .toolbar .send-button {
                 display: inline-block;
             }
 
@@ -107,30 +107,28 @@
                     $('.invite').fadeOut(3000);
                 }, 1000);
 
-                $('.clear-button').parent().
-                        prepend('<div class="button clear-button">Send</div>').
+                $('.clear-button').parent().prepend('<div class="button send-button">Send</div>');
+                $('.send-button').
                         on("click", function() {
-
-                    var canvas = $('.literally').canvasForExport();
-
-                    //$('body').empty().append(canvas);
-
-                    $.ajax({
-                        type: 'POST',
-                        url: '/frontend/save',
-                        data: {
-                            imgColor: canvas.toDataURL("image/png"),
-                            imgNormal: canvas.toDataURL("image/png")
-                        },
-                        success: function(data) {
-                            triggered = privateChannel.trigger('client-myevent', data);
-                            $('body').empty().
+                            var canvas = $('.literally').canvasForExport();
+                            //$('body').empty().append(canvas);
+                            $.ajax({
+                                type: 'POST',
+                                url: '/frontend/save',
+                                data: {
+                                    imgColor: canvas.toDataURL("image/png"),
+                                    imgNormal: canvas.toDataURL("image/png")
+                                },
+                                success: function(data) {
+                                    triggered = privateChannel.trigger('client-myevent', data);
+                                    $('body').empty().
                                     append("<div style=\"padding-top: 13%;\">Merci votre dessin a été sauvegardé. Maintenant, regardez l'écran.</div>");
-                             
-                                
-                        }
-                    });
+                                }
+                            });
+
+                      
                 });
+
             });
         </script>
 <% end %>
