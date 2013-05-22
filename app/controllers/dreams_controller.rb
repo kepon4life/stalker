@@ -7,19 +7,52 @@ class DreamsController < ApplicationController
   def index
 
     @sort = "desc"
-    if params[:sort] == "asc"
-      @sort = "asc"
-    end
-
     @secret_room = true
-    if params[:special] == "false"
-      @secret_room = false
+    @is_valid = true
+
+    if(!params[:sort] && !params[:special] && !params[:valid])
+      puts "kikou on est làààààààà"
+      if(cookies[:sort] )
+        @sort = cookies[:sort]
+      end
+
+      if(cookies[:special] && cookies[:special] == "false")
+        @secret_room = false
+      end
+
+      if(cookies[:valid] && cookies[:valid] == "false")
+        @is_valid = false
+      end
+
+     else
+      if params[:sort] == "asc"
+        @sort = "asc"
+        cookies[:sort] = "asc"
+      else
+        cookies[:sort] = "desc"
+      end
+
+      if params[:special] == "false"
+        @secret_room = false
+        cookies[:special] = false
+      else
+        cookies[:special] = true
+      end
+    
+      if params[:valid] == "false"
+        @is_valid = false
+        cookies[:valid] = false
+      else
+        cookies[:valid] = true
+      end  
     end
 
-    @is_valid = true
-    if params[:valid] == "false"
-      @is_valid = false
-    end
+    puts @sort
+    puts @secret_room
+    puts @secret_room  == "false"
+
+    puts @is_valid
+    
 
     @dreams = Dream.order("file_name "+@sort).where(:is_valid => @is_valid, :secret_room => @secret_room)
 
