@@ -18,7 +18,7 @@
         <tr>
           <th>Dream</th>
           <th><a href="?sort=<%= @sort=="asc"? "desc" : "asc" %>&valid=<%= @is_valid %>&special=<%= @secret_room %>"><i class="icon-arrow-<%= @sort=="asc"? "up" : "down" %>"></i>Date (click to sort)</a></th>
-          <th></th>
+          <th>Change status</th>
           <th></th>
         </tr>
       </thead>
@@ -33,7 +33,15 @@
                 <%= date.strftime("%d/%m/%Y - %H:%M") %>
               </ul>
             </td>
-            <td><%= link_to "Edit", {:controller => "dreams", :action => "edit", :id => dream.id}, :class => 'btn' %></td>
+            <td>
+              <div class="btn-group btn-group-vertical" style="margin: 0 auto 20px auto;">
+                <a class="btn" style="display:<%= (@is_valid && @secret_room)? 'none' : '' %>" href="dreams/changestatus/<%= dream.id %>/1/1"><img src="/img/star.png" alt="star" /> Special dreams</a>
+                <a class="btn" style="display:<%= (@is_valid && !@secret_room)? 'none' : '' %>" href="dreams/changestatus/<%= dream.id %>/1/0"><img src="/img/check.png" alt="ok" /> Accepted dreams</a>
+                <a class="btn" style="display:<%= (!@is_valid && !@secret_room)? 'none' : '' %>" href="dreams/changestatus/<%= dream.id %>/0/0"><img src="/img/delete.png" alt="delete" /> Unaccepted dreams</a>
+              </div>
+
+
+            </td>
             <td><%= button_to( 'Delete', dream, :confirm => 'Are you sure?', :method => :delete, :class => "btn btn-danger")%></td>
           </tr>
         <% end %>

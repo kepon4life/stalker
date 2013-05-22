@@ -6,6 +6,8 @@ StalkerBackend::Application.routes.draw do
   match '/dreams/tagwithcat', :controller => 'dreams', :action => 'tagWithCat'
   match '/dreams/tagDreamwithcat', :controller => 'dreams', :action => 'tagDreamWithCat'
 
+  match '/dreams/changestatus/:id/:valid/:secret_room', :controller => 'dreams', :action => 'changeStatus'
+
   match '/frontend/index', :controller =>"frontend", :action => "index"
   match '/frontend/save', :controller =>"frontend", :action => "save"
 

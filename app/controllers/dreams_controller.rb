@@ -60,6 +60,38 @@ class DreamsController < ApplicationController
     @dream = Dream.find(params[:id])
   end
 
+  def changeStatus
+
+    begin
+      dream = Dream.find(params[:id])
+
+      if(params[:valid] == "0" && params[:valid] == "1" && params[:secret_room] == "0" && params[:secret_room] == "1")
+        raise "params invalids"
+      end
+
+      if(params[:secret_room] == "1" && params[:valid] == "0")
+        raise "you can't do that dude!"
+      end
+      
+      dream.is_valid = params[:valid].to_i
+      dream.secret_room = params[:secret_room].to_i
+      dream.save
+
+      respond_to do |format|
+        flash[:success] = "Dream was successfully updated!"
+        format.html { redirect_to dreams_url }
+        format.json { head :no_content }
+      end
+
+      rescue => error
+        respond_to do |format|
+          flash[:error] = "Dream was not successfully updated! " + error.message
+          format.html { redirect_to dreams_url }
+          format.json { head :no_content }
+        end
+      end
+  end
+
 
 
   # GET /dreams/tag
