@@ -6,6 +6,7 @@ YUI.add("stalker-slider", function(Y) {
     YUI_config.stalkerbase = YUI_config.stalkerbase || "";
 
     var ALBUMPATH = YUI_config.stalkerbase + "data/pictures.json",
+            DREAMS_SERVICE_URL = window.location.origin + "/services/dreamssecretroom",
             SHADERPATH = YUI_config.stalkerbase + "shader/",
             PHONEDRAWPATH = window.location.origin + "/frontend/phonedraw.html",
             //TIME_FOR_FADING = 3 + 1, // 3 + 2
@@ -62,7 +63,8 @@ YUI.add("stalker-slider", function(Y) {
 
                 this.gohome();                                                  // Paricles should go to initial position
 
-                this.loadAlbum(ALBUMPATH);                                      // Load the album json final
+                //this.loadAlbum(ALBUMPATH);                                      // Load the album json final
+                this.loadAlbumFromService(DREAMS_SERVICE_URL);
                 this.renderCustomization();                                     // Render side panel
             });
         },
@@ -78,11 +80,20 @@ YUI.add("stalker-slider", function(Y) {
 
                 privateChannel.bind('client-myevent', Y.bind(function(data) {   // Dream received events
                     //$('#content').append('<img src="'+data.imgUrl+'"/>');
-                    dreamAlbum.splice(0, 1, {
-                        name: PATH_TO_DREAMS_SENDED + data.imgUrl,
-                        thumbnail_url: PATH_TO_DREAMS_SENDED + data.imgUrl,
-                        photo_url: PATH_TO_DREAMS_SENDED + data.imgUrl
-                    });
+                    if(dreamAlbum[0]["photo_url"].split("/")[2] == "sended"){
+                        dreamAlbum.splice(0, 1, {
+                            name: PATH_TO_DREAMS_SENDED + data.imgUrl,
+                            thumbnail_url: PATH_TO_DREAMS_SENDED + data.imgUrl,
+                            photo_url: PATH_TO_DREAMS_SENDED + data.imgUrl
+                        });
+                    }else{
+                        dreamAlbum.splice(0, 0, {
+                            name: PATH_TO_DREAMS_SENDED + data.imgUrl,
+                            thumbnail_url: PATH_TO_DREAMS_SENDED + data.imgUrl,
+                            photo_url: PATH_TO_DREAMS_SENDED + data.imgUrl
+                        });
+                    }
+                    
                     populateAlbum(dreamAlbum);
                     this.startSlideshow();
                 }, this));
@@ -129,6 +140,30 @@ YUI.add("stalker-slider", function(Y) {
                                 name: photo.url,
                                 thumbnail_url: YUI_config.stalkerbase + photo.url,
                                 photo_url: YUI_config.stalkerbase + photo.url
+                            });
+                        }
+                        populateAlbum(dreamAlbum);
+                        this.selectFirstPicture();
+                        this.startSlideshow();
+                    }
+                }
+            });
+        },
+        loadAlbumFromService: function(url) {
+            this.status('Loading album: ' + url);
+            Y.io(url, {
+                context: this,
+                on: {
+                    success: function(tId, e) {
+                        var photos = Y.JSON.parse(e.response);
+                        this.status(photos.length + " photos found.");
+
+                        for (var i = 0; i < photos.length; i++) {
+                            photo = photos[i]["file_name"];
+                            dreamAlbum.push({
+                                name: photo,
+                                thumbnail_url: PATH_TO_DREAMS_TREATED + photo,
+                                photo_url: PATH_TO_DREAMS_TREATED + photo
                             });
                         }
                         populateAlbum(dreamAlbum);

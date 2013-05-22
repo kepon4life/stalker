@@ -11,9 +11,8 @@ class DreamsController < ApplicationController
     @is_valid = true
 
     if(!params[:sort] && !params[:special] && !params[:valid])
-      puts "kikou on est làààààààà"
-      if(cookies[:sort] )
-        @sort = cookies[:sort]
+      if(cookies[:sort] && cookies[:sort] == "asc")
+        @sort = "asc"
       end
 
       if(cookies[:special] && cookies[:special] == "false")
@@ -46,13 +45,6 @@ class DreamsController < ApplicationController
         cookies[:valid] = true
       end  
     end
-
-    puts @sort
-    puts @secret_room
-    puts @secret_room  == "false"
-
-    puts @is_valid
-    
 
     @dreams = Dream.order("file_name "+@sort).where(:is_valid => @is_valid, :secret_room => @secret_room)
 
