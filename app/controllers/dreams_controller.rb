@@ -65,8 +65,12 @@ class DreamsController < ApplicationController
     begin
       dream = Dream.find(params[:id])
 
-      if(params[:valid] == "0" && params[:valid] == "1" && params[:secret_room] == "0" && params[:secret_room] == "1")
-        raise "params invalids"
+      if(params[:valid] != "0" && params[:valid] != "1")
+        raise "params invalids for validity"
+      end
+
+      if(params[:secret_room] != "0" && params[:secret_room] != "1")
+        raise "params invalids for secret room"
       end
 
       if(params[:secret_room] == "1" && params[:valid] == "0")
