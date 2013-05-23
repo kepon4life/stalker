@@ -46,7 +46,7 @@ class DreamsController < ApplicationController
       end  
     end
 
-    @dreams = Dream.order("file_name "+@sort).where(:is_valid => @is_valid, :secret_room => @secret_room)
+    @dreams = Kaminari.paginate_array(Dream.order("file_name "+@sort).where(:is_valid => @is_valid, :secret_room => @secret_room)).page(params[:page]).per(12)
 
     respond_to do |format|
       format.html # index.html.erb
