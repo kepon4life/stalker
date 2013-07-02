@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130419073456) do
+ActiveRecord::Schema.define(:version => 20130701151311) do
 
   create_table "categories", :force => true do |t|
     t.string   "name"
@@ -34,11 +34,11 @@ ActiveRecord::Schema.define(:version => 20130419073456) do
   add_index "categories_events", ["category_id", "event_id"], :name => "index_categories_events_on_category_id_and_event_id"
 
   create_table "dreams", :force => true do |t|
-    t.string   "file_name"
     t.boolean  "is_valid"
-    t.datetime "created_at",                     :null => false
-    t.datetime "updated_at",                     :null => false
-    t.boolean  "secret_room", :default => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+    t.binary   "metadatas"
+    t.boolean  "secret_room"
   end
 
   create_table "events", :force => true do |t|

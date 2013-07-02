@@ -46,7 +46,7 @@ class DreamsController < ApplicationController
       end  
     end
 
-    @dreams = Kaminari.paginate_array(Dream.order("file_name "+@sort).where(:is_valid => @is_valid, :secret_room => @secret_room)).page(params[:page]).per(12)
+    @dreams = Kaminari.paginate_array(Dream.order("id "+@sort).where(:is_valid => @is_valid, :secret_room => @secret_room)).page(params[:page]).per(12)
 
     respond_to do |format|
       format.html # index.html.erb
@@ -100,65 +100,60 @@ class DreamsController < ApplicationController
 
   # GET /dreams/tag
   # GET /dreams/tag.json
-  def tag
-    dirContent = Dir["public" + PATH_TO_DREAMS_UNTREATED + '*' + DREAM_EXTENSION].sort.reverse # PATH_TO_DREAMS & DREAM_EXTENSION : constant defined in config/initializers/constants.rb
-    
+  def tag    
+    dreamsNotTagged = Dream.where(:is_valid => nil, :secret_room => nil).all
 
     if(!cookies[:nbImgPerPage])
       cookies[:nbImgPerPage] = 12
     end
     @nbImgPerPage = cookies[:nbImgPerPage].to_i
-    @files = Kaminari.paginate_array(dirContent).page(params[:page]).per(@nbImgPerPage)
+    @dreams = Kaminari.paginate_array(dreamsNotTagged).page(params[:page]).per(@nbImgPerPage)
 
     respond_to do |format|
       format.html # tag.html.erb
-      format.json { render :json => @dream }
     end
   end
 
   # GET /dreams/tagwithcat
   # GET /dreams/tagwithcat.json
-  def tagWithCat
-    @categories = Category.all
-    @files = Dir["public" + PATH_TO_DREAMS_UNTREATED + '*' + DREAM_EXTENSION].sort.reverse # PATH_TO_DREAMS & DREAM_EXTENSION : constant defined in config/initializers/constants.rb
+  #def tagWithCat
+  #  @categories = Category.all
+  #  @files = Dir["public" + PATH_TO_DREAMS_UNTREATED + '*' + DREAM_EXTENSION].sort.reverse # PATH_TO_DREAMS & DREAM_EXTENSION : constant defined in config/initializers/constants.rb
 
-    respond_to do |format|
-      format.html # tag.html.erb
-      format.json { render :json => @dream }
-    end
-  end
+  #  respond_to do |format|
+  #    format.html # tag.html.erb
+  #    format.json { render :json => @dream }
+  #  end
+  #end
 
 
   def tagDream
+
     #render:json => {:file_name => params[:file_name], :is_valid => params[:is_valid], :category_ids => params[:category_ids]}
     datas = params[:images]
     dreams = Array.new
 
     datas.each do |data|
       if data[1] != "0" 
-        @dream = Dream.new(:file_name => data[0] + DREAM_EXTENSION)
-        if data[1] == "1"
-          @dream.is_valid = false
-        elsif data[1] == "2"
-          @dream.is_valid = true
-          @dream.secret_room = false
-        else
-          @dream.is_valid = true
-          @dream.secret_room = true
-        end
+        @dream = Dream.find(data[0])
+        if @dream
+          if data[1] == "1"
+            @dream.is_valid = false
+            @dream.secret_room = false
+          elsif data[1] == "2"
+            @dream.is_valid = true
+            @dream.secret_room = false
+          else
+            @dream.is_valid = true
+            @dream.secret_room = true
+          end
         
-        if @dream.save
-          dreams.push @dream
-          FileUtils.mv("public" + PATH_TO_DREAMS_UNTREATED + @dream.file_name , "public" + PATH_TO_DREAMS_TREATED + @dream.file_name)
+          if @dream.save
+            dreams.push @dream
+          end
         end
-
-
       end
     end
-
-
-    
-
 
     #@dream = Dream.new(:file_name => params[:file_name], :is_valid => params[:is_valid], :secret_room => params[:in_secret_room] )
     respond_to do |format|
@@ -166,19 +161,19 @@ class DreamsController < ApplicationController
     end
   end
 
-  def tagDreamWithCat
+  #def tagDreamWithCat
     #render:json => {:file_name => params[:file_name], :is_valid => params[:is_valid], :category_ids => params[:category_ids]}
 
-    @dream = Dream.new(:file_name => params[:file_name], :is_valid => params[:is_valid], :category_ids => params[:category_ids], :secret_room => params[:in_secret_room] )
-    respond_to do |format|
-      if @dream.save
-        FileUtils.mv("public" + PATH_TO_DREAMS_UNTREATED + @dream.file_name , "public" + PATH_TO_DREAMS_TREATED + @dream.file_name)
-        format.json { render :json => @dream, :status => :created, :location => @dream }
-      else
-        format.json { render :json => @dream.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
+  #  @dream = Dream.new(:file_name => params[:file_name], :is_valid => params[:is_valid], :category_ids => params[:category_ids], :secret_room => params[:in_secret_room] )
+  #  respond_to do |format|
+  #    if @dream.save
+  #      FileUtils.mv("public" + PATH_TO_DREAMS_UNTREATED + @dream.file_name , "public" + PATH_TO_DREAMS_TREATED + @dream.file_name)
+  #      format.json { render :json => @dream, :status => :created, :location => @dream }
+  #    else
+  #      format.json { render :json => @dream.errors, :status => :unprocessable_entity }
+  #    end
+  #  end
+  #end
 
 
 
@@ -207,9 +202,7 @@ class DreamsController < ApplicationController
   def destroy
     @dream = Dream.find(params[:id])
     @dream.destroy
-
-    FileUtils.remove_file("public" + PATH_TO_DREAMS_TREATED + @dream.file_name)
-
+    FileUtils.remove_file("public" + PATH_TO_DREAMS + @dream.id.to_s + DREAM_EXTENSION)
     respond_to do |format|
       flash[:success] = "Dream was successfully deleted!"
       format.html { redirect_to dreams_url }

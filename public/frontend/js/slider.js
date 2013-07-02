@@ -82,15 +82,15 @@ YUI.add("stalker-slider", function(Y) {
                     //$('#content').append('<img src="'+data.imgUrl+'"/>');
                     if(dreamAlbum[0]["photo_url"].split("/")[2] == "sended"){
                         dreamAlbum.splice(0, 1, {
-                            name: PATH_TO_DREAMS_SENDED + data.imgUrl,
-                            thumbnail_url: PATH_TO_DREAMS_SENDED + data.imgUrl,
-                            photo_url: PATH_TO_DREAMS_SENDED + data.imgUrl
+                            name: PATH_TO_DREAMS + data.imgUrl,
+                            thumbnail_url: PATH_TO_DREAMS + data.imgUrl,
+                            photo_url: PATH_TO_DREAMS + data.imgUrl
                         });
                     }else{
                         dreamAlbum.splice(0, 0, {
-                            name: PATH_TO_DREAMS_SENDED + data.imgUrl,
-                            thumbnail_url: PATH_TO_DREAMS_SENDED + data.imgUrl,
-                            photo_url: PATH_TO_DREAMS_SENDED + data.imgUrl
+                            name: PATH_TO_DREAMS + data.imgUrl ,
+                            thumbnail_url: PATH_TO_DREAMS + data.imgUrl,
+                            photo_url: PATH_TO_DREAMS + data.imgUrl
                         });
                     }
                     
@@ -159,11 +159,11 @@ YUI.add("stalker-slider", function(Y) {
                         this.status(photos.length + " photos found.");
 
                         for (var i = 0; i < photos.length; i++) {
-                            photo = photos[i]["file_name"];
+                            photo = photos[i]["id"];
                             dreamAlbum.push({
                                 name: photo,
-                                thumbnail_url: PATH_TO_DREAMS_TREATED + photo,
-                                photo_url: PATH_TO_DREAMS_TREATED + photo
+                                thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
+                                photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
                             });
                         }
                         populateAlbum(dreamAlbum);

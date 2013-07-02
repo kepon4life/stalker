@@ -24,13 +24,13 @@
       </thead>
       <tbody>
         <% @dreams.each do |dream| %>
+        <% puts dream.created_at.class %>
           <tr>
             <td>
-              <img class="dream" class src="<%= PATH_TO_DREAMS_TREATED + dream.file_name %>" alt="<%= dream.file_name %>" />
+              <img class="dream" class src="<%= PATH_TO_DREAMS + dream.id.to_s + DREAM_EXTENSION %>" alt="<%= dream.id.to_s %>" />
             <td>
               <ul>
-                <% date =  DateTime.strptime(dream.file_name.split(DREAM_EXTENSION)[0],'%s').in_time_zone(Time.zone) %>
-                <%= date.strftime("%d/%m/%Y - %H:%M") %>
+                <%= dream.created_at.to_s(:standard) %>
               </ul>
             </td>
             <td>

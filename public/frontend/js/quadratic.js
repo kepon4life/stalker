@@ -192,7 +192,7 @@ privateChannel.bind('pusher:subscription_error', function(status) {
         }
         //Envoie (bouton verre) --> Zone à redéfinir pour la mise en prod
         if( x*nw<(nw) && x*nw>(nw-200) && y*nh>160 && y*nh<320){
-            console.log('sended!') 
+            console.log('sended!');
             sendTosave();
 
         }
@@ -204,15 +204,15 @@ privateChannel.bind('pusher:subscription_error', function(status) {
     var compositeOperation;
 
     function sendTosave(){
-        
         drawColorBg();
         drawWhiteBg();
 
         $.ajax({
           type: 'POST',
           url: '/frontend/save',
-          data: {imgColor : imgBgColor, imgNormal : imgBgWhite},
+          data: {metadatas : "here metadatas", imgNormal : imgBgWhite},
           success: function(data){
+            console.log(data)
             triggered = privateChannel.trigger('client-myevent', data); 
                 clear();
             }

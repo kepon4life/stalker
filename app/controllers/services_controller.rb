@@ -1,7 +1,8 @@
 class ServicesController < ApplicationController  
 
 	def get_number_of_dreams_to_treat
-		render :json => {:nbImg => Dir["public" + PATH_TO_DREAMS_UNTREATED + '*' + DREAM_EXTENSION].count}, :callback => params[:callback]
+		dreams = Dream.where(:is_valid => nil, :secret_room => nil).all
+		render :json => {:nbImg => dreams.count}, :callback => params[:callback]
 	end
 
 	def get_dreams_for_event
@@ -27,7 +28,7 @@ class ServicesController < ApplicationController
 
 	def get_dreams_for_secret_room
 		dreams = Dream.where(:secret_room => true)
-		render:json => dreams.to_json(:only => [:file_name])
+		render:json => dreams.to_json(:only => [:id])
 	end
 
 
