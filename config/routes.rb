@@ -11,6 +11,7 @@ StalkerBackend::Application.routes.draw do
   match '/frontend/index', :controller =>"frontend", :action => "index"
   match '/frontend/save', :controller =>"frontend", :action => "save"
 
+  match '/simple_slider', :controller =>"frontend", :action => "simple_slider"
   match '/slider', :controller =>"frontend", :action => "slider"
   match '/draw', :controller => "frontend", :action => "draw"
   match '/drawsmartphone', :controller => "frontend", :action => "drawsmartphone"
