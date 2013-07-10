@@ -18,6 +18,11 @@ var effacerimg = document.getElementById('effacer');
 
 var controlPanelWidth = 200; // Largeur de la bande qui contient les boutons envoyer et effacer
 
+//Initialisation du screen-saver
+var timerId = null;    
+$('#screen-saver').hide();
+$('#asd').trigger('pause');
+
 $(document).ready(function(){
     nw = window.innerWidth;
     nh = window.innerHeight;
@@ -100,6 +105,17 @@ privateChannel.bind('pusher:subscription_error', function(status) {
     //Tuio.cursor_update == déplacement du doigts sur la surface
     tuio.cursor_update(function(data) {
         initControls();
+        $('div#draw-tool').show();
+        $('#screen-saver').hide();
+        $('#asd').trigger('pause');
+       
+       clearTimeout(timerId);
+
+        timerId = setTimeout(function(){
+            $('div#draw-tool').fadeOut('slow');
+            $('#screen-saver').fadeIn();
+            $('#asd').trigger('play');
+        }, 2000);
         
         //Pour chaque doigts on détecte son déplacement
         for (var i = 0; i < tuio.cursors.length; i++){

@@ -1,8 +1,5 @@
 <% @title="Stalker - Simple Slider" %>
-
-<h1>HELLLLLOOO</h1>
-<ul>
-	<% @dreams.each do |dream| %>
-		<li><%= dream.id %></li>
-	<% end %>
-</ul>
+<% content_for :javascript_includes_in_head do %>
+	<%= javascript_include_tag "/frontend/js/libs/jquery-1.8.3.min.js" %>
+  	<%= javascript_include_tag "/frontend/js/simple_slider.js" %>
+<% end %>

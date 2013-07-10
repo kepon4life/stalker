@@ -11,14 +11,6 @@ class FrontendController < ApplicationController
 	
 
 	def simple_slider
-		special_dreams = Dream.where(:is_valid => true, :secret_room => true).order("created_at DESC").limit(50)
-
-		normal_dreams = Dream.where(:is_valid => true, :secret_room => false).order("created_at DESC").limit(50-special_dreams.count)
-		
-		@dreams = special_dreams + normal_dreams
-
-		@dreams = @dreams.shuffle
-
 		respond_to do |format|
 			format.html
 		end

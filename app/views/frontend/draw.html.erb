@@ -8,9 +8,16 @@
   <%= javascript_include_tag "/frontend/js/libs/pusher.min.js" %>
   <%= javascript_include_tag "/frontend/js/quadratic.js" %>
 <% end %>
+<div id="draw-tool">
 
-<!--<h1>Test d'envoi</h1>-->
 <canvas id="mycanvas"></canvas>
 <!--<canvas id="mycanvasbis" width="600" height="600"></canvas>-->
 <img class="controls" id="envoyer" src="/frontend/img/envoyer.png" />
-<img class="controls" id="effacer" src="/frontend/img/effacer.png" />
+<img class="controls" id="effacer" src="/frontend/img/effacer.png" /></div>
+
+<div id="screen-saver">    
+	<video id="asd" width="320" height="240"  loop="true">
+	    <source src="http://www.w3schools.com/html/movie.mp4" type="video/mp4" />
+	    <source src="http://www.w3schools.com/html/movie.ogg" type="video/ogg" />
+	</video>
+</div>
