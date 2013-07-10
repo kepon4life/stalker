@@ -1,54 +1,76 @@
-
+var FADINTIME = 2000;
+var FADEOUTTIME = 2000;
+var PICTURETIME = 3000;
 $(document).ready(function() {
 
   init();
 
   function init(){
     $("img").remove();
-    $("body").append("<img id='img1' src='img1.png'style='display: none;'/>");
-    var idImgToDisplay=1;
-    $("img").hide();
-    displayImg(idImgToDisplay);
+    loadingFirstImg();
   }
 
-  function displayImg(idImg){
-    $("#img"+idImg).fadeIn(2000,function(){
-    loadingNextImg(idImg);
-    });
+  function loadingFirstImg(){
+    var idImg = -1;
+    var isLoaded = false;
+    $.ajax({
+      url:"/services/dreamforsimpleslider",
+      data: {id: 0},
+      success: function(idNextImgToDisplay){
+          idImg = idNextImgToDisplay.id;
+          $("body").append("<img id='"+idNextImgToDisplay.id+"' src='/dreams/"+idNextImgToDisplay.id+".png' style='display: none;'/>");
+      },
+      error: function(msg){
+        console.log(msg)
+      }
+    }).done(function(){
+      var src = "/dreams/"+idImg+".png";
+      waitingForLoading(src,function(){
+        $("#"+idImg).fadeIn(FADINTIME,function(){
+          setTimeout(function(){
+            loadingNextImg(idImg)
+          },PICTURETIME)
+        })
+      })
+    }
+    )
+  }
+
+  function waitingForLoading(src, callback){
+      var firstImg = new Image();
+      firstImg.onload = callback;
+      firstImg.src = src;
   }
 
   function loadingNextImg(idImgDisplayed){
     var idNextImg = -1;
-    var isLoaded = false;
     $.ajax({
-      url:"treatment.php",
-      data: {idImgDisplayed: idImgDisplayed},
+      url:"/services/dreamforsimpleslider",
+      data: {id: idImgDisplayed},
       success: function(idNextImgToDisplay){
-          $("body").append("<img id='img"+idNextImgToDisplay+"' src='img"+idNextImgToDisplay+".png' style='display: none;'/>");
-          $("#img"+idNextImgToDisplay).bind("load",function(){
-            idNextImg = idNextImgToDisplay;
-            isLoaded = true;
+          $("body").append("<img id='"+idNextImgToDisplay.id+"' src='/dreams/"+idNextImgToDisplay.id+".png' style='display: none;'/>");
+          $("#"+idNextImgToDisplay.id).bind("load",function(){
+            idNextImg = idNextImgToDisplay.id; // Allow as well to know if the picture is loaded
           })
       },
       error: function(msg){
         console.log(msg)
       }
     }).done(setTimeout(function(){
-      if(isLoaded){
-        isLoaded = false;
-        fadeout(idImgDisplayed,idNextImg);
-      }else{
-        console.log("error")
-        init();
-      }
-    },3000))
+      fadeout(idImgDisplayed,idNextImg);
+    },PICTURETIME))
   }
 
-  function fadeout(idLastImg, idNextImg){
-    $("#img"+idLastImg).fadeOut(2000,function(){
-      console.log("remove "+idLastImg)
-      $("#img"+idLastImg).remove();
-      displayImg(idNextImg);
+  function fadeout(idLastImg, idImgToDisplay){
+    $("#"+idLastImg).fadeOut(FADEOUTTIME,function(){
+      $("#"+idLastImg).remove();
+      if(idImgToDisplay<0){ // An idImgToDisplay negative means that the next image is not loaded
+        init();
+      }else{
+        $("#"+idImgToDisplay).fadeIn(FADINTIME,function(){
+        loadingNextImg(idImgToDisplay);
+        });
+      }
     })
   }
 });
