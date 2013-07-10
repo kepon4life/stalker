@@ -27,5 +27,6 @@ StalkerBackend::Application.routes.draw do
   match '/services/dreamsevent', :controller => 'services', :action => 'get_dreams_for_event'
   match '/services/categories', :controller => 'services', :action => 'get_categories'
   match '/services/dreamssecretroom' , :controller => 'services', :action => 'get_dreams_for_secret_room'
+  match '/services/dreamforsimpleslider' , :controller => 'services', :action => 'get_dream_for_simple_slider'
   
 end
