@@ -6,7 +6,7 @@ YUI.add("stalker-slider", function(Y) {
     YUI_config.stalkerbase = YUI_config.stalkerbase || "";
 
     var ALBUMPATH = YUI_config.stalkerbase + "data/pictures.json",
-            DREAMS_SERVICE_URL = window.location.origin + "/services/dreamssecretroom",
+            DREAMS_SERVICE_URL = window.location.origin + "/services/dreamsvalidated",
             SHADERPATH = YUI_config.stalkerbase + "shader/",
             PHONEDRAWPATH = window.location.origin + "/drawsmartphone",
             //TIME_FOR_FADING = 3 + 1, // 3 + 2
