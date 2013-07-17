@@ -7,7 +7,7 @@ class ServicesController < ApplicationController
 
 	def get_dreams_validated
 		dreams = Dream.where(:is_valid => true)
-		render:json => dreams.to_json(:only => [:id])
+		render :json => dreams.to_json(:only => [:id])
 	end
 
 	def get_dream_for_simple_slider
@@ -18,9 +18,9 @@ class ServicesController < ApplicationController
 		end
 
 		if dream == nil
-			render:json => nil
+			render :json => nil
 		else
-			render:json => dream.to_json(:only => [:id])
+			render :json => dream.to_json(:only => [:id])
 		end
 
 	end
@@ -45,12 +45,12 @@ class ServicesController < ApplicationController
 			end
 		end
 
-		render:json => dreams.to_json(:only => [:file_name])
+		render :json => dreams.to_json(:only => [:file_name])
 	end
 
 	def get_dreams_for_secret_room
 		dreams = Dream.where(:secret_room => true)
-		render:json => dreams.to_json(:only => [:id])
+		render :json => dreams.to_json(:only => [:id])
 	end
 
 
@@ -62,7 +62,7 @@ class ServicesController < ApplicationController
 			c = category.name
 			cat[category.id] = c
 		end
-		render:json => cat
+		render :json => cat
 	end
 
 
