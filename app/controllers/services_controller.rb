@@ -5,6 +5,11 @@ class ServicesController < ApplicationController
 		render :json => {:nbImg => dreams.count}, :callback => params[:callback]
 	end
 
+	def get_dreams_validated
+		dreams = Dream.where(:is_valid => true)
+		render:json => dreams.to_json(:only => [:id])
+	end
+
 	def get_dream_for_simple_slider
 
 		dream = Dream.find(:first, :conditions => ["is_valid = ? AND id > " + params[:id], true, ])
