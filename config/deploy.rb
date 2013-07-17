@@ -32,9 +32,8 @@ namespace :vlad do
 
   desc "Add simlink for dreams folders"
   remote_task :add_simlink_to_dreams_folders do
-    run "ln -s #{shared_path}/dreams/treated/ #{current_path}/public/dreams/treated"
-    run "ln -s #{shared_path}/dreams/untreated/ #{current_path}/public/dreams/untreated"
-    run "ln -s #{shared_path}/dreams/sended/ #{current_path}/public/dreams/sended"
+    run "ln -s #{shared_path}/dreams/ #{current_path}/public/dreams"
+    run "ln -s #{shared_path}/dreams-small/ #{current_path}/public/dreams-small"
   end
 
   desc "Full deployment cycle"
