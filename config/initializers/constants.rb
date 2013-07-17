@@ -1,4 +1,4 @@
-
+PATH_TO_DREAMS_THUMBNAILS = "/dreams-small/"
 PATH_TO_DREAMS = "/dreams/"
 DREAM_EXTENSION = ".png"
 DREAM_EXTENSION_REGEX = /^[A-Z0-9_-]+.(png)$/i

@@ -16,6 +16,7 @@
 
 # Ignore dreams
 /public/dreams/*.png
+/public/dreams-small/*.png
 
 # OS generated files 
 .DS_Store*
