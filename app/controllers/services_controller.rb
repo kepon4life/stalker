@@ -7,7 +7,7 @@ class ServicesController < ApplicationController
 
 	def get_dreams_validated
 		dreams = Dream.where(:is_valid => true)
-		render:json => dreams.to_json(:only => [:id])
+		render:json => dreams.to_json(:only => [:id,:created_at])
 	end
 
 	def get_dream_for_simple_slider

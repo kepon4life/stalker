@@ -728,11 +728,20 @@ YUI.add("stalker-slider", function(Y) {
                   if(!(curValues[1] instanceof Date)){
                     curValues[1] = new Date(curValues[1])
                   }
-                  var tooltipOne = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[0].getDate() + "/" + ((curValues[0].getMonth())+1) + "/" + curValues[0].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
-                  var tooltipTwo = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[1].getDate() + "/" + ((curValues[1].getMonth())+1) + "/" + curValues[1].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
+                  
+                  if(typeof ui.handle ==="undefined"){
+                    var tooltipOne = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[0].getDate() + "/" + ((curValues[0].getMonth())+1) + "/" + curValues[0].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
+                    var tooltipTwo = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[1].getDate() + "/" + ((curValues[1].getMonth())+1) + "/" + curValues[1].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
+                  }else{
+                    var tooltipOne = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[0].getDate() + "/" + ((curValues[0].getMonth())+1) + "/" + curValues[0].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
+                    var tooltipTwo = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[1].getDate() + "/" + ((curValues[1].getMonth())+1) + "/" + curValues[1].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';              
+                  }
+
 
                   $('.ui-slider-handle').first().html(tooltipOne); //attach tooltip to the slider handle
                   $('.ui-slider-handle').last().html(tooltipTwo); //attach tooltip to the slider handle
+
+                  
                 }
 
                 $("#slider-dreams").slider({
@@ -742,7 +751,9 @@ YUI.add("stalker-slider", function(Y) {
                   min: initialDateValinMs,
                   max: currentDateinMs,
                   create: sliderTooltip,
-                  slide: sliderTooltip
+                  slide: sliderTooltip,
+                  start: function(e,ui){$(ui.handle).toggleClass("classA")},
+                  stop: function(e,ui){$(ui.handle).toggleClass("classA")}
                 });
          },
 
@@ -1025,6 +1036,7 @@ YUI.add("stalker-slider", function(Y) {
         }
         $('#preview-strip').append(ul);
         function createThumbnail(photo_album, index) {
+            
             var info = photo_album[index],
                     name = info.name,
                     thumbnail_url = info.thumbnail_url,

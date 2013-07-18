@@ -6,14 +6,14 @@
     font-size: 11px;
     visibility: visible;
     margin-top: -2px;
-    bottom:0;
+    bottom:-8px;
     margin-left: 2em;
 }
 
 .handle-tooltip .handle-tooltip-arrow {
     bottom: 30%;
     left: 0;
-    border-right: 5px solid #000000;
+    border-right: 5px solid rgba(255, 255, 255, 0.6);
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
     position: absolute;
@@ -24,10 +24,9 @@
 .handle-tooltip-inner {
     max-width: 200px;
     padding: 3px 8px;
-    color: #ffffff;
     text-align: center;
     text-decoration: none;
-    background-color: #000000;
+    background-color: rgba(255, 255, 255, 0.6);
     -webkit-border-radius: 4px;
        -moz-border-radius: 4px;
             border-radius: 4px;
@@ -37,4 +36,9 @@
 #slider-dreams{
     position: fixed;
     margin-left: 205px;
+    margin-top: 22px;
+}
+.classA{
+    color:red !important;
+    z-index: 12000 !important;
 }
