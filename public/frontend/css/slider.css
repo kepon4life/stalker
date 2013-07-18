@@ -68,16 +68,15 @@ html {
     display: none;
 }
 #sink #preview-strip {
-    width: 100%;
+    width: 20%;
     overflow: hidden;
     position: fixed;
     z-index: 13;
     bottom: 0;
     left: 0;
-    text-align: center;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(155, 0, 0, 0.5);
     white-space: nowrap;
-    height: 96px;
+    height: 100%;
     border-top: 2px solid rgba(255, 255, 255, 0.8);
     -webkit-transition: all 0.2s ease-out;
     -moz-transition: all 0.2s ease-out;
@@ -94,6 +93,7 @@ html {
     display: inline-block;
     position: relative;
     padding: 0;
+    margin: 0;
     -moz-opacity: 0.8;
     -khtml-opacity: 0.8;
     -webkit-opacity: 0.8;
@@ -282,4 +282,10 @@ a:hover {
     position: fixed;
     right: 180px;
     top: 15px;
+}
+
+/*ABG*/
+
+#nav-bar{
+    display: none;
 }

@@ -979,7 +979,7 @@ YUI.add("stalker-slider", function(Y) {
             }
             return true;
         }
-        $('#preview-strip').html(ul);
+        $('#preview-strip').prepend(ul);
         function createThumbnail(photo_album, index) {
             var info = photo_album[index],
                     name = info.name,

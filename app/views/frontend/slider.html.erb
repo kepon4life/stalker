@@ -1,6 +1,7 @@
 <% @title="Stalker - Slider" %>
 <% content_for :stylesheet_includes do %>
-  <%= stylesheet_link_tag '/frontend/css/slider.css'  %>
+<%= stylesheet_link_tag '/frontend/css/slider.css'  %>
+  <%= stylesheet_link_tag '/frontend/css/iThing-min.css'  %>
 <% end %>
 <% content_for :javascript_includes_in_head do %>
   <script>window["_GOOG_TRANS_EXT_VER"] = "1";</script>
@@ -12,6 +13,9 @@
     <!--<script src="http://yui.yahooapis.com/3.9.0/build/yui/yui-min.js"></script>-->
     <%= javascript_include_tag "/frontend/js/libs/yui3/build/yui/yui-min.js" %>
     <%= javascript_include_tag "/frontend/js/libs/inputex/src/loader.js" %>
+    <%= javascript_include_tag "/frontend/js/libs/jquery-1.8.3.min.js"%>
+    <%= javascript_include_tag "/frontend/js/libs/jquery-ui-1.8.16.custom.min.js"%>
+    <%= javascript_include_tag "/frontend/js/libs/jQDateRangeSlider-min.js"%>
     <script src="http://js.pusher.com/1.12/pusher.min.js"></script>
 
     <%= javascript_include_tag "/frontend/js/slider.js" %>
@@ -36,6 +40,7 @@
                                 particleSize: 13  // default: 10
                             });
                     slider.render();                                        // Render slider
+                     $("#slider").dateRangeSlider();
                 } else {
                     Y.one('.loading').hide();
                     Y.one('.fail').show();
@@ -67,5 +72,6 @@
         <div id="status"></div>
     </div>
     <div id="preview-image"></div>
-    <div id="preview-strip"><!-- prev next --></div>
+    <div id="preview-strip"><div id="slider"></div></div>
+    
 </div>
