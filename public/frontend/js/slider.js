@@ -1002,10 +1002,7 @@ YUI.add("stalker-slider", function(Y) {
             if (toMove)
                 strip.scrollLeft(strip.scrollLeft() + toMove);
         }
-        strip.on('mousemove', mousemove).on('mouseover', function(e) {
-            laste = e;
-            autofire = setInterval(mousemove, 25);
-        }).on('mouseout', function(e) {
+        strip.on('mouseout', function(e) {
             clearInterval(autofire);
         }).on('scroll', function(e) {
             checks();
