@@ -66,6 +66,7 @@ YUI.add("stalker-slider", function(Y) {
                 //this.loadAlbum(ALBUMPATH);                                      // Load the album json final
                 this.loadAlbumFromService(DREAMS_SERVICE_URL);
                 this.renderCustomization();                                     // Render side panel
+                this.renderSliderRangeForDreams();
             });
         },
         /**
@@ -703,6 +704,49 @@ YUI.add("stalker-slider", function(Y) {
             fboParticles.renderToTexture(rtTexturePos, generatedTexturePos);
         },
         // ***************************
+        // *** SLIDER RANGE ***
+        // ***************************
+        /**
+         *
+         */
+
+         renderSliderRangeForDreams: function() {
+                var initialDate =new Date(); // Start date of exhibition
+                initialDate.setFullYear(2013,4,11);
+                var initialDateValinMs = initialDate.getTime();
+
+                var currentDate = new Date()
+                var currentDateinMs = currentDate.getTime();
+
+                var initialValues = [initialDateValinMs, currentDateinMs];
+                var initialValuesDates = [new Date(initialDateValinMs),new Date(currentDateinMs)];
+                var sliderTooltip = function(event, ui) {
+                  var curValues = ui.values || initialValuesDates; // current value (when sliding) or initial value (at start)
+                  if(!(curValues[0] instanceof Date)){
+                    curValues[0] = new Date(curValues[0])
+                  }
+                  if(!(curValues[1] instanceof Date)){
+                    curValues[1] = new Date(curValues[1])
+                  }
+                  var tooltipOne = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[0].getDate() + "/" + ((curValues[0].getMonth())+1) + "/" + curValues[0].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
+                  var tooltipTwo = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[1].getDate() + "/" + ((curValues[1].getMonth())+1) + "/" + curValues[1].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
+
+                  $('.ui-slider-handle').first().html(tooltipOne); //attach tooltip to the slider handle
+                  $('.ui-slider-handle').last().html(tooltipTwo); //attach tooltip to the slider handle
+                }
+
+                $("#slider-dreams").slider({
+                  values: initialValues,
+                  orientation: "vertical",
+                  range: true,
+                  min: initialDateValinMs,
+                  max: currentDateinMs,
+                  create: sliderTooltip,
+                  slide: sliderTooltip
+                });
+         },
+
+        // ***************************
         // *** CUSTOMIZATION PANEL ***
         // ***************************
         /**
@@ -979,7 +1023,7 @@ YUI.add("stalker-slider", function(Y) {
             }
             return true;
         }
-        $('#preview-strip').prepend(ul);
+        $('#preview-strip').append(ul);
         function createThumbnail(photo_album, index) {
             var info = photo_album[index],
                     name = info.name,

@@ -1,0 +1,40 @@
+.handle-tooltip {
+    position: absolute;
+    z-index: 1020;
+    display: block;
+    padding: 5px;
+    font-size: 11px;
+    visibility: visible;
+    margin-top: -2px;
+    bottom:0;
+    margin-left: 2em;
+}
+
+.handle-tooltip .handle-tooltip-arrow {
+    bottom: 30%;
+    left: 0;
+    border-right: 5px solid #000000;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+.handle-tooltip-inner {
+    max-width: 200px;
+    padding: 3px 8px;
+    color: #ffffff;
+    text-align: center;
+    text-decoration: none;
+    background-color: #000000;
+    -webkit-border-radius: 4px;
+       -moz-border-radius: 4px;
+            border-radius: 4px;
+}
+.ui-slider a {outline:none;} /* discard the border when you click on the handle's slider */
+.ui-slider-vertical {height: 300px;}
+#slider-dreams{
+    position: fixed;
+    margin-left: 205px;
+}
