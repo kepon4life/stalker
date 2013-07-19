@@ -68,8 +68,8 @@ html {
     display: none;
 }
 #sink #preview-strip {
-    width: 230px;
-    overflow: hidden;
+    width: 195px;
+    overflow: scroll;
     position: fixed;
     z-index: 13;
     bottom: 0;

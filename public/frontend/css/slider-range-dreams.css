@@ -42,3 +42,6 @@
     color:red !important;
     z-index: 12000 !important;
 }
+.even-display{
+    clear: left;
+}

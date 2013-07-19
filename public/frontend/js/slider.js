@@ -66,7 +66,7 @@ YUI.add("stalker-slider", function(Y) {
                 //this.loadAlbum(ALBUMPATH);                                      // Load the album json final
                 this.loadAlbumFromService(DREAMS_SERVICE_URL);
                 this.renderCustomization();                                     // Render side panel
-                this.renderSliderRangeForDreams();
+                                this.renderSliderRangeForDreams();
             });
         },
         /**
@@ -755,6 +755,15 @@ YUI.add("stalker-slider", function(Y) {
                   start: function(e,ui){$(ui.handle).toggleClass("classA")},
                   stop: function(e,ui){$(ui.handle).toggleClass("classA")}
                 });
+
+
+                /*$('#preview-strip').niceScroll({
+                });*/
+                
+                   /* $('#preview-strip').enscroll();*/
+
+                
+
          },
 
         // ***************************
@@ -981,7 +990,12 @@ YUI.add("stalker-slider", function(Y) {
 
     function populateAlbum(the_album) {
         photo_album = the_album;
-        var ul = $('<ul />');
+        var ul = $('<ul class="dreamslist" />');
+        var uli = $('#dreamslist');
+        var elements = document.getElementsByClassName("dreamslist");
+        console.log(ul)
+        console.log(uli)
+        console.log(elements)
         var strip = $('#preview-strip');
         var autofire;
         var laste;
@@ -1045,7 +1059,13 @@ YUI.add("stalker-slider", function(Y) {
             if (name) {
                 img.alt = name;
             }
-            var li = $('<li />').append(img);
+            if(index % 2 === 0 && index !=6){
+                var li = $('<li class="even-display"  />').append(img);
+            }else{
+                if(index !=6){var li = $('<li />').append(img)};
+                    if(index ==6){var li = $('<li id="vlop" class="even-display"/>').append(img)};
+            }
+            
             li[0].info = photo_album[index];
             ul.append(li);
             li.hover(function(e) {
@@ -1090,6 +1110,14 @@ YUI.add("stalker-slider", function(Y) {
         for (var i = 0; i < photo_album.length; i++) {
             createThumbnail(photo_album, i);
         }
+        $('.dreamslist').waypoint({
+                  context: "#preview-strip",
+                  offset: "bottom-in-view",
+                  handler: function(direction) {
+                    console.log(direction)
+                  }
+                });
+
         checks();
     }
 
