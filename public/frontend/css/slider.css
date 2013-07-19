@@ -69,7 +69,7 @@ html {
 }
 #sink #preview-strip {
     width: 195px;
-    overflow: scroll;
+    overflow: auto;
     position: fixed;
     z-index: 13;
     bottom: 0;

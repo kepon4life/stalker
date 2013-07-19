@@ -757,10 +757,11 @@ YUI.add("stalker-slider", function(Y) {
                 });
 
 
-                /*$('#preview-strip').niceScroll({
-                });*/
-                
-                   /* $('#preview-strip').enscroll();*/
+                $('#preview-strip').enscroll({
+                    showOnHover: true,
+                    verticalTrackClass: 'track3',
+                    verticalHandleClass: 'handle3'
+                });
 
                 
 
