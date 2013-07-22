@@ -56,7 +56,7 @@ YUI.add("stalker-slider", function(Y) {
 
             this.loadShaders(function() {                                       // After shaders are retrieved
                 this.initScene();                                               // Init Webgl scene
-                this.animate();                                                 // Start animation
+                //this.animate();                                                 // Start animation
 
                 start = Date.now();                                             // Set noicse animation start time
                 last = start;                                                   // Activate explosion
@@ -66,7 +66,7 @@ YUI.add("stalker-slider", function(Y) {
                 //this.loadAlbum(ALBUMPATH);                                      // Load the album json final
                 this.loadAlbumFromService(DREAMS_SERVICE_URL);
                 this.renderCustomization();                                     // Render side panel
-                                this.renderSliderRangeForDreams();
+                this.renderSliderRangeForDreams();
             });
         },
         /**
@@ -1048,7 +1048,7 @@ YUI.add("stalker-slider", function(Y) {
         }
         $('#preview-strip').append(ul);
         function createThumbnail(photo_album, index) {
-            
+            console.log("Function createThumbnail")
             var info = photo_album[index],
                     name = info.name,
                     thumbnail_url = info.thumbnail_url,
@@ -1108,14 +1108,28 @@ YUI.add("stalker-slider", function(Y) {
                 t.css('top', (80 - h) / 2 + 'px');
             });
         }
-        for (var i = 0; i < photo_album.length; i++) {
-            createThumbnail(photo_album, i);
-        }
+        nbThumbnailToLoad = 10;
+        nbThumbnail = photo_album.length;
+        indexThumbnail = 0;
+
         $('.dreamslist').waypoint({
                   context: "#preview-strip",
                   offset: "bottom-in-view",
                   handler: function(direction) {
-                    console.log(direction)
+                    if(direction=="down"){
+                        console.log("WAYPOINT")
+                    $('.dreamslist').waypoint("disable")
+                    if((indexThumbnail+nbThumbnailToLoad) > photo_album.length){
+                        nbThumbnailToLoad = (photo_album.length-indexThumbnail);
+                    }
+                    for (var i = 0; i < nbThumbnailToLoad; i++) {
+                    createThumbnail(photo_album, indexThumbnail+i);}
+                    }
+                    indexThumbnail = indexThumbnail+nbThumbnailToLoad;
+                    if(indexThumbnail < photo_album.length){
+                        $('.dreamslist').waypoint("enable")
+                    }
+                    
                   }
                 });
 
