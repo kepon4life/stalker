@@ -175,17 +175,27 @@ YUI.add("stalker-slider", function(Y) {
                 }
             });
         },
-        loadAlbumByDate: function() {
-            if(jsonPhotos!= null || "undefined"){ 
+        loadAlbumByDate: function(dates) {
+            if(jsonPhotos!= null || "undefined"){
+                var startDate = dates[0];
+                var endDate = dates[1];
+                console.log("start date "+startDate); 
                 var photos = jsonPhotos;
                 dreamAlbum =[];
                 for (var i = 0; i < photos.length; i++) {
+                            var a = photos[i];
+                            var datePhoto = new Date(a.created_at);
+                            var datePhoto = datePhoto.getTime();
+                            
                             photo = photos[i]["id"];
-                            dreamAlbum.push({
-                                name: photo,
-                                thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
-                                photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
-                            });
+
+                            if(datePhoto>dates[0] && datePhoto<dates[1]){
+                                dreamAlbum.push({
+                                    name: photo,
+                                    thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
+                                    photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
+                                });
+                            }
                         }
                 populateAlbum(dreamAlbum);
                 this.selectFirstPicture();
@@ -728,31 +738,28 @@ YUI.add("stalker-slider", function(Y) {
          */
 
          renderSliderRangeForDreams: function() {
-                var initialDate =new Date(); // Start date of exhibition
-                initialDate.setFullYear(2013,4,11);
+                //We use the date in MS to deal with the date comparison
+                var initialDate =new Date(); 
+                initialDate.setFullYear(2013,4,11); // Start date of exhibition
                 var initialDateValinMs = initialDate.getTime();
 
                 var currentDate = new Date()
                 var currentDateinMs = currentDate.getTime();
 
-                var initialValues = [initialDateValinMs, currentDateinMs];
+                var initialValues = [initialDateValinMs, currentDateinMs]; // Value to init the slider
                 var initialValuesDates = [new Date(initialDateValinMs),new Date(currentDateinMs)];
                 var sliderTooltip = function(event, ui) {
                   var curValues = ui.values || initialValuesDates; // current value (when sliding) or initial value (at start)
-                  if(!(curValues[0] instanceof Date)){
+                  if(!(curValues[0] instanceof Date)){ // if curValues are not instances of Date they should be in MS (int). We have to convert it in Date format to display it on the slider.
+                    console.log(curValues[0])
                     curValues[0] = new Date(curValues[0])
                   }
                   if(!(curValues[1] instanceof Date)){
                     curValues[1] = new Date(curValues[1])
                   }
                   
-                  if(typeof ui.handle ==="undefined"){
-                    var tooltipOne = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[0].getDate() + "/" + ((curValues[0].getMonth())+1) + "/" + curValues[0].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
-                    var tooltipTwo = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[1].getDate() + "/" + ((curValues[1].getMonth())+1) + "/" + curValues[1].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
-                  }else{
-                    var tooltipOne = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[0].getDate() + "/" + ((curValues[0].getMonth())+1) + "/" + curValues[0].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
-                    var tooltipTwo = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[1].getDate() + "/" + ((curValues[1].getMonth())+1) + "/" + curValues[1].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';              
-                  }
+                var tooltipOne = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[0].getDate() + "/" + ((curValues[0].getMonth())+1) + "/" + curValues[0].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
+                var tooltipTwo = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[1].getDate() + "/" + ((curValues[1].getMonth())+1) + "/" + curValues[1].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
 
 
                   $('.ui-slider-handle').first().html(tooltipOne); //attach tooltip to the slider handle
@@ -769,10 +776,10 @@ YUI.add("stalker-slider", function(Y) {
                   max: currentDateinMs,
                   create: sliderTooltip,
                   slide: sliderTooltip,
-                  start: function(e,ui){$(ui.handle).toggleClass("classA")},
+                  start: function(e,ui){$(ui.handle).toggleClass("moveHandle")}, // This class allow to display the moved handler over the other handle
                   stop: function(e,ui){
-                    $(ui.handle).toggleClass("classA");
-                    Y.Stalker.slider.loadAlbumByDate();
+                    $(ui.handle).toggleClass("moveHandle");
+                    Y.Stalker.slider.loadAlbumByDate(ui.values);
                 }
               });
 
@@ -1125,16 +1132,15 @@ YUI.add("stalker-slider", function(Y) {
             });
         }
 
-        nbThumbnailToLoad = 15;
-        indexThumbnail = 0;
+        nbThumbnailToLoad = 15; // number of thumbnail loaded at the beginning
+        indexThumbnail = 0; // useful to know which thumbnail (index) was the last thumnail loaded
         $('.dreamslist').waypoint({
           context: "#preview-strip",
-          offset: "bottom-in-view",
+          offset: "bottom-in-view", // waypoint is triggered when the bottom of .dreamslist is in view in the viewport
           handler: function(direction) {
-            if(direction=="down"){
-                console.log("WAYPOINT")
-                $('.dreamslist').waypoint("disable")
-                if((indexThumbnail+nbThumbnailToLoad) > photo_album.length){
+            if(direction=="down"){  // we must load the next thumbnail only if the user is scrolling down
+                $('.dreamslist').waypoint("disable") // Allow to load dynamically the next thumbnails into .dreamslist. Then the waypoint will be enabled again.
+                if((indexThumbnail+nbThumbnailToLoad) > photo_album.length){ // Useful when we have less thumbnails to load than nbThumbnailToLoad
                     nbThumbnailToLoad = (photo_album.length-indexThumbnail);
                 }
                 for (var i = 0; i < nbThumbnailToLoad; i++) {
