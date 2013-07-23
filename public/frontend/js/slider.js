@@ -13,6 +13,7 @@ YUI.add("stalker-slider", function(Y) {
             timeoutExplosion,
             slideshow_running = false,
             slideshow_timer,
+            jsonPhotos,
             dreamAlbum = [],
             strip_width,
             photo_album,
@@ -158,7 +159,7 @@ YUI.add("stalker-slider", function(Y) {
                     success: function(tId, e) {
                         var photos = Y.JSON.parse(e.response);
                         this.status(photos.length + " photos found.");
-
+                        jsonPhotos=photos;
                         for (var i = 0; i < photos.length; i++) {
                             photo = photos[i]["id"];
                             dreamAlbum.push({
@@ -173,6 +174,23 @@ YUI.add("stalker-slider", function(Y) {
                     }
                 }
             });
+        },
+        loadAlbumByDate: function() {
+            if(jsonPhotos!= null || "undefined"){ 
+                var photos = jsonPhotos;
+                dreamAlbum =[];
+                for (var i = 0; i < photos.length; i++) {
+                            photo = photos[i]["id"];
+                            dreamAlbum.push({
+                                name: photo,
+                                thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
+                                photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
+                            });
+                        }
+                populateAlbum(dreamAlbum);
+                this.selectFirstPicture();
+                this.startSlideshow();
+            }
         },
         selectPicture: function(index) {
             Y.log("Selecting picture:" + index);
@@ -398,7 +416,6 @@ YUI.add("stalker-slider", function(Y) {
             debugScene.add(plane2);
             debugScene.add(debugCamera);
             this.render = function() {
-                console.log('debug render');
                 renderer.render(debugScene, debugCamera);
             }
         },
@@ -753,8 +770,11 @@ YUI.add("stalker-slider", function(Y) {
                   create: sliderTooltip,
                   slide: sliderTooltip,
                   start: function(e,ui){$(ui.handle).toggleClass("classA")},
-                  stop: function(e,ui){$(ui.handle).toggleClass("classA")}
-                });
+                  stop: function(e,ui){
+                    $(ui.handle).toggleClass("classA");
+                    Y.Stalker.slider.loadAlbumByDate();
+                }
+              });
 
 
                 $('#preview-strip').enscroll({
@@ -988,15 +1008,13 @@ YUI.add("stalker-slider", function(Y) {
             }
         }
     });
-
+    var start = true;
     function populateAlbum(the_album) {
         photo_album = the_album;
-        var ul = $('<ul class="dreamslist" />');
-        var uli = $('#dreamslist');
-        var elements = document.getElementsByClassName("dreamslist");
-        console.log(ul)
-        console.log(uli)
-        console.log(elements)
+
+        $('#preview-strip').find('.dreamslist').remove();
+
+        ul = $('<ul class="dreamslist"/>');
         var strip = $('#preview-strip');
         var autofire;
         var laste;
@@ -1048,7 +1066,6 @@ YUI.add("stalker-slider", function(Y) {
         }
         $('#preview-strip').append(ul);
         function createThumbnail(photo_album, index) {
-            console.log("Function createThumbnail")
             var info = photo_album[index],
                     name = info.name,
                     thumbnail_url = info.thumbnail_url,
@@ -1060,11 +1077,10 @@ YUI.add("stalker-slider", function(Y) {
             if (name) {
                 img.alt = name;
             }
-            if(index % 2 === 0 && index !=6){
+            if(index % 2 === 0){
                 var li = $('<li class="even-display"  />').append(img);
             }else{
-                if(index !=6){var li = $('<li />').append(img)};
-                    if(index ==6){var li = $('<li id="vlop" class="even-display"/>').append(img)};
+                var li = $('<li />').append(img);
             }
             
             li[0].info = photo_album[index];
@@ -1108,31 +1124,30 @@ YUI.add("stalker-slider", function(Y) {
                 t.css('top', (80 - h) / 2 + 'px');
             });
         }
-        nbThumbnailToLoad = 10;
-        nbThumbnail = photo_album.length;
+
+        nbThumbnailToLoad = 15;
         indexThumbnail = 0;
-
         $('.dreamslist').waypoint({
-                  context: "#preview-strip",
-                  offset: "bottom-in-view",
-                  handler: function(direction) {
-                    if(direction=="down"){
-                        console.log("WAYPOINT")
-                    $('.dreamslist').waypoint("disable")
-                    if((indexThumbnail+nbThumbnailToLoad) > photo_album.length){
-                        nbThumbnailToLoad = (photo_album.length-indexThumbnail);
-                    }
-                    for (var i = 0; i < nbThumbnailToLoad; i++) {
-                    createThumbnail(photo_album, indexThumbnail+i);}
-                    }
-                    indexThumbnail = indexThumbnail+nbThumbnailToLoad;
-                    if(indexThumbnail < photo_album.length){
-                        $('.dreamslist').waypoint("enable")
-                    }
-                    
-                  }
-                });
+          context: "#preview-strip",
+          offset: "bottom-in-view",
+          handler: function(direction) {
+            if(direction=="down"){
+                console.log("WAYPOINT")
+                $('.dreamslist').waypoint("disable")
+                if((indexThumbnail+nbThumbnailToLoad) > photo_album.length){
+                    nbThumbnailToLoad = (photo_album.length-indexThumbnail);
+                }
+                for (var i = 0; i < nbThumbnailToLoad; i++) {
+                    createThumbnail(photo_album, indexThumbnail+i);
+                }
+            }
+            indexThumbnail = indexThumbnail+nbThumbnailToLoad;
+            if(indexThumbnail < photo_album.length){
+                $('.dreamslist').waypoint("enable")
+            }
 
+        }
+    });
         checks();
     }
 
