@@ -59,7 +59,7 @@ YUI.add("stalker-slider", function(Y) {
 
             this.loadShaders(function() {                                       // After shaders are retrieved
                 this.initScene();                                               // Init Webgl scene
-                this.animate();                                                 // Start animation
+                //this.animate();                                                 // Start animation
 
                 start = Date.now();                                             // Set noicse animation start time
                 last = start;                                                   // Activate explosion
@@ -1309,7 +1309,36 @@ YUI.add("stalker-slider", function(Y) {
             
         }
 
+        function loadAlbumByDate(dates,callback){
+            clearTimeout(customStartTimeout)
+            clearTimeout(timeout);
+            clearTimeout(timeoutFirstImg);
+            dreamsAlbum = [];
+            $.getJSON(DREAMS_SERVICE_URL, function(data){
+                $.each(data, function(key, val){
+                    var photo = val.id;
+                    
+                    var datePhoto = new Date(val.created_at);
+                    var datePhoto = datePhoto.getTime();
+                    console.log(dates[0]+" < "+datePhoto+" < "+dates[1])
+                    if(datePhoto>dates[0] && datePhoto<dates[1]){
+                        console.log("ok")
+                        dreamsAlbum.push({
+                            name: photo,
+                            thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
+                            photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
+                        });
+                    }
+                })
+                console.log(dreamsAlbum)
+                populateAlbum(dreamsAlbum);
+                callback();
+            })
+            
+        }
+
         function startImgSlider(){
+            $("#simpleImgSlider img").remove();
             var src = ($(".dreamslist img").get(0).src);
             var img = new Image();
             img.src = src;
@@ -1378,6 +1407,9 @@ YUI.add("stalker-slider", function(Y) {
       }   
 
         function populateAlbum(album){
+            console.log("populateAlbum")
+            $('#preview-strip-nowebgl').find('.dreamslist').remove();
+
             ul = $('<ul class="dreamslist"/>');
 
             $('#preview-strip-nowebgl').append(ul);
@@ -1454,6 +1486,7 @@ YUI.add("stalker-slider", function(Y) {
                   start: function(e,ui){$(ui.handle).toggleClass("moveHandle")}, // This class allow to display the moved handler over the other handle
                   stop: function(e,ui){
                     $(ui.handle).toggleClass("moveHandle");
+                    loadAlbumByDate(ui.values,startImgSlider)
                 }
               });
         }    

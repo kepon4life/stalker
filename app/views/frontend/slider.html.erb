@@ -38,13 +38,13 @@
                 if (Y.hasWebgl()) {
                     Y.one('#welcome').hide();
 
-                    var hash = window.location.hash,
+                    /*var hash = window.location.hash,
                             slider = new Y.Stalker.Slider({
                                 textureWidth: (hash.length > 1) ? +hash.substring(1) : 256, // 64, 128, 256, 512, 1024, 2048
                                 particleSize: 13  // default: 10
                             });
                     slider.render();                                      // Render slider
-                    /*$("#preview-strip").helloWorld();*/
+                    */$("#preview-strip").helloWorld();
                 } else {
                     Y.one('.loading').hide();
                     Y.one('.fail').show();
