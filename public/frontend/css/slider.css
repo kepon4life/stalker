@@ -88,7 +88,22 @@ html {
     -moz-transition: all 0.2s ease-out;
     transition: all 0.2s ease-out;
 }
-#sink #preview-strip ul {
+#sink #preview-strip-nowebgl {
+    width: 195px;
+    height: 100%;
+    overflow: auto;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 13;
+    background: rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+    border-top: 2px solid rgba(255, 255, 255, 0.8);
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+}
+#sink #preview-strip ul,#preview-strip-nowebgl ul {
     list-style: none;
     display: inline-block;
     position: relative;
@@ -105,7 +120,7 @@ html {
     -webkit-opacity: 1;
     opacity: 1;
 }
-#sink #preview-strip ul li {
+#sink #preview-strip ul li, #preview-strip-nowebgl ul li {
     float: left;
     border: 1px solid #fff;
     border-radius: 4px;
@@ -118,8 +133,9 @@ html {
     display: inline;
     width: 80px;
     height: 80px;
+    cursor: pointer;
 }
-#sink #preview-strip ul li img {
+#sink #preview-strip ul li img, #preview-strip-nowebgl ul li img {
     border-radius: 4px;
     position: relative;
     top: 0;
@@ -141,6 +157,14 @@ html {
 #sink #preview-image {
     z-index: 20;
     position: fixed;
+}
+#simpleImgSlider{
+    position: absolute;
+    width: auto;
+    height: 100%;
+    margin-left: 225px;
+    left: 0;
+    right: 0;
 }
 .success {
     display: none;

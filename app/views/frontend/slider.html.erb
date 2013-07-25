@@ -43,7 +43,8 @@
                                 textureWidth: (hash.length > 1) ? +hash.substring(1) : 256, // 64, 128, 256, 512, 1024, 2048
                                 particleSize: 13  // default: 10
                             });
-                    slider.render();                                        // Render slider
+                    slider.render();                                      // Render slider
+                    /*$("#preview-strip").helloWorld();*/
                 } else {
                     Y.one('.loading').hide();
                     Y.one('.fail').show();
@@ -76,5 +77,8 @@
     </div>
     <div id="preview-image"></div>
     <div id="preview-strip"><div id="slider-dreams" class="ui-slider-vertical"></div></div>
+    <div id="preview-strip-nowebgl"><div id="slider-dreams-nowebgl" class="ui-slider-vertical"></div></div>
     
 </div>
+<div id="simpleImgSlider"></div>
+

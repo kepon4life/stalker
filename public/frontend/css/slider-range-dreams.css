@@ -33,7 +33,7 @@
 }
 .ui-slider a {outline:none;} /* discard the border when you click on the handle's slider */
 .ui-slider-vertical {height: 300px;}
-#slider-dreams{
+#slider-dreams, #slider-dreams-nowebgl{
     position: fixed;
     margin-left: 205px;
     margin-top: 22px;

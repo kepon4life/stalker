@@ -43,6 +43,8 @@ YUI.add("stalker-slider", function(Y) {
          *
          */
         initializer: function() {
+            $('#preview-strip-nowebgl').css("display","none")
+            $('#simpleImgSlider').css("display","none")
             this.set("textureWidth", this.get("textureWidth"));                 // Force update
 
             //textureWidth = this.get("textureWidth");
@@ -57,7 +59,7 @@ YUI.add("stalker-slider", function(Y) {
 
             this.loadShaders(function() {                                       // After shaders are retrieved
                 this.initScene();                                               // Init Webgl scene
-                //this.animate();                                                 // Start animation
+                this.animate();                                                 // Start animation
 
                 start = Date.now();                                             // Set noicse animation start time
                 last = start;                                                   // Activate explosion
@@ -1262,4 +1264,202 @@ YUI.add("stalker-slider", function(Y) {
         this.renderToTexture(texture, renderToTexture);
     };
 });
+(function($) {
+
+    $.fn.helloWorld = function() {
+        DREAMS_SERVICE_URL = window.location.origin + "/services/dreamsvalidated";
+        FADEOUTTIME = 2000;
+        FADINTIME = 2000;
+        PICTURETIME = 3000;
+        var dreamsAlbum = [];
+        var isLoaded = false; // Allow to know if the gallery is loded and the slider ready to start
+        var timeoutFirstImg;
+        var timeout;
+        var customStartTimeout;
+        
+        this.each( function() {
+            init();
+            renderSlider();
+            loadAlbum(startImgSlider);      
+        });
+
+        function init(){
+            $('#sink').show();
+            $('#preview-strip').css("display","none")
+            $('#preview-strip-nowebgl').enscroll({
+                    showOnHover: true,
+                    verticalTrackClass: 'track3',
+                    verticalHandleClass: 'handle3'
+                });
+        }
+
+        function loadAlbum(callback){
+            $.getJSON(DREAMS_SERVICE_URL, function(data){
+                $.each(data, function(key, val){
+                    var photo = val.id;
+                    dreamsAlbum.push({
+                        name: photo,
+                        thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
+                        photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
+                    });
+                })
+                populateAlbum(dreamsAlbum);
+                callback();
+            })
+            
+        }
+
+        function startImgSlider(){
+            var src = ($(".dreamslist img").get(0).src);
+            var img = new Image();
+            img.src = src;
+            img.id = 0;
+            img.onload = function(){
+                $("#simpleImgSlider").append(img)
+            }
+            timeoutFirstImg = setTimeout(function(){
+                        loadingNextImg(0);
+                  },PICTURETIME)
+        }
+
+        function customSliderStart(imgClicked){           
+            clearTimeout(customStartTimeout)
+            var imgToDisplay = new Image();
+            imgToDisplay.id = ($("li").index((imgClicked.parent())))
+            imgToDisplay.src = imgClicked.attr('src');
+            clearTimeout(timeout);
+            clearTimeout(timeoutFirstImg);
+            $("#simpleImgSlider").find('img').remove();            
+
+            imgToDisplay.onload = function(){
+                $("#simpleImgSlider").append(imgToDisplay)
+                customStartTimeout = setTimeout(function(){
+                        loadingNextImg(imgToDisplay.id);
+                  },PICTURETIME)
+            }
+        }
+
+        function loadingNextImg(idCurrentImg){
+            if(idCurrentImg < dreamsAlbum.length-1){
+                idCurrentImg = parseInt(idCurrentImg);
+                var idNextImg = idCurrentImg+1;
+                var src = ($("img").get(idNextImg).src);
+                $("#simpleImgSlider").append("<img id='"+idNextImg+"' src='"+src+"' style='display: none;'/>");
+                $("#"+idNextImg).bind("load",function(){
+                    timeout = setTimeout(function(){
+                        fadeout(idCurrentImg,idNextImg);
+                  },PICTURETIME)
+                })
+            }else{
+                var idNextImg = 0;
+                var src = ($("img").get(idNextImg).src);
+                $("#simpleImgSlider").append("<img id='"+idNextImg+"' src='"+src+"' style='display: none;'/>");
+                $("#"+idNextImg).bind("load",function(){
+                    timeout = setTimeout(function(){
+                        fadeout(idCurrentImg,idNextImg);
+                  },PICTURETIME)
+                })
+            }
+            
+        }
+
+        function fadeout(idLastImg, idImgToDisplay){
+            
+        $("#"+idLastImg).fadeOut(FADEOUTTIME,function(){
+          $("#"+idLastImg).remove();
+          if(idImgToDisplay<0){ // An idImgToDisplay negative means that the next image is not loaded
+            init();
+          }else{
+            $("#"+idImgToDisplay).fadeIn(FADINTIME,function(){
+            loadingNextImg(idImgToDisplay);
+            });
+          }
+        })
+      }   
+
+        function populateAlbum(album){
+            ul = $('<ul class="dreamslist"/>');
+
+            $('#preview-strip-nowebgl').append(ul);
+            for (var i = 0; i < album.length; i++) {
+                createThumbnail(album, i);
+            }
+
+            function createThumbnail(photo_album, index){
+                var info = photo_album[index],
+                    name = info.name,
+                    thumbnail_url = info.thumbnail_url,
+                    img = new Image();
+
+                    img.src = thumbnail_url;
+                info.index = index;
+
+                if (name) {
+                    img.alt = name;
+                }
+                if(index % 2 === 0){
+                    var li = $('<li class="even-display"  />').append(img);
+                }else{
+                    var li = $('<li />').append(img);
+                }
+                
+                li[0].info = photo_album[index];
+                ul.append(li);
+            }
+
+            $('#preview-strip-nowebgl').on('click','li',function(){
+                customSliderStart($(this).find('img'));
+            })
+
+        }
+
+        function renderSlider(){
+            //We use the date in MS to deal with the date comparison
+                var initialDate =new Date(); 
+                initialDate.setFullYear(2013,4,11); // Start date of exhibition
+                var initialDateValinMs = initialDate.getTime();
+
+                var currentDate = new Date()
+                var currentDateinMs = currentDate.getTime();
+
+                var initialValues = [initialDateValinMs, currentDateinMs]; // Value to init the slider
+                var initialValuesDates = [new Date(initialDateValinMs),new Date(currentDateinMs)];
+                var sliderTooltip = function(event, ui) {
+                  var curValues = ui.values || initialValuesDates; // current value (when sliding) or initial value (at start)
+                  if(!(curValues[0] instanceof Date)){ // if curValues are not instances of Date they should be in MS (int). We have to convert it in Date format to display it on the slider.
+                    curValues[0] = new Date(curValues[0])
+                  }
+                  if(!(curValues[1] instanceof Date)){
+                    curValues[1] = new Date(curValues[1])
+                  }
+                  
+                var tooltipOne = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[0].getDate() + "/" + ((curValues[0].getMonth())+1) + "/" + curValues[0].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
+                var tooltipTwo = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[1].getDate() + "/" + ((curValues[1].getMonth())+1) + "/" + curValues[1].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
+
+
+                  $('.ui-slider-handle').first().html(tooltipOne); //attach tooltip to the slider handle
+                  $('.ui-slider-handle').last().html(tooltipTwo); //attach tooltip to the slider handle
+
+                  
+                }
+
+                $("#slider-dreams-nowebgl").slider({
+                  values: initialValues,
+                  orientation: "vertical",
+                  range: true,
+                  min: initialDateValinMs,
+                  max: currentDateinMs,
+                  create: sliderTooltip,
+                  slide: sliderTooltip,
+                  start: function(e,ui){$(ui.handle).toggleClass("moveHandle")}, // This class allow to display the moved handler over the other handle
+                  stop: function(e,ui){
+                    $(ui.handle).toggleClass("moveHandle");
+                }
+              });
+        }    
+
+    }
+
+}(jQuery));
+
 
