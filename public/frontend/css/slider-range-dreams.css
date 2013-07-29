@@ -39,7 +39,7 @@
     margin-top: 22px;
 }
 .moveHandle{
-    color:red !important;
+    color:black !important;
     z-index: 12000 !important;
 }
 .even-display{

@@ -59,7 +59,7 @@ YUI.add("stalker-slider", function(Y) {
 
             this.loadShaders(function() {                                       // After shaders are retrieved
                 this.initScene();                                               // Init Webgl scene
-                //this.animate();                                                 // Start animation
+                this.animate();                                                 // Start animation
 
                 start = Date.now();                                             // Set noicse animation start time
                 last = start;                                                   // Activate explosion
@@ -1266,7 +1266,7 @@ YUI.add("stalker-slider", function(Y) {
 });
 (function($) {
 
-    $.fn.helloWorld = function() {
+    $.fn.slider_web = function() {
         DREAMS_SERVICE_URL = window.location.origin + "/services/dreamsvalidated";
         FADEOUTTIME = 2000;
         FADINTIME = 2000;
@@ -1320,7 +1320,6 @@ YUI.add("stalker-slider", function(Y) {
                     
                     var datePhoto = new Date(val.created_at);
                     var datePhoto = datePhoto.getTime();
-                    console.log(dates[0]+" < "+datePhoto+" < "+dates[1])
                     if(datePhoto>dates[0] && datePhoto<dates[1]){
                         console.log("ok")
                         dreamsAlbum.push({
@@ -1439,7 +1438,7 @@ YUI.add("stalker-slider", function(Y) {
                 ul.append(li);
             }
 
-            $('#preview-strip-nowebgl').on('click','li',function(){
+            $('#preview-strip-nowebgl .dreamslist').on('click','li',function(){
                 customSliderStart($(this).find('img'));
             })
 
