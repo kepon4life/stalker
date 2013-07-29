@@ -17,6 +17,12 @@ class FrontendController < ApplicationController
 		end
 	end
 
+	def web_slider
+		respond_to do |format|
+			format.html
+		end
+	end
+
 	def draw
 		respond_to do |format|
 			format.html
