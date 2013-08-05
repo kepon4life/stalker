@@ -316,16 +316,41 @@ a:hover {
 /** QR Styles **/
 .yui3-stalker-slider .qr{
     position: fixed;
-    top: 10px;
-    right: 10px;
+    top: 0px;
+    right: 0px;
     font-size: 10px;
     text-align: right;
     color: white;
     z-index: 20000;
 }
-.yui3-stalker-slider-hidden {
-    display: none;
+
+.yui3-stalker-slider .qr span {
+    margin-top: 15px;
+    vertical-align: top;
+    display: inline-block;
+    font-size: 1.7em;
+    font-style: italic;
+    font-weight: bold;
 }
+/** Legend Styles **/
+.yui3-stalker-slider .details {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    border-top: 1px solid white;
+    font-size: 10px;
+    text-align: right;
+    color: white;
+    z-index: 20000;
+    text-align: right;
+    height: 32px;
+    line-height: 1.2em;
+    padding-top: 5px;
+    width: 200px;
+    padding: 5px;
+
+}
+
 /** Stats.js styles **/
 #stats {
     position: fixed;

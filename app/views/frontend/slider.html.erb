@@ -34,7 +34,8 @@
                                 slider = new Y.Stalker.Slider({
                             textureWidth: (hash.length > 1) ? +hash.substring(1) : 256, // 64, 128, 256, 512, 1024, 2048
                             particleSize: 13, // default: 10
-                            slideshowRunning: true
+                            slideshowRunning: true,
+                            showLegend: true
                         });
                         slider.render();                                        // Render slider
                         slider.loadAlbumFromService(window.location.origin + "/services/dreamssecretroom");// Load album

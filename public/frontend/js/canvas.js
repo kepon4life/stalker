@@ -5,24 +5,19 @@
 YUI.add("stalker-canvas", function(Y) {
     YUI_config.stalkerbase = YUI_config.stalkerbase || "";
 
-    var canvas, ctx;
-    var defaultcolor = '#fff';
-    var canvaswidth;
-    var canvasheight;
-    var color = defaultcolor;
-    //permet de sauvegarder toutes les courbes dessinées
-    var savedCurves = [];
-    //Permet de connaître combien de doigts sont actuellement sur la surface
-    var nbdoigts = 0;
-    //Le nombre de courbes sauvrgardées et dessinées en live. Cela signifie que dans ce tableau on ne stock que les courbes
-    //que l'on est en train de dessiner, celles pour lesquelles on a encore le doigts posé sur l'écran
-    var stockpoints = [];
-    var nw; //Screen width
-    var nh; // Screnn Height
-    /*var imagebg = document.createElement('img'); // Si on utilise pas un dégradé mais une background image
-     imagebg.src = "todraw.png"*/
-
-    var controlPanelWidth = 0; // Largeur de la bande qui contient les boutons envoyer et effacer
+    var canvas, ctx, canvaswidth, canvasheight,
+            defaultcolor = '#fff',
+            color = defaultcolor,
+            //permet de sauvegarder toutes les courbes dessinées
+            savedCurves = [],
+            //Permet de connaître combien de doigts sont actuellement sur la surface
+            nbdoigts = 0,
+            //Le nombre de courbes sauvrgardées et dessinées en live. Cela signifie que dans ce tableau on ne stock que les courbes
+            //que l'on est en train de dessiner, celles pour lesquelles on a encore le doigts posé sur l'écran
+            stockpoints = [],
+            nw, //Screen width
+            nh, // Screnn Height
+            controlPanelWidth = 0; // Largeur de la bande qui contient les boutons envoyer et effacer
 
 
     Y.namespace("Stalker").Canvas = Y.Base.create("stalker-canvas", Y.Widget, [], {
@@ -36,13 +31,12 @@ YUI.add("stalker-canvas", function(Y) {
 
             //Pusher
             //Pusher.channel_auth_endpoint = 'pusher/auth';
-            //var pusher = new Pusher(PUSHER_API_KEY);
-            //var privateChannel = pusher.subscribe(PUSHER_CHANEL);
-            //var triggered;
-            //
-            //privateChannel.bind('pusher:subscription_error', function(status) {
-            //    console.log("error " + status);
-            //});
+            var pusher = new Pusher(PUSHER_API_KEY);
+            this.privateChannel = pusher.subscribe(PUSHER_CHANEL);
+
+            this.privateChannel.bind('pusher:subscription_error', function(status) {
+                console.log("error " + status);
+            });
 
             //Canvas
             // Bind canvas to listeners
@@ -57,32 +51,7 @@ YUI.add("stalker-canvas", function(Y) {
             canvasheight = nh;
 
             ctx = canvas.getContext('2d');
-
             color = defaultcolor;
-
-            //Délimitation
-            //ctx.strokeStyle = "#fff";
-            //ctx.beginPath();
-            //ctx.moveTo(nw - controlPanelWidth, 0);
-            //ctx.lineWidth = 3;
-            //ctx.lineTo(nw - controlPanelWidth, nh);
-            //ctx.stroke();
-
-            //Bouttons rose et vert. Certainement à supprimer pour la mise en prod.
-            //ctx.fillStyle = "#CCAABB";
-            //ctx.fillRect(nw - 198, 0, 200, 160)
-            //ctx.fillStyle = "#AAFFBB";
-            //ctx.fillRect(nw - 198, 160, 200, 160)
-            //ctx.drawImage(envoyerimg, nw - 190, 210);
-            //ctx.drawImage(effacerimg, nw - 182, 40);
-
-            //envoyerimg.onload = function() {
-            //    ctx.drawImage(envoyerimg, nw - 190, 210);
-            //}
-            //effacerimg.onload = function() {
-            //    ctx.drawImage(effacerimg, nw - 182, 40);
-            //}
-
         },
         bindUI: function() {
             if (window.Pusher) {                                                // Init pusher
@@ -141,19 +110,21 @@ YUI.add("stalker-canvas", function(Y) {
             var imgBgWhite = drawWhiteBg();
 
             this.fire("saved");
-            $.ajax({
-                type: 'POST',
-                url: '/frontend/save',
+
+            Y.io('/frontend/save', {
+                method: "POST",
+                context: this,
                 data: {
                     metadatas: Y.JSON.stringify({
                         event: Y.Stalker.slider.get("event")
                     }),
                     imgNormal: imgBgWhite
                 },
-                success: function(data) {
-                    console.log(data);
-                    triggered = privateChannel.trigger('client-myevent', data);
-                    clear();
+                on: {
+                    success: function(tId, e) {
+                        this.privateChannel.trigger('client-myevent', Y.JSON.parse(e.response));
+                        this.clear();
+                    }
                 }
             });
         },
@@ -314,6 +285,9 @@ YUI.add("stalker-canvas", function(Y) {
         ctx.globalCompositeOperation = "destination-over";
         //set background color
         ctx.fillStyle = gradient1;
+
+        /*var imagebg = document.createElement('img'); // Si on utilise pas un dégradé mais une background image
+         imagebg.src = "todraw.png"*/
         //ctx.drawImage(imagebg,0,0,canvaswidth,canvasheight); // Si on utilise pas une dégradé mais une image en background
 
         //draw background

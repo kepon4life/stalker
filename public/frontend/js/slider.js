@@ -35,6 +35,7 @@ YUI.add("stalker-slider", function(Y) {
 
     Y.namespace("Stalker").Slider = Y.Base.create("stalker-slider", Y.Widget, [], {
         CONTENT_TEMPLATE: '<div>'
+                + '<div class="details"></div>'
                 + '<div class="qr"></div>'
                 + '<div id="sink">'
                 + '<div id="nav-bar">'
@@ -106,9 +107,22 @@ YUI.add("stalker-slider", function(Y) {
             }
 
             Y.delegate("click", function(e) {                                   // Thumbnail clicks
-                var node = e.currentTarget.getDOMNode();
+                var node = e.currentTarget.getDOMNode(),
+                        metas,
+                        detailsNode = this.get("contentBox").one(".details"),
+                        date = new Date(Date.parse(node.info.created_at)),
+                        monthNames = ["January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"];
                 currently_playing = node.info.index;
                 this.loadPicture(node.info.photo_url);
+                detailsNode.setContent(date.getHours() + ":" + date.getMinutes()
+                        + " " + date.getDate() + " " + monthNames[date.getMonth()] + " " + date.getFullYear());
+                try {
+                    metas = Y.JSON.parse(node.info.metadatas);
+                    detailsNode.append("<br />" + metas.event);
+                } catch (e) {
+                    // GOTCHA
+                }
             }, "#preview-strip", "li", this);
 
             Y.on("windowresize", function() {                                   // Window resize
@@ -131,7 +145,7 @@ YUI.add("stalker-slider", function(Y) {
             this.set("event", this.get("event"));
             this.set("trackCam", this.get("trackCam"));
             this.set("visibleQr", this.get("visibleQr"));
-
+            this.set("showLegend", this.get("showLegend"));
         },
         loadAlbum: function(url) {
             this.status('Loading album: ' + url);
@@ -163,16 +177,16 @@ YUI.add("stalker-slider", function(Y) {
                 context: this,
                 on: {
                     success: function(tId, e) {
-                        var photos = Y.JSON.parse(e.response);
+                        var photos = Y.JSON.parse(e.response), photo;
                         this.status(photos.length + " photos found.");
 
                         for (var i = 0; i < photos.length; i++) {
-                            photo = photos[i]["id"];
-                            dreamAlbum.push({
-                                name: photo,
-                                thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
-                                photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
-                            });
+                            photo = photos[i];
+                            dreamAlbum.push(Y.mix(photo, {
+                                name: photo.id,
+                                thumbnail_url: PATH_TO_DREAMS + photo.id + DREAM_EXTENSION,
+                                photo_url: PATH_TO_DREAMS + photo.id + DREAM_EXTENSION
+                            }));
                         }
                         populateAlbum(dreamAlbum);
                         this.selectFirstPicture();
@@ -884,6 +898,18 @@ YUI.add("stalker-slider", function(Y) {
                     return val;
                 }
             },
+            showLegend: {
+                value: false,
+                setter: function(val) {
+
+                    if (val) {
+                        this.get("contentBox").one(".details").show();
+                    } else {
+                        this.get("contentBox").one(".details").hide();
+                    }
+                    return val;
+                }
+            },
             visibleQr: {
                 value: true,
                 setter: function(val) {
@@ -899,12 +925,13 @@ YUI.add("stalker-slider", function(Y) {
                 value: "Secret room",
                 setter: function(val) {
                     var url = PHONEDRAWPATH + "?event=" + escape(val);
-                    this.get("contentBox").one(".qr").setHTML('<img src="'
-                            + "http://chart.apis.google.com/chart?cht=qr&chs=130x130&chld=Q&choe=UTF-8&chl="
-//                            + "http://qrickit.com/api/qr?fgdcolor=ffffff&bgdcolor=000000&qrsize=150&t=p&e=m&d="
+                    this.get("contentBox").one(".qr").setHTML('<span>And what is YOUR dream? </span><img src="'
+//                            + "http://chart.apis.google.com/chart?cht=qr&chs=130x130&chld=Q&choe=UTF-8&chl="
+                            + "http://qrickit.com/api/qr?fgdcolor=ffffff&bgdcolor=000000&qrsize=150&t=p&e=m&d="
                             + encodeURIComponent(url) + '" />'
                             //+ '<br />scan this QR or go to <br /><a target="_blank" href="' + url + '">' + url + "</a>");
-                            + '<br />Scan this or go to<br /><a href="' + url + '">' + url + "</a> with your mobile to tell us your dream");
+//                            + '<br />Scan this or go to<br /><a href="' + url + '">' + url + "</a> with your mobile to tell us your dream"
+                            );
 
                     return val;
                 }
