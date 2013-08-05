@@ -5,10 +5,15 @@
 YUI.add("stalker-slider", function(Y) {
     YUI_config.stalkerbase = YUI_config.stalkerbase || "";
 
-    var SHADERPATH = YUI_config.stalkerbase + "shader/",
+    var ALBUMPATH = YUI_config.stalkerbase + "data/pictures.json",
+            DREAMS_SERVICE_URL = window.location.origin + "/services/dreamsvalidated",
+            SHADERPATH = YUI_config.stalkerbase + "shader/",
             PHONEDRAWPATH = window.location.origin + "/drawsmartphone",
             //TIME_FOR_FADING = 3 + 1, // 3 + 2
             timeoutExplosion,
+            slideshow_running = false,
+            slideshow_timer,
+            jsonPhotos,
             dreamAlbum = [],
             strip_width,
             photo_album,
@@ -20,7 +25,7 @@ YUI.add("stalker-slider", function(Y) {
         "particles_vertex", "texture_fragment_simulation_shader",
         "texture_vertex_simulation_shader", "texture_cpu_to_gpu_vertex_shader",
         "texture_cpu_to_gpu_fragment_shader"],
-            camera, scene, renderer, debugRenderer, shadowCamera,
+            camera, controls, scene, renderer, debugRenderer, shadowCamera,
             effectsComposer, particles, stopRenderering = false,
             directionalLight, shadowPlane, planeTest, gl, cameraRTT,
             sceneRTTPos, rtTexturePos, rtTexturePos2, positionShader,
@@ -34,20 +39,12 @@ YUI.add("stalker-slider", function(Y) {
             resizeCtx = resizeCanvas.getContext('2d');
 
     Y.namespace("Stalker").Slider = Y.Base.create("stalker-slider", Y.Widget, [], {
-        CONTENT_TEMPLATE: '<div>'
-                + '<div class="qr"></div>'
-                + '<div id="sink">'
-                + '<div id="nav-bar">'
-                + '<div id="status"></div>'
-                + '</div>'
-                + '<div id="preview-image"></div>'
-                + '<div id="preview-strip"><!-- prev next --></div>'
-                + '</div>'
-                + '</div>',
         /**
          *
          */
         initializer: function() {
+            $('#preview-strip-nowebgl').css("display","none")
+            $('#simpleImgSlider').css("display","none")
             this.set("textureWidth", this.get("textureWidth"));                 // Force update
 
             //textureWidth = this.get("textureWidth");
@@ -59,7 +56,6 @@ YUI.add("stalker-slider", function(Y) {
          */
         renderUI: function() {
             this.renderStats();
-            Y.one("#sink").hide();
 
             this.loadShaders(function() {                                       // After shaders are retrieved
                 this.initScene();                                               // Init Webgl scene
@@ -68,11 +64,12 @@ YUI.add("stalker-slider", function(Y) {
                 start = Date.now();                                             // Set noicse animation start time
                 last = start;                                                   // Activate explosion
 
-                this.toggleHome();                                                  // Paricles should go to initial position
+                this.gohome();                                                  // Paricles should go to initial position
 
-                //this.loadAlbum(ALBUMPATH);                                    // Load the album json final
-                //this.loadAlbumFromService(DREAMS_SERVICE_URL);
+                //this.loadAlbum(ALBUMPATH);                                      // Load the album json final
+                this.loadAlbumFromService(DREAMS_SERVICE_URL);
                 this.renderCustomization();                                     // Render side panel
+                this.renderSliderRangeForDreams();
             });
         },
         /**
@@ -80,35 +77,34 @@ YUI.add("stalker-slider", function(Y) {
          * @returns {undefined}
          */
         bindUI: function() {
-            if (window.Pusher && window.PUSHER_API_KEY) {                       // Init pusher
+            if (window.Pusher) {                                                // Init pusher
                 Pusher.channel_auth_endpoint = 'pusher/auth';
                 var pusher = new Pusher(PUSHER_API_KEY),
                         privateChannel = pusher.subscribe(PUSHER_CHANEL);
 
                 privateChannel.bind('client-myevent', Y.bind(function(data) {   // Dream received events
                     //$('#content').append('<img src="'+data.imgUrl+'"/>');
-                    var data = {
-                        name: PATH_TO_DREAMS + data.imgUrl,
-                        thumbnail_url: PATH_TO_DREAMS + data.imgUrl,
-                        photo_url: PATH_TO_DREAMS + data.imgUrl
-                    };
-
-                    if (dreamAlbum[0]["photo_url"].split("/")[2] === "sended") {
-                        dreamAlbum.splice(0, 1, data);
-                    } else {
-                        dreamAlbum.splice(0, 0, data);
+                    if(dreamAlbum[0]["photo_url"].split("/")[2] == "sended"){
+                        dreamAlbum.splice(0, 1, {
+                            name: PATH_TO_DREAMS + data.imgUrl,
+                            thumbnail_url: PATH_TO_DREAMS + data.imgUrl,
+                            photo_url: PATH_TO_DREAMS + data.imgUrl
+                        });
+                    }else{
+                        dreamAlbum.splice(0, 0, {
+                            name: PATH_TO_DREAMS + data.imgUrl ,
+                            thumbnail_url: PATH_TO_DREAMS + data.imgUrl,
+                            photo_url: PATH_TO_DREAMS + data.imgUrl
+                        });
                     }
-
+                    
                     populateAlbum(dreamAlbum);
-                    this.selectFirstPicture();
-//                    this.startSlideshow();
+                    this.startSlideshow();
                 }, this));
             }
 
             Y.delegate("click", function(e) {                                   // Thumbnail clicks
-                var node = e.currentTarget.getDOMNode();
-                currently_playing = node.info.index;
-                this.loadPicture(node.info.photo_url);
+                this.loadPicture(e.currentTarget.getDOMNode().info);
             }, "#preview-strip", "li", this);
 
             Y.on("windowresize", function() {                                   // Window resize
@@ -121,17 +117,17 @@ YUI.add("stalker-slider", function(Y) {
                 }
             });
 
-            Y.one('doc').on('key', function(e) {                                // Debug mode on § click
-                $("#sink").toggle();
-            }, "32");
+            Y.one('doc').
+                    on('keypress', function(e) {                           // Debug mode on § click
+                if (e.charCode === 167 || e.charCode === 32) {
+                    $("#sink").toggle();
+                }
+            });
 
             //$('#play').on('click', this.toggleSlideshow);                     // play/pause
         },
         syncUI: function() {
             this.set("event", this.get("event"));
-            this.set("trackCam", this.get("trackCam"));
-            this.set("visibleQr", this.get("visibleQr"));
-
         },
         loadAlbum: function(url) {
             this.status('Loading album: ' + url);
@@ -152,7 +148,7 @@ YUI.add("stalker-slider", function(Y) {
                         }
                         populateAlbum(dreamAlbum);
                         this.selectFirstPicture();
-//                        this.startSlideshow();
+                        this.startSlideshow();
                     }
                 }
             });
@@ -165,7 +161,7 @@ YUI.add("stalker-slider", function(Y) {
                     success: function(tId, e) {
                         var photos = Y.JSON.parse(e.response);
                         this.status(photos.length + " photos found.");
-
+                        jsonPhotos=photos;
                         for (var i = 0; i < photos.length; i++) {
                             photo = photos[i]["id"];
                             dreamAlbum.push({
@@ -176,10 +172,37 @@ YUI.add("stalker-slider", function(Y) {
                         }
                         populateAlbum(dreamAlbum);
                         this.selectFirstPicture();
-//                        this.startSlideshow();
+                        this.startSlideshow();
                     }
                 }
             });
+        },
+        loadAlbumByDate: function(dates) {
+            if(jsonPhotos!= null || "undefined"){
+                var startDate = dates[0];
+                var endDate = dates[1];
+                console.log("start date "+startDate); 
+                var photos = jsonPhotos;
+                dreamAlbum =[];
+                for (var i = 0; i < photos.length; i++) {
+                            var a = photos[i];
+                            var datePhoto = new Date(a.created_at);
+                            var datePhoto = datePhoto.getTime();
+                            
+                            photo = photos[i]["id"];
+
+                            if(datePhoto>dates[0] && datePhoto<dates[1]){
+                                dreamAlbum.push({
+                                    name: photo,
+                                    thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
+                                    photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
+                                });
+                            }
+                        }
+                populateAlbum(dreamAlbum);
+                this.selectFirstPicture();
+                this.startSlideshow();
+            }
         },
         selectPicture: function(index) {
             Y.log("Selecting picture:" + index);
@@ -193,53 +216,31 @@ YUI.add("stalker-slider", function(Y) {
             this.selectPicture((currently_playing + 1) % photo_album.length);
         },
         toggleSlideshow: function() {
-            this.set("slideshowRunning", !this.get("slideshowRunning"));
+            if (slideshow_running) {
+                this.stopSlideshow();
+            } else {
+                this.startSlideshow();
+            }
             //$('#play').html("Start Slideshow");
         },
         startSlideshow: function() {
             Y.log("startSlideshow()");
-            this.set("slideshowRunning", true);
-            this.advanceSlideshow();
+            slideshow_running = true;
             //$('#play').html("Stop Slideshow");
-        },
-        startImploding: function() {
-//            implode = true;
-//            startExplodingTime = Date.now();
-//            home = false;
-
-            home = false;
-            positionShader.uniforms.tPositions2.texture = positionShader.uniforms.tPositions.texture;
-            renderer.render(sceneRTTPos, cameraRTT, savedState, false);
-            positionShader.uniforms.tPositions2.texture = savedState;
         },
         advanceSlideshow: function() {
             Y.log("advanceSlideshow()");
-            if (this.slideshow_timer) {
-                this.slideshow_timer.cancel();
+            if (slideshow_timer) {
+                slideshow_timer.cancel();
             }
-            if (this.get("slideshowRunning")) {
-
-                implode = true;
-                this.slideshow_timer = Y.later(this.get("totalDuration") * 1000, this, this.selectNextPicture);
-
-                Y.later(1000 * this.get("implosionDuration"), this, function() {
-                    Y.log("implosionTimeout();");
-                    implode = false;
-                    renderer.deallocateTexture(particles.material.uniforms.color_texture.texture);
-                    particles.material.uniforms.color_texture.texture = particles.material.uniforms.next_color_texture.texture;
-                });
-                timeoutExplosion = Y.later(1000 * this.get("explosionDuration"), this, function() {
-                    Y.log("explosionTimeout();");
-                    if (home) {
-                        this.toggleHome();
-                    }
-                });
+            if (slideshow_running) {
+                slideshow_timer = Y.later(this.get("totalDuration") * 1000, this, this.selectNextPicture);
             }
         },
         stopSlideshow: function() {
-            this.set("slideshowRunning", false);
-            if (this.slideshow_timer) {
-                this.slideshow_timer.cancel();
+            slideshow_running = false;
+            if (slideshow_timer) {
+                slideshow_timer.cancel();
             }
             $('#play').html("Start Slideshow");
         },
@@ -250,11 +251,13 @@ YUI.add("stalker-slider", function(Y) {
          *
          * @param {type} cfg
          */
-        loadPicture: function(url, cb) {
+        loadPicture: function(cfg) {
             //Y.log("loadPicture(" + info.photo_url + ")");
+            var info = cfg;
 
-            this.loadTexture(url, new THREE.UVMapping(), Y.bind(function(texture) {
+            this.loadTexture(info.photo_url, new THREE.UVMapping(), Y.bind(function(texture) {
                 Y.log("loadPicture.onLoadTexture");
+                currently_playing = info.index;
                 this.showPicture(texture);
                 this.advanceSlideshow();
             }, this));
@@ -273,19 +276,33 @@ YUI.add("stalker-slider", function(Y) {
             particles.material.uniforms['next_color_texture'].texture = texture;
             startExplodingTime = Date.now();
             if (!home) {
-                this.toggleHome();
+                this.gohome();
             }
             if (timeoutExplosion) {
                 timeoutExplosion.cancel();
             }
+            implode = true;
+            Y.later(1000 * this.get("implosionDuration"), this, function() {
+                Y.log("implosionTimeout();");
+                implode = false;
+                renderer.deallocateTexture(particles.material.uniforms.color_texture.texture);
+                particles.material.uniforms['color_texture'].texture = texture;
+            });
+            timeoutExplosion = Y.later(1000 * this.get("explosionDuration"), this, function() {
+                Y.log("explosionTimeout();");
+                if (home) {
+                    this.gohome();
+                }
+            });
         },
-        toggleHome: function() {
-            Y.log("toggleHome(" + !home + ")");
-            if (!home) {
-                home = true;
+        gohome: function() {
+            home = !home;
+            if (home) {
                 savedState = positionShader.uniforms.tPositions2.texture;
             } else {
-                this.startImploding();
+                positionShader.uniforms.tPositions2.texture = positionShader.uniforms.tPositions.texture;
+                renderer.render(sceneRTTPos, cameraRTT, savedState, false);
+                positionShader.uniforms.tPositions2.texture = savedState;
             }
         },
         animate: function() {
@@ -304,12 +321,12 @@ YUI.add("stalker-slider", function(Y) {
             if (startExplodingTime) {
                 var implosionLapse = (now - startExplodingTime) / 1000,
                         transition = (implosionLapse <= this.get("implosionDuration")) ?
-                        implosionLapse / this.get("implosionDuration") : 1,
+                        implosionLapse / this.get("implosionDuration") : 0,
                         fadeTransition = (implosionLapse <= this.get("fadingDuration")) ?
                         implosionLapse / this.get("fadingDuration") : 1;
 
-                particles.material.uniforms.transition.value = this.get("slideshowRunning") ? fadeTransition : 1;
-                positionShader.uniforms.transition.value = transition;
+                particles.material.uniforms['transition'].value = fadeTransition;
+                positionShader.uniforms['transition'].value = transition;
             }
 
             // Simulation
@@ -325,9 +342,7 @@ YUI.add("stalker-slider", function(Y) {
                 particles.material.uniforms.position_texture.texture = positionShader.uniforms.tPositions.texture;
             }
 
-            if (this.get("trackCam")) {
-                this.controls.update();
-            }
+            controls.update();
             renderer.render(scene, camera);
 
             this.stats.end();
@@ -413,7 +428,6 @@ YUI.add("stalker-slider", function(Y) {
             debugScene.add(plane2);
             debugScene.add(debugCamera);
             this.render = function() {
-                //console.log('debug render');
                 renderer.render(debugScene, debugCamera);
             }
         },
@@ -494,17 +508,6 @@ YUI.add("stalker-slider", function(Y) {
             t.needsUpdate = true;
             return t;
         },
-        resetCamera: function() {
-            camera.position.x = 0;
-            camera.position.y = 0;
-            camera.position.z = 400;
-            camera.rotation.x = 0;
-            camera.rotation.y = 0;
-            camera.rotation.z = 0;
-            camera.scale.x = 1;
-            camera.scale.y = 1;
-            camera.scale.z = 1;
-        },
         /**
          *
          */
@@ -513,7 +516,8 @@ YUI.add("stalker-slider", function(Y) {
 
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 100000);
-            this.resetCamera();
+            camera.position.y = 200;
+            camera.position.z = 500;
             scene.add(camera);
             shadowCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 100000);
             shadowCamera.position.z = 500 + 500;
@@ -532,15 +536,12 @@ YUI.add("stalker-slider", function(Y) {
             renderer = new THREE.WebGLRenderer();
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.autoClear = false;
-            this.get("contentBox").appendChild(renderer.domElement);
+            document.body.appendChild(renderer.domElement);
             renderer.domElement.id = 'particleCanvas';
             renderCanvas = renderer.domElement;
+            controls = new THREE.TrackballControls(camera, renderCanvas);
             effectsComposer = new PostComposer(window.innerWidth, window.innerHeight, renderer, scene, shadowCamera);
             this.initRTT();
-
-            this.controls = new THREE.TrackballControls(camera, renderCanvas);
-            this.controls.enabled = this.get("trackCam");
-            //this.controls.noRotate = this.controls.noPan = !this.get("trackCam");
 
             var attributes = {
                 size: {
@@ -732,12 +733,78 @@ YUI.add("stalker-slider", function(Y) {
             fboParticles.renderToTexture(rtTexturePos, generatedTexturePos);
         },
         // ***************************
+        // *** SLIDER RANGE ***
+        // ***************************
+        /**
+         *
+         */
+
+         renderSliderRangeForDreams: function() {
+                //We use the date in MS to deal with the date comparison
+                var initialDate =new Date(); 
+                initialDate.setFullYear(2013,4,11); // Start date of exhibition
+                var initialDateValinMs = initialDate.getTime();
+
+                var currentDate = new Date()
+                var currentDateinMs = currentDate.getTime();
+
+                var initialValues = [initialDateValinMs, currentDateinMs]; // Value to init the slider
+                var initialValuesDates = [new Date(initialDateValinMs),new Date(currentDateinMs)];
+                var sliderTooltip = function(event, ui) {
+                  var curValues = ui.values || initialValuesDates; // current value (when sliding) or initial value (at start)
+                  if(!(curValues[0] instanceof Date)){ // if curValues are not instances of Date they should be in MS (int). We have to convert it in Date format to display it on the slider.
+                    console.log(curValues[0])
+                    curValues[0] = new Date(curValues[0])
+                  }
+                  if(!(curValues[1] instanceof Date)){
+                    curValues[1] = new Date(curValues[1])
+                  }
+                  
+                var tooltipOne = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[0].getDate() + "/" + ((curValues[0].getMonth())+1) + "/" + curValues[0].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
+                var tooltipTwo = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[1].getDate() + "/" + ((curValues[1].getMonth())+1) + "/" + curValues[1].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
+
+
+                  $('.ui-slider-handle').first().html(tooltipOne); //attach tooltip to the slider handle
+                  $('.ui-slider-handle').last().html(tooltipTwo); //attach tooltip to the slider handle
+
+                  
+                }
+
+                $("#slider-dreams").slider({
+                  values: initialValues,
+                  orientation: "vertical",
+                  range: true,
+                  min: initialDateValinMs,
+                  max: currentDateinMs,
+                  create: sliderTooltip,
+                  slide: sliderTooltip,
+                  start: function(e,ui){$(ui.handle).toggleClass("moveHandle")}, // This class allow to display the moved handler over the other handle
+                  stop: function(e,ui){
+                    $(ui.handle).toggleClass("moveHandle");
+                    Y.Stalker.slider.loadAlbumByDate(ui.values);
+                }
+              });
+
+
+                $('#preview-strip').enscroll({
+                    showOnHover: true,
+                    verticalTrackClass: 'track3',
+                    verticalHandleClass: 'handle3'
+                });
+
+                
+
+         },
+
+        // ***************************
         // *** CUSTOMIZATION PANEL ***
         // ***************************
         /**
          *
          */
         renderCustomization: function() {
+            $('#sink').show();
+
             var params = new Y.inputEx.Group({
                 parentEl: Y.one("#nav-bar"),
                 legend: "Options (space to toogle)",
@@ -746,10 +813,10 @@ YUI.add("stalker-slider", function(Y) {
                         name: "event",
                         label: "Event"
                     }, {
-                        name: "visibleQr",
+                        name: "visible",
                         label: "Show QR",
                         type: "boolean"
-                    }, {
+                    },{
                         type: "select",
                         name: "textureWidth",
                         label: "Grid width",
@@ -871,35 +938,11 @@ YUI.add("stalker-slider", function(Y) {
         }
     }, {
         ATTRS: {
-            slideshowRunning: {
-                value: false
-            },
-            trackCam: {
-                value: false,
-                setter: function(val) {
-                    if (this.controls) {
-                        this.controls.enabled = val;
-                        //this.controls.noRotate = this.controls.noPan = !val;
-                    }
-                    return val;
-                }
-            },
-            visibleQr: {
-                value: true,
-                setter: function(val) {
-                    if (val) {
-                        this.get("contentBox").one(".qr").show();
-                    } else {
-                        this.get("contentBox").one(".qr").hide();
-                    }
-                    return val;
-                }
-            },
             event: {
                 value: "Secret room",
                 setter: function(val) {
                     var url = PHONEDRAWPATH + "?event=" + escape(val);
-                    this.get("contentBox").one(".qr").setHTML('<img src="'
+                    this.get("contentBox").setHTML('<img src="'
                             + "http://chart.apis.google.com/chart?cht=qr&chs=130x130&chld=Q&choe=UTF-8&chl="
 //                            + "http://qrickit.com/api/qr?fgdcolor=ffffff&bgdcolor=000000&qrsize=150&t=p&e=m&d="
                             + encodeURIComponent(url) + '" />'
@@ -917,7 +960,6 @@ YUI.add("stalker-slider", function(Y) {
                 }
             },
             particleSize: {
-                value: 13, //default 10
                 setter: function(val) {
                     if (shaderMaterial) {
                         shaderMaterial.uniforms['particleSize'].value = val;
@@ -975,10 +1017,13 @@ YUI.add("stalker-slider", function(Y) {
             }
         }
     });
-
+    var start = true;
     function populateAlbum(the_album) {
         photo_album = the_album;
-        var ul = $('<ul />');
+
+        $('#preview-strip').find('.dreamslist').remove();
+
+        ul = $('<ul class="dreamslist"/>');
         var strip = $('#preview-strip');
         var autofire;
         var laste;
@@ -999,10 +1044,7 @@ YUI.add("stalker-slider", function(Y) {
             if (toMove)
                 strip.scrollLeft(strip.scrollLeft() + toMove);
         }
-        strip.on('mousemove', mousemove).on('mouseover', function(e) {
-            laste = e;
-            autofire = setInterval(mousemove, 25);
-        }).on('mouseout', function(e) {
+        strip.on('mouseout', function(e) {
             clearInterval(autofire);
         }).on('scroll', function(e) {
             checks();
@@ -1031,7 +1073,7 @@ YUI.add("stalker-slider", function(Y) {
             }
             return true;
         }
-        $('#preview-strip').html(ul);
+        $('#preview-strip').append(ul);
         function createThumbnail(photo_album, index) {
             var info = photo_album[index],
                     name = info.name,
@@ -1044,7 +1086,12 @@ YUI.add("stalker-slider", function(Y) {
             if (name) {
                 img.alt = name;
             }
-            var li = $('<li />').append(img);
+            if(index % 2 === 0){
+                var li = $('<li class="even-display"  />').append(img);
+            }else{
+                var li = $('<li />').append(img);
+            }
+            
             li[0].info = photo_album[index];
             ul.append(li);
             li.hover(function(e) {
@@ -1086,9 +1133,29 @@ YUI.add("stalker-slider", function(Y) {
                 t.css('top', (80 - h) / 2 + 'px');
             });
         }
-        for (var i = 0; i < photo_album.length; i++) {
-            createThumbnail(photo_album, i);
+
+        nbThumbnailToLoad = 15; // number of thumbnail loaded at the beginning
+        indexThumbnail = 0; // useful to know which thumbnail (index) was the last thumnail loaded
+        $('.dreamslist').waypoint({
+          context: "#preview-strip",
+          offset: "bottom-in-view", // waypoint is triggered when the bottom of .dreamslist is in view in the viewport
+          handler: function(direction) {
+            if(direction=="down"){  // we must load the next thumbnail only if the user is scrolling down
+                $('.dreamslist').waypoint("disable") // Allow to load dynamically the next thumbnails into .dreamslist. Then the waypoint will be enabled again.
+                if((indexThumbnail+nbThumbnailToLoad) > photo_album.length){ // Useful when we have less thumbnails to load than nbThumbnailToLoad
+                    nbThumbnailToLoad = (photo_album.length-indexThumbnail);
+                }
+                for (var i = 0; i < nbThumbnailToLoad; i++) {
+                    createThumbnail(photo_album, indexThumbnail+i);
+                }
+            }
+            indexThumbnail = indexThumbnail+nbThumbnailToLoad;
+            if(indexThumbnail < photo_album.length){
+                $('.dreamslist').waypoint("enable")
+            }
+
         }
+    });
         checks();
     }
 
@@ -1197,3 +1264,234 @@ YUI.add("stalker-slider", function(Y) {
         this.renderToTexture(texture, renderToTexture);
     };
 });
+(function($) {
+
+    $.fn.slider_web = function() {
+        DREAMS_SERVICE_URL = window.location.origin + "/services/dreamsvalidated";
+        FADEOUTTIME = 2000;
+        FADINTIME = 2000;
+        PICTURETIME = 3000;
+        var dreamsAlbum = [];
+        var isLoaded = false; // Allow to know if the gallery is loded and the slider ready to start
+        var timeoutFirstImg;
+        var timeout;
+        var customStartTimeout;
+        
+        this.each( function() {
+            init();
+            renderSlider();
+            loadAlbum(startImgSlider);      
+        });
+
+        function init(){
+            $('#sink').show();
+            $('#preview-strip').css("display","none")
+            $('#preview-strip-nowebgl').enscroll({
+                    showOnHover: true,
+                    verticalTrackClass: 'track3',
+                    verticalHandleClass: 'handle3'
+                });
+        }
+
+        function loadAlbum(callback){
+            $.getJSON(DREAMS_SERVICE_URL, function(data){
+                $.each(data, function(key, val){
+                    var photo = val.id;
+                    dreamsAlbum.push({
+                        name: photo,
+                        thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
+                        photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
+                    });
+                })
+                populateAlbum(dreamsAlbum);
+                callback();
+            })
+            
+        }
+
+        function loadAlbumByDate(dates,callback){
+            clearTimeout(customStartTimeout)
+            clearTimeout(timeout);
+            clearTimeout(timeoutFirstImg);
+            dreamsAlbum = [];
+            $.getJSON(DREAMS_SERVICE_URL, function(data){
+                $.each(data, function(key, val){
+                    var photo = val.id;
+                    
+                    var datePhoto = new Date(val.created_at);
+                    var datePhoto = datePhoto.getTime();
+                    if(datePhoto>dates[0] && datePhoto<dates[1]){
+                        console.log("ok")
+                        dreamsAlbum.push({
+                            name: photo,
+                            thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
+                            photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
+                        });
+                    }
+                })
+                console.log(dreamsAlbum)
+                populateAlbum(dreamsAlbum);
+                callback();
+            })
+            
+        }
+
+        function startImgSlider(){
+            $("#simpleImgSlider img").remove();
+            var src = ($(".dreamslist img").get(0).src);
+            var img = new Image();
+            img.src = src;
+            img.id = 0;
+            img.onload = function(){
+                $("#simpleImgSlider").append(img)
+            }
+            timeoutFirstImg = setTimeout(function(){
+                        loadingNextImg(0);
+                  },PICTURETIME)
+        }
+
+        function customSliderStart(imgClicked){           
+            clearTimeout(customStartTimeout)
+            var imgToDisplay = new Image();
+            imgToDisplay.id = ($("li").index((imgClicked.parent())))
+            imgToDisplay.src = imgClicked.attr('src');
+            clearTimeout(timeout);
+            clearTimeout(timeoutFirstImg);
+            $("#simpleImgSlider").find('img').remove();            
+
+            imgToDisplay.onload = function(){
+                $("#simpleImgSlider").append(imgToDisplay)
+                customStartTimeout = setTimeout(function(){
+                        loadingNextImg(imgToDisplay.id);
+                  },PICTURETIME)
+            }
+        }
+
+        function loadingNextImg(idCurrentImg){
+            if(idCurrentImg < dreamsAlbum.length-1){
+                idCurrentImg = parseInt(idCurrentImg);
+                var idNextImg = idCurrentImg+1;
+                var src = ($("img").get(idNextImg).src);
+                $("#simpleImgSlider").append("<img id='"+idNextImg+"' src='"+src+"' style='display: none;'/>");
+                $("#"+idNextImg).bind("load",function(){
+                    timeout = setTimeout(function(){
+                        fadeout(idCurrentImg,idNextImg);
+                  },PICTURETIME)
+                })
+            }else{
+                var idNextImg = 0;
+                var src = ($("img").get(idNextImg).src);
+                $("#simpleImgSlider").append("<img id='"+idNextImg+"' src='"+src+"' style='display: none;'/>");
+                $("#"+idNextImg).bind("load",function(){
+                    timeout = setTimeout(function(){
+                        fadeout(idCurrentImg,idNextImg);
+                  },PICTURETIME)
+                })
+            }
+            
+        }
+
+        function fadeout(idLastImg, idImgToDisplay){
+            
+        $("#"+idLastImg).fadeOut(FADEOUTTIME,function(){
+          $("#"+idLastImg).remove();
+          if(idImgToDisplay<0){ // An idImgToDisplay negative means that the next image is not loaded
+            init();
+          }else{
+            $("#"+idImgToDisplay).fadeIn(FADINTIME,function(){
+            loadingNextImg(idImgToDisplay);
+            });
+          }
+        })
+      }   
+
+        function populateAlbum(album){
+            console.log("populateAlbum")
+            $('#preview-strip-nowebgl').find('.dreamslist').remove();
+
+            ul = $('<ul class="dreamslist"/>');
+
+            $('#preview-strip-nowebgl').append(ul);
+            for (var i = 0; i < album.length; i++) {
+                createThumbnail(album, i);
+            }
+
+            function createThumbnail(photo_album, index){
+                var info = photo_album[index],
+                    name = info.name,
+                    thumbnail_url = info.thumbnail_url,
+                    img = new Image();
+
+                    img.src = thumbnail_url;
+                info.index = index;
+
+                if (name) {
+                    img.alt = name;
+                }
+                if(index % 2 === 0){
+                    var li = $('<li class="even-display"  />').append(img);
+                }else{
+                    var li = $('<li />').append(img);
+                }
+                
+                li[0].info = photo_album[index];
+                ul.append(li);
+            }
+
+            $('#preview-strip-nowebgl .dreamslist').on('click','li',function(){
+                customSliderStart($(this).find('img'));
+            })
+
+        }
+
+        function renderSlider(){
+            //We use the date in MS to deal with the date comparison
+                var initialDate =new Date(); 
+                initialDate.setFullYear(2013,4,11); // Start date of exhibition
+                var initialDateValinMs = initialDate.getTime();
+
+                var currentDate = new Date()
+                var currentDateinMs = currentDate.getTime();
+
+                var initialValues = [initialDateValinMs, currentDateinMs]; // Value to init the slider
+                var initialValuesDates = [new Date(initialDateValinMs),new Date(currentDateinMs)];
+                var sliderTooltip = function(event, ui) {
+                  var curValues = ui.values || initialValuesDates; // current value (when sliding) or initial value (at start)
+                  if(!(curValues[0] instanceof Date)){ // if curValues are not instances of Date they should be in MS (int). We have to convert it in Date format to display it on the slider.
+                    curValues[0] = new Date(curValues[0])
+                  }
+                  if(!(curValues[1] instanceof Date)){
+                    curValues[1] = new Date(curValues[1])
+                  }
+                  
+                var tooltipOne = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[0].getDate() + "/" + ((curValues[0].getMonth())+1) + "/" + curValues[0].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
+                var tooltipTwo = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[1].getDate() + "/" + ((curValues[1].getMonth())+1) + "/" + curValues[1].getFullYear() +'</div><div class="handle-tooltip-arrow"></div></div>';
+
+
+                  $('.ui-slider-handle').first().html(tooltipOne); //attach tooltip to the slider handle
+                  $('.ui-slider-handle').last().html(tooltipTwo); //attach tooltip to the slider handle
+
+                  
+                }
+
+                $("#slider-dreams-nowebgl").slider({
+                  values: initialValues,
+                  orientation: "vertical",
+                  range: true,
+                  min: initialDateValinMs,
+                  max: currentDateinMs,
+                  create: sliderTooltip,
+                  slide: sliderTooltip,
+                  start: function(e,ui){$(ui.handle).toggleClass("moveHandle")}, // This class allow to display the moved handler over the other handle
+                  stop: function(e,ui){
+                    $(ui.handle).toggleClass("moveHandle");
+                    loadAlbumByDate(ui.values,startImgSlider)
+                }
+              });
+        }    
+
+    }
+
+}(jQuery));
+
+
