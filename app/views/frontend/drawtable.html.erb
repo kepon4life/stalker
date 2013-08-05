@@ -1,0 +1,142 @@
+<% @title="Stalker - Slider" %>
+<% content_for :stylesheet_includes do %>
+  <%= stylesheet_link_tag '/frontend/css/slider.css'  %>
+<% end %>
+<% content_for :javascript_includes_in_head do %>
+  <script>window["_GOOG_TRANS_EXT_VER"] = "1";</script>
+<% end %>
+<% content_for :javascript_includes do %>
+
+    <%= javascript_include_tag "/frontend/js/libs/three.min.js" %>
+    <%= javascript_include_tag "/frontend/js/libs/stats.min.js" %>
+    <!--<script src="http://yui.yahooapis.com/3.9.0/build/yui/yui-min.js"></script>-->
+    <%= javascript_include_tag "/frontend/js/libs/yui3/build/yui/yui-min.js" %>
+    <%= javascript_include_tag "/frontend/js/libs/inputex/src/loader.js" %>
+    <script src="http://js.pusher.com/1.12/pusher.min.js"></script>
+
+    <!-- Canvas dependencies -->
+    <script src="js/libs/tuiojs.js" type="text/javascript"></script>
+    <script src="js/libs/connect.js" type="text/javascript"></script>
+
+
+    <%= javascript_include_tag "/frontend/js/slider.js" %>
+    <script src="js/canvas.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+        YUI_config.groups.inputex.base = "frontend/js/libs/inputex/src/";
+        YUI_config.groups.inputex.filter = "raw";
+        YUI_config.stalkerbase = "frontend/";
+
+        YUI().use("io", "json", "widget", "base", "event-resize",
+                "inputex-string", "inputex-select", "inputex-group",
+                "inputex-list", "inputex-combine", "inputex-checkbox",
+                "node-event-simulate",
+                "stalker-slider", "stalker-canvas", "transition", function(Y) {
+
+            Y.on("domready", function() {
+                var canvas, slider, hash = window.location.hash;
+
+                Y.one('#welcome').hide();
+
+                canvas = new Y.Stalker.Canvas({});                          // Render canvas (gets input from tuio)
+                canvas.render();
+
+                if (Y.hasWebgl()) {
+                    canvas.hide();
+
+                    slider = new Y.Stalker.Slider({
+                        textureWidth: (hash.length > 1) ? +hash.substring(1) : 256, // 64, 128, 256, 512, 1024, 2048
+                        visibleQr: false,
+                        slideshowRunning: false
+                    });
+                    slider.render();
+                    //slider.loadAlbumFromService(window.location.origin + "/services/dreamssecretroom");// Load album
+                    slider.loadPicture(canvas.canvasNode.toDataURL("image/png"));
+
+                    var idleTimer, resetUI = function() {
+                        canvas.clear();
+                        Y.one("#draw-tool").show(true);
+                        slider.resetCamera();
+                        slider.set("trackCam", false);
+                        canvas.set("allowEdition", true);
+                    }, resetIdleTimer = function() {
+//                            Y.log("resetIdleTimer");
+                        $('#screen-saver').hide(true);
+                        $('#asd').trigger('pause');
+                        if (idleTimer) {
+                            idleTimer.cancel();
+                            idleTimer = null;
+//                                resetUI();
+                        }
+                        idleTimer = Y.later(10000, null, function() {
+                            // $('div#draw-tool').fadeOut('slow');
+                            Y.one("#screen-saver").show(true);
+                            resetUI();
+                        });
+                    }
+                    //Y.one('#screen-saver').hide();
+                    $('#asd').trigger('pause');
+
+                    canvas.on("cursorUpdate", resetIdleTimer);                  // Idle screen saver
+                    canvas.on("update", function() {                        // When an input is done on the canvas
+                        slider.loadPicture(canvas.canvasNode.toDataURL("image/png"));// Show its image in the slider
+                    });
+                    canvas.on("saved", function() {                         // When the canvas is saved
+                        slider.loadPicture(canvas.canvasNode.toDataURL("image/png"));// Show its image in the slider
+                        canvas.clear();
+                        canvas.set("allowEdition", false);
+                        slider.set("trackCam", true);
+                        Y.one("#draw-tool").hide(true);
+                        Y.later(1000, slider, slider.startImploding);
+                    });
+
+                    var toggled = false;                                    // Debug mode, toggle canvas/slider on enter key press
+                    Y.one('doc').on('key', function(e) {
+                        toggled = !toggled;
+                        canvas.set("visible", toggled);
+                        slider.set("visible", !toggled);
+                    }, 'enter');
+                } else {
+
+//                        canvas.on("saved", function() {                         // When the canvas is saved
+//                            alert("Thank you for your submission");
+//                        });
+//                        Y.one('.loading').hide();
+                    Y.one('.fail').show();
+                }
+            });
+        });
+    </script>
+
+<% end %>
+
+<div class="overlay" id="welcome">
+    <div class="wrap">
+        <div class="messagebox">
+
+            <p class="loading" style="">Loading...</p>
+
+            <p class="fail" style="display: none; ">
+                Unfortunately, it seems that your system is currently unable to run WebGL required for this experiment. You may try installing the latest version of <a href="https://www.google.com/chrome">Chrome</a> or <a href="http://www.getfirefox.net/">Firefox</a> browsers. Visit this <a href="http://www.khronos.org/webgl/wiki/Getting_a_WebGL_Implementation">page</a> for more details on obtaining WebGL.
+            </p>
+
+        </div>
+    </div>
+</div>
+<div id="draw-tool">
+    <img class="controls" id="envoyer" src="img/UI_send.png" />
+    <img class="controls" id="undo" src="img/UI_undo.png" />
+    <img class="controls" id="effacer" src="img/UI_trash.png" />
+</div>
+
+<div id="screen-saver" style="display:none" >
+    <video id="asd" width="320" height="240"  loop="true">
+        <!--<source src="http://www.w3schools.com/html/movie.mp4" type="video/mp4" />-->
+        <source src="img/movie.mp4" type="video/mp4" />
+        <source src="http://www.w3schools.com/html/movie.ogg" type="video/ogg" />
+    </video>
+</div>
+
+<!--<object id="tuio" type="application/x-tuio">Plugin FAILED to load</object>-->
+

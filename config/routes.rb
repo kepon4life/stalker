@@ -15,6 +15,7 @@ StalkerBackend::Application.routes.draw do
   match '/web_slider', :controller =>"frontend", :action => "web_slider"
   match '/slider', :controller =>"frontend", :action => "slider"
   match '/draw', :controller => "frontend", :action => "draw"
+  match '/drawtable', :controller => "frontend", :action => "drawtable"
   match '/drawsmartphone', :controller => "frontend", :action => "drawsmartphone"
 
   resources :categories, :users, :dreams, :events
@@ -30,5 +31,5 @@ StalkerBackend::Application.routes.draw do
   match '/services/dreamssecretroom' , :controller => 'services', :action => 'get_dreams_for_secret_room'
   match '/services/dreamsvalidated', :controller => 'services', :action => 'get_dreams_validated'
   match '/services/dreamforsimpleslider' , :controller => 'services', :action => 'get_dream_for_simple_slider'
-  
+
 end
