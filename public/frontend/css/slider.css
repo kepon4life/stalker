@@ -1,28 +1,79 @@
-/*---------------------------------------------------
-LESS Elements 0.6
----------------------------------------------------
-A set of useful LESS mixins by Dmitry Fadeyev
-Special thanks for mixin suggestions to:
-  Kris Van Herzeele,
-  Benoit Adam,
-  Portenart Emile-Victor,
-  Ryan Faerman
-
-More info at: http://lesselements.com
------------------------------------------------------*/
+/*
+ * Stalker slider
+ */
+html {
+    width: 100%;
+}
+body {
+    background: black;
+    font-family: Helvetica, sans-serif;
+    font-size: 12px;
+    margin:0;
+    overflow: hidden;
+}
 #particleCanvas {
     position: absolute;
     float: left;
     top: 0;
     left: 0;
 }
-body {
-    background: black;
-    font-family: Helvetica, sans-serif;
-    font-size: 12px;
+object {
+    /*display:none;*/
+    position:absolute;
+    left: 100000px;
 }
-html {
+#screen-saver {
+    position:absolute;
+    background: black;
+    z-index: 100;
     width: 100%;
+    height: 100%;
+    text-align: center;
+}
+/** Canvas styles */
+.yui3-stalker-canvas {
+    position: absolute;
+}
+.yui3-stalker-canvas-hidden {
+    display:none;
+}
+#mycanvas{
+    background-color: black;
+}
+#mycanvasbis{
+    border-style: solid;
+    border-width: 2px;
+    border-color: white;
+    width: 600px;
+    height: 600px;
+    background-color: black;
+    margin-right: auto;
+    margin-left: auto;
+}
+#draw-tool img {
+    z-index: 40;
+    position: absolute;
+    cursor: pointer;
+}
+#draw-tool #envoyer {
+    right: 20px;
+    bottom: 20px;
+}
+#draw-tool #effacer {
+    left: 20px;
+    bottom: 20px;
+}
+#draw-tool #effacer {
+    left: 20px;
+    bottom: 20px;
+}
+#draw-tool #undo {
+    left: 130px;
+    bottom: 20px;
+}
+/* Slider styles */
+.yui3-stalker-slider-hidden {
+    display: none;
 }
 #sink {
     z-index: 10;
@@ -156,11 +207,9 @@ a:hover {
     font-weight: bold;
 }
 .overlay {
-    position: fixed;
+    color: white;
+    position: absolute;
     z-index: 10;
-    width: 100%;
-    height: 100%;
-    display: table;
     /*    background: -webkit-radial-gradient(rgba(119, 106, 127, 0.15) 0, rgba(220, 127, 178, 0.15) 23%, transparent 66%, rgba(127, 18, 148, 0.2) 78%);
         background: -moz-radial-gradient(rgba(119, 106, 127, 0.15) 0, rgba(220, 127, 178, 0.15) 23%, transparent 66%, rgba(127, 18, 148, 0.2) 78%);*/
     bottom: 0;
@@ -168,12 +217,20 @@ a:hover {
     right: 0;
     top: 0;
     overflow: auto;
-    padding: 20px;
-    padding-bottom: 80px;
+    font-weight: bolder;
+    font-size: 3em;
+    background: black;
+    /*display:table;*/
 }
 .overlay > .wrap {
-    vertical-align: middle;
+    /*display:table-cell;*/
+    /*vertical-align: middle;*/
     text-align: center;
+}
+.overlay > .wrap >* {
+
+    position:absolute; top:0; bottom:0; left:0; right:0;
+    margin:auto; height:100px; width:70%;
 }
 #credits {
     position: absolute;
@@ -186,15 +243,7 @@ a:hover {
     font-weight: normal;
 }
 .messagebox {
-    margin: auto;
-    width: 450px;
-    color: #fff;
-    background-color: rgba(0, 0, 0, 0.6);
-    padding: 30px;
-    opacity: 0.95;
-    border-radius: 10px;
-    -webkit-box-shadow: 0px 0px 20px #000000;
-    -moz-box-shadow: 0px 0px 20px #000000;
+
 }
 .messagebox p {
     padding: 5px;
@@ -265,7 +314,7 @@ a:hover {
     width: 26px;
 }
 /** QR Styles **/
-.yui3-stalker-slider {
+.yui3-stalker-slider .qr{
     position: fixed;
     top: 10px;
     right: 10px;

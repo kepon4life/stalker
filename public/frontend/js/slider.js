@@ -5,14 +5,10 @@
 YUI.add("stalker-slider", function(Y) {
     YUI_config.stalkerbase = YUI_config.stalkerbase || "";
 
-    var ALBUMPATH = YUI_config.stalkerbase + "data/pictures.json",
-            DREAMS_SERVICE_URL = window.location.origin + "/services/dreamssecretroom",
-            SHADERPATH = YUI_config.stalkerbase + "shader/",
+    var SHADERPATH = YUI_config.stalkerbase + "shader/",
             PHONEDRAWPATH = window.location.origin + "/drawsmartphone",
             //TIME_FOR_FADING = 3 + 1, // 3 + 2
             timeoutExplosion,
-            slideshow_running = false,
-            slideshow_timer,
             dreamAlbum = [],
             strip_width,
             photo_album,
@@ -24,7 +20,7 @@ YUI.add("stalker-slider", function(Y) {
         "particles_vertex", "texture_fragment_simulation_shader",
         "texture_vertex_simulation_shader", "texture_cpu_to_gpu_vertex_shader",
         "texture_cpu_to_gpu_fragment_shader"],
-            camera, controls, scene, renderer, debugRenderer, shadowCamera,
+            camera, scene, renderer, debugRenderer, shadowCamera,
             effectsComposer, particles, stopRenderering = false,
             directionalLight, shadowPlane, planeTest, gl, cameraRTT,
             sceneRTTPos, rtTexturePos, rtTexturePos2, positionShader,
@@ -38,6 +34,16 @@ YUI.add("stalker-slider", function(Y) {
             resizeCtx = resizeCanvas.getContext('2d');
 
     Y.namespace("Stalker").Slider = Y.Base.create("stalker-slider", Y.Widget, [], {
+        CONTENT_TEMPLATE: '<div>'
+                + '<div class="qr"></div>'
+                + '<div id="sink">'
+                + '<div id="nav-bar">'
+                + '<div id="status"></div>'
+                + '</div>'
+                + '<div id="preview-image"></div>'
+                + '<div id="preview-strip"><!-- prev next --></div>'
+                + '</div>'
+                + '</div>',
         /**
          *
          */
@@ -53,6 +59,7 @@ YUI.add("stalker-slider", function(Y) {
          */
         renderUI: function() {
             this.renderStats();
+            Y.one("#sink").hide();
 
             this.loadShaders(function() {                                       // After shaders are retrieved
                 this.initScene();                                               // Init Webgl scene
@@ -61,10 +68,10 @@ YUI.add("stalker-slider", function(Y) {
                 start = Date.now();                                             // Set noicse animation start time
                 last = start;                                                   // Activate explosion
 
-                this.gohome();                                                  // Paricles should go to initial position
+                this.toggleHome();                                                  // Paricles should go to initial position
 
-                //this.loadAlbum(ALBUMPATH);                                      // Load the album json final
-                this.loadAlbumFromService(DREAMS_SERVICE_URL);
+                //this.loadAlbum(ALBUMPATH);                                    // Load the album json final
+                //this.loadAlbumFromService(DREAMS_SERVICE_URL);
                 this.renderCustomization();                                     // Render side panel
             });
         },
@@ -73,34 +80,35 @@ YUI.add("stalker-slider", function(Y) {
          * @returns {undefined}
          */
         bindUI: function() {
-            if (window.Pusher) {                                                // Init pusher
+            if (window.Pusher && window.PUSHER_API_KEY) {                       // Init pusher
                 Pusher.channel_auth_endpoint = 'pusher/auth';
                 var pusher = new Pusher(PUSHER_API_KEY),
                         privateChannel = pusher.subscribe(PUSHER_CHANEL);
 
                 privateChannel.bind('client-myevent', Y.bind(function(data) {   // Dream received events
                     //$('#content').append('<img src="'+data.imgUrl+'"/>');
-                    if(dreamAlbum[0]["photo_url"].split("/")[2] == "sended"){
-                        dreamAlbum.splice(0, 1, {
-                            name: PATH_TO_DREAMS + data.imgUrl,
-                            thumbnail_url: PATH_TO_DREAMS + data.imgUrl,
-                            photo_url: PATH_TO_DREAMS + data.imgUrl
-                        });
-                    }else{
-                        dreamAlbum.splice(0, 0, {
-                            name: PATH_TO_DREAMS + data.imgUrl ,
-                            thumbnail_url: PATH_TO_DREAMS + data.imgUrl,
-                            photo_url: PATH_TO_DREAMS + data.imgUrl
-                        });
+                    var data = {
+                        name: PATH_TO_DREAMS + data.imgUrl,
+                        thumbnail_url: PATH_TO_DREAMS + data.imgUrl,
+                        photo_url: PATH_TO_DREAMS + data.imgUrl
+                    };
+
+                    if (dreamAlbum[0]["photo_url"].split("/")[2] === "sended") {
+                        dreamAlbum.splice(0, 1, data);
+                    } else {
+                        dreamAlbum.splice(0, 0, data);
                     }
-                    
+
                     populateAlbum(dreamAlbum);
-                    this.startSlideshow();
+                    this.selectFirstPicture();
+//                    this.startSlideshow();
                 }, this));
             }
 
             Y.delegate("click", function(e) {                                   // Thumbnail clicks
-                this.loadPicture(e.currentTarget.getDOMNode().info);
+                var node = e.currentTarget.getDOMNode();
+                currently_playing = node.info.index;
+                this.loadPicture(node.info.photo_url);
             }, "#preview-strip", "li", this);
 
             Y.on("windowresize", function() {                                   // Window resize
@@ -113,17 +121,17 @@ YUI.add("stalker-slider", function(Y) {
                 }
             });
 
-            Y.one('doc').
-                    on('keypress', function(e) {                           // Debug mode on § click
-                if (e.charCode === 167 || e.charCode === 32) {
-                    $("#sink").toggle();
-                }
-            });
+            Y.one('doc').on('key', function(e) {                                // Debug mode on § click
+                $("#sink").toggle();
+            }, "32");
 
             //$('#play').on('click', this.toggleSlideshow);                     // play/pause
         },
         syncUI: function() {
             this.set("event", this.get("event"));
+            this.set("trackCam", this.get("trackCam"));
+            this.set("visibleQr", this.get("visibleQr"));
+
         },
         loadAlbum: function(url) {
             this.status('Loading album: ' + url);
@@ -144,7 +152,7 @@ YUI.add("stalker-slider", function(Y) {
                         }
                         populateAlbum(dreamAlbum);
                         this.selectFirstPicture();
-                        this.startSlideshow();
+//                        this.startSlideshow();
                     }
                 }
             });
@@ -168,7 +176,7 @@ YUI.add("stalker-slider", function(Y) {
                         }
                         populateAlbum(dreamAlbum);
                         this.selectFirstPicture();
-                        this.startSlideshow();
+//                        this.startSlideshow();
                     }
                 }
             });
@@ -185,31 +193,53 @@ YUI.add("stalker-slider", function(Y) {
             this.selectPicture((currently_playing + 1) % photo_album.length);
         },
         toggleSlideshow: function() {
-            if (slideshow_running) {
-                this.stopSlideshow();
-            } else {
-                this.startSlideshow();
-            }
+            this.set("slideshowRunning", !this.get("slideshowRunning"));
             //$('#play').html("Start Slideshow");
         },
         startSlideshow: function() {
             Y.log("startSlideshow()");
-            slideshow_running = true;
+            this.set("slideshowRunning", true);
+            this.advanceSlideshow();
             //$('#play').html("Stop Slideshow");
+        },
+        startImploding: function() {
+//            implode = true;
+//            startExplodingTime = Date.now();
+//            home = false;
+
+            home = false;
+            positionShader.uniforms.tPositions2.texture = positionShader.uniforms.tPositions.texture;
+            renderer.render(sceneRTTPos, cameraRTT, savedState, false);
+            positionShader.uniforms.tPositions2.texture = savedState;
         },
         advanceSlideshow: function() {
             Y.log("advanceSlideshow()");
-            if (slideshow_timer) {
-                slideshow_timer.cancel();
+            if (this.slideshow_timer) {
+                this.slideshow_timer.cancel();
             }
-            if (slideshow_running) {
-                slideshow_timer = Y.later(this.get("totalDuration") * 1000, this, this.selectNextPicture);
+            if (this.get("slideshowRunning")) {
+
+                implode = true;
+                this.slideshow_timer = Y.later(this.get("totalDuration") * 1000, this, this.selectNextPicture);
+
+                Y.later(1000 * this.get("implosionDuration"), this, function() {
+                    Y.log("implosionTimeout();");
+                    implode = false;
+                    renderer.deallocateTexture(particles.material.uniforms.color_texture.texture);
+                    particles.material.uniforms.color_texture.texture = particles.material.uniforms.next_color_texture.texture;
+                });
+                timeoutExplosion = Y.later(1000 * this.get("explosionDuration"), this, function() {
+                    Y.log("explosionTimeout();");
+                    if (home) {
+                        this.toggleHome();
+                    }
+                });
             }
         },
         stopSlideshow: function() {
-            slideshow_running = false;
-            if (slideshow_timer) {
-                slideshow_timer.cancel();
+            this.set("slideshowRunning", false);
+            if (this.slideshow_timer) {
+                this.slideshow_timer.cancel();
             }
             $('#play').html("Start Slideshow");
         },
@@ -220,13 +250,11 @@ YUI.add("stalker-slider", function(Y) {
          *
          * @param {type} cfg
          */
-        loadPicture: function(cfg) {
+        loadPicture: function(url, cb) {
             //Y.log("loadPicture(" + info.photo_url + ")");
-            var info = cfg;
 
-            this.loadTexture(info.photo_url, new THREE.UVMapping(), Y.bind(function(texture) {
+            this.loadTexture(url, new THREE.UVMapping(), Y.bind(function(texture) {
                 Y.log("loadPicture.onLoadTexture");
-                currently_playing = info.index;
                 this.showPicture(texture);
                 this.advanceSlideshow();
             }, this));
@@ -245,33 +273,19 @@ YUI.add("stalker-slider", function(Y) {
             particles.material.uniforms['next_color_texture'].texture = texture;
             startExplodingTime = Date.now();
             if (!home) {
-                this.gohome();
+                this.toggleHome();
             }
             if (timeoutExplosion) {
                 timeoutExplosion.cancel();
             }
-            implode = true;
-            Y.later(1000 * this.get("implosionDuration"), this, function() {
-                Y.log("implosionTimeout();");
-                implode = false;
-                renderer.deallocateTexture(particles.material.uniforms.color_texture.texture);
-                particles.material.uniforms['color_texture'].texture = texture;
-            });
-            timeoutExplosion = Y.later(1000 * this.get("explosionDuration"), this, function() {
-                Y.log("explosionTimeout();");
-                if (home) {
-                    this.gohome();
-                }
-            });
         },
-        gohome: function() {
-            home = !home;
-            if (home) {
+        toggleHome: function() {
+            Y.log("toggleHome(" + !home + ")");
+            if (!home) {
+                home = true;
                 savedState = positionShader.uniforms.tPositions2.texture;
             } else {
-                positionShader.uniforms.tPositions2.texture = positionShader.uniforms.tPositions.texture;
-                renderer.render(sceneRTTPos, cameraRTT, savedState, false);
-                positionShader.uniforms.tPositions2.texture = savedState;
+                this.startImploding();
             }
         },
         animate: function() {
@@ -290,12 +304,12 @@ YUI.add("stalker-slider", function(Y) {
             if (startExplodingTime) {
                 var implosionLapse = (now - startExplodingTime) / 1000,
                         transition = (implosionLapse <= this.get("implosionDuration")) ?
-                        implosionLapse / this.get("implosionDuration") : 0,
+                        implosionLapse / this.get("implosionDuration") : 1,
                         fadeTransition = (implosionLapse <= this.get("fadingDuration")) ?
                         implosionLapse / this.get("fadingDuration") : 1;
 
-                particles.material.uniforms['transition'].value = fadeTransition;
-                positionShader.uniforms['transition'].value = transition;
+                particles.material.uniforms.transition.value = this.get("slideshowRunning") ? fadeTransition : 1;
+                positionShader.uniforms.transition.value = transition;
             }
 
             // Simulation
@@ -311,7 +325,9 @@ YUI.add("stalker-slider", function(Y) {
                 particles.material.uniforms.position_texture.texture = positionShader.uniforms.tPositions.texture;
             }
 
-            controls.update();
+            if (this.get("trackCam")) {
+                this.controls.update();
+            }
             renderer.render(scene, camera);
 
             this.stats.end();
@@ -397,7 +413,7 @@ YUI.add("stalker-slider", function(Y) {
             debugScene.add(plane2);
             debugScene.add(debugCamera);
             this.render = function() {
-                console.log('debug render');
+                //console.log('debug render');
                 renderer.render(debugScene, debugCamera);
             }
         },
@@ -478,6 +494,17 @@ YUI.add("stalker-slider", function(Y) {
             t.needsUpdate = true;
             return t;
         },
+        resetCamera: function() {
+            camera.position.x = 0;
+            camera.position.y = 0;
+            camera.position.z = 400;
+            camera.rotation.x = 0;
+            camera.rotation.y = 0;
+            camera.rotation.z = 0;
+            camera.scale.x = 1;
+            camera.scale.y = 1;
+            camera.scale.z = 1;
+        },
         /**
          *
          */
@@ -486,8 +513,7 @@ YUI.add("stalker-slider", function(Y) {
 
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 100000);
-            camera.position.y = 200;
-            camera.position.z = 500;
+            this.resetCamera();
             scene.add(camera);
             shadowCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 100000);
             shadowCamera.position.z = 500 + 500;
@@ -506,12 +532,15 @@ YUI.add("stalker-slider", function(Y) {
             renderer = new THREE.WebGLRenderer();
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.autoClear = false;
-            document.body.appendChild(renderer.domElement);
+            this.get("contentBox").appendChild(renderer.domElement);
             renderer.domElement.id = 'particleCanvas';
             renderCanvas = renderer.domElement;
-            controls = new THREE.TrackballControls(camera, renderCanvas);
             effectsComposer = new PostComposer(window.innerWidth, window.innerHeight, renderer, scene, shadowCamera);
             this.initRTT();
+
+            this.controls = new THREE.TrackballControls(camera, renderCanvas);
+            this.controls.enabled = this.get("trackCam");
+            //this.controls.noRotate = this.controls.noPan = !this.get("trackCam");
 
             var attributes = {
                 size: {
@@ -709,8 +738,6 @@ YUI.add("stalker-slider", function(Y) {
          *
          */
         renderCustomization: function() {
-            $('#sink').show();
-
             var params = new Y.inputEx.Group({
                 parentEl: Y.one("#nav-bar"),
                 legend: "Options (space to toogle)",
@@ -719,10 +746,10 @@ YUI.add("stalker-slider", function(Y) {
                         name: "event",
                         label: "Event"
                     }, {
-                        name: "visible",
+                        name: "visibleQr",
                         label: "Show QR",
                         type: "boolean"
-                    },{
+                    }, {
                         type: "select",
                         name: "textureWidth",
                         label: "Grid width",
@@ -844,11 +871,35 @@ YUI.add("stalker-slider", function(Y) {
         }
     }, {
         ATTRS: {
+            slideshowRunning: {
+                value: false
+            },
+            trackCam: {
+                value: false,
+                setter: function(val) {
+                    if (this.controls) {
+                        this.controls.enabled = val;
+                        //this.controls.noRotate = this.controls.noPan = !val;
+                    }
+                    return val;
+                }
+            },
+            visibleQr: {
+                value: true,
+                setter: function(val) {
+                    if (val) {
+                        this.get("contentBox").one(".qr").show();
+                    } else {
+                        this.get("contentBox").one(".qr").hide();
+                    }
+                    return val;
+                }
+            },
             event: {
                 value: "Secret room",
                 setter: function(val) {
                     var url = PHONEDRAWPATH + "?event=" + escape(val);
-                    this.get("contentBox").setHTML('<img src="'
+                    this.get("contentBox").one(".qr").setHTML('<img src="'
                             + "http://chart.apis.google.com/chart?cht=qr&chs=130x130&chld=Q&choe=UTF-8&chl="
 //                            + "http://qrickit.com/api/qr?fgdcolor=ffffff&bgdcolor=000000&qrsize=150&t=p&e=m&d="
                             + encodeURIComponent(url) + '" />'
@@ -866,6 +917,7 @@ YUI.add("stalker-slider", function(Y) {
                 }
             },
             particleSize: {
+                value: 13, //default 10
                 setter: function(val) {
                     if (shaderMaterial) {
                         shaderMaterial.uniforms['particleSize'].value = val;
