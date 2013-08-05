@@ -144,7 +144,12 @@ YUI.add("stalker-canvas", function(Y) {
             $.ajax({
                 type: 'POST',
                 url: '/frontend/save',
-                data: {metadatas: "here metadatas", imgNormal: imgBgWhite},
+                data: {
+                    metadatas: Y.JSON.stringify({
+                        event: Y.Stalker.slider.get("event")
+                    }),
+                    imgNormal: imgBgWhite
+                },
                 success: function(data) {
                     console.log(data);
                     triggered = privateChannel.trigger('client-myevent', data);

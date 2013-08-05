@@ -1,4 +1,4 @@
-class ServicesController < ApplicationController  
+class ServicesController < ApplicationController
 
 	def get_number_of_dreams_to_treat
 		dreams = Dream.where(:is_valid => nil, :secret_room => nil).all
@@ -15,7 +15,7 @@ class ServicesController < ApplicationController
 
 		dream = Dream.find(:first, :conditions => ["is_valid = ? AND id > " + params[:id], true, ])
 		if dream == nil
-			dream = Dream.find(:first, :conditions => ["is_valid = ?", true])	
+			dream = Dream.find(:first, :conditions => ["is_valid = ?", true])
 		end
 
 		if dream == nil
@@ -26,7 +26,7 @@ class ServicesController < ApplicationController
 
 	end
 
-	
+
 
 	def get_dreams_for_event
 		event = Event.find(params[:id])
@@ -51,7 +51,7 @@ class ServicesController < ApplicationController
 
 	def get_dreams_for_secret_room
 		dreams = Dream.where(:secret_room => true)
-		render :json => dreams.to_json(:only => [:id])
+		render :json => dreams.to_json(:only => [:id, :metadatas, :created_at])
 	end
 
 
@@ -71,5 +71,5 @@ class ServicesController < ApplicationController
 
 
 
-	
+
 end
