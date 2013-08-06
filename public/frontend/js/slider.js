@@ -170,7 +170,7 @@ YUI.add("stalker-slider", function(Y) {
                                 photo_url: YUI_config.stalkerbase + photo.url
                             });
                         }
-                        populateAlbum(this.dreamAlbum);
+                        this.populateAlbum(this.dreamAlbum);
                         this.selectFirstPicture();
 //                        this.startSlideshow();
                     }
@@ -194,7 +194,7 @@ YUI.add("stalker-slider", function(Y) {
                                 photo_url: PATH_TO_DREAMS + photo.id + DREAM_EXTENSION
                             }));
                         }
-                        populateAlbum(this.dreamAlbum);
+                        this.populateAlbum(this.dreamAlbum);
                         this.selectFirstPicture();
 //                        this.startSlideshow();
                     }

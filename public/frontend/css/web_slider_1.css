@@ -1,0 +1,306 @@
+/*---------------------------------------------------
+LESS Elements 0.6
+---------------------------------------------------
+A set of useful LESS mixins by Dmitry Fadeyev
+Special thanks for mixin suggestions to:
+  Kris Van Herzeele,
+  Benoit Adam,
+  Portenart Emile-Victor,
+  Ryan Faerman
+
+More info at: http://lesselements.com
+-----------------------------------------------------*/
+#particleCanvas {
+    position: absolute;
+    float: left;
+    top: 0;
+    left: 0;
+}
+body {
+    background: black;
+    font-family: Helvetica, sans-serif;
+    font-size: 12px;
+}
+html {
+    width: 100%;
+}
+#sink {
+    z-index: 10;
+    position: absolute;
+    display: none;
+}
+#sink #status {
+    color: #efefef;
+    display: none;
+}
+#sink #nav-bar .controls {
+    cursor: pointer;
+    padding: 3px;
+    margin: 5px;
+    margin-right: 0;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    padding-left: 7px;
+    padding-right: 7px;
+    background: #efefef;
+    background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #efefef), color-stop(1, #ededed));
+    background: -ms-linear-gradient(bottom, #efefef, #ededed);
+    background: -moz-linear-gradient(center bottom, #efefef 0%, #ededed 100%);
+}
+#sink #nav-bar .controls.hover {
+    background: #ededed;
+    background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #ededed), color-stop(1, #efefef));
+    background: -ms-linear-gradient(bottom, #ededed, #efefef);
+    background: -moz-linear-gradient(center bottom, #ededed 0%, #efefef 100%);
+}
+#sink #nav-bar img#spinner {
+    display: inline-block;
+    vertical-align: bottom;
+    width: 19px;
+    height: 19px;
+    margin: 5px;
+}
+#sink #albums {
+    display: none;
+}
+#sink #preview-strip {
+    width: 195px;
+    overflow: auto;
+    position: fixed;
+    z-index: 13;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+    height: 100%;
+    border-top: 2px solid rgba(255, 255, 255, 0.8);
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+}
+#sink #preview-strip:hover {
+    bottom: 0;
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+}
+#sink #preview-strip-nowebgl {
+    width: 195px;
+    height: 100%;
+    overflow: auto;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 13;
+    background: rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+    border-top: 2px solid rgba(255, 255, 255, 0.8);
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+}
+#sink #preview-strip ul,#preview-strip-nowebgl ul {
+    list-style: none;
+    display: inline-block;
+    position: relative;
+    padding: 0;
+    margin: 0;
+    -moz-opacity: 0.8;
+    -khtml-opacity: 0.8;
+    -webkit-opacity: 0.8;
+    opacity: 0.8;
+}
+#sink #preview-strip ul:hover {
+    -moz-opacity: 1;
+    -khtml-opacity: 1;
+    -webkit-opacity: 1;
+    opacity: 1;
+}
+#sink #preview-strip ul li, #preview-strip-nowebgl ul li {
+    float: left;
+    border: 1px solid #fff;
+    border-radius: 4px;
+    margin-top: 8px;
+    margin-left: 8px;
+    margin-bottom: 8px;
+    margin-right: 0px;
+    list-style: none;
+    background: #111111;
+    display: inline;
+    width: 80px;
+    height: 80px;
+    cursor: pointer;
+}
+#sink #preview-strip ul li img, #preview-strip-nowebgl ul li img {
+    border-radius: 4px;
+    position: relative;
+    top: 0;
+    bottom: 0;
+    -moz-opacity: 0.9;
+    -khtml-opacity: 0.9;
+    -webkit-opacity: 0.9;
+    opacity: 0.9;
+}
+#sink #preview-strip ul li img:hover {
+    -moz-opacity: 1;
+    -khtml-opacity: 1;
+    -webkit-opacity: 1;
+    opacity: 1;
+}
+#sink #preview-strip ul li:hover {
+    cursor: pointer;
+}
+#sink #preview-image {
+    z-index: 20;
+    position: fixed;
+}
+#simpleImgSlider{
+    position: absolute;
+    width: auto;
+    height: 100%;
+    margin-left: 225px;
+    left: 0;
+    right: 0;
+}
+.success {
+    display: none;
+}
+.fail {
+    display: none;
+}
+a {
+    color: #eee;
+}
+a:hover {
+    text-decoration: none;
+    font-weight: bold;
+}
+.overlay {
+    position: fixed;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    display: table;
+    /*    background: -webkit-radial-gradient(rgba(119, 106, 127, 0.15) 0, rgba(220, 127, 178, 0.15) 23%, transparent 66%, rgba(127, 18, 148, 0.2) 78%);
+        background: -moz-radial-gradient(rgba(119, 106, 127, 0.15) 0, rgba(220, 127, 178, 0.15) 23%, transparent 66%, rgba(127, 18, 148, 0.2) 78%);*/
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    overflow: auto;
+    padding: 20px;
+    padding-bottom: 80px;
+}
+.overlay > .wrap {
+    vertical-align: middle;
+    text-align: center;
+}
+#credits {
+    position: absolute;
+    bottom: 0px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    width: 100%;
+}
+#credits a:hover {
+    font-weight: normal;
+}
+.messagebox {
+    margin: auto;
+    width: 450px;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 30px;
+    opacity: 0.95;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 0px 20px #000000;
+    -moz-box-shadow: 0px 0px 20px #000000;
+}
+.messagebox p {
+    padding: 5px;
+}
+.messagebox button {
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 10px;
+    border: 0;
+    min-width: 100px;
+    background: -moz-linear-gradient(top, rgba(130, 130, 130, 0.15) 0%, rgba(120, 120, 120, 0.15) 50%, rgba(110, 110, 110, 0.15) 50%, rgba(20, 20, 20, 0.15) 100%);
+    background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, rgba(130, 130, 130, 0.1)), color-stop(0.5, rgba(120, 120, 120, 0.1)), color-stop(0.5, rgba(110, 110, 110, 0.1)), color-stop(1, rgba(10, 10, 10, 0.1)));
+    color: #fff;
+}
+.messagebox button:hover {
+    background: -moz-linear-gradient(top, rgba(130, 130, 130, 0.3) 0%, rgba(120, 120, 120, 0.3) 50%, rgba(120, 120, 120, 0.3) 50%, rgba(20, 20, 20, 0.3) 100%);
+    background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, rgba(130, 130, 130, 0.25)), color-stop(0.5, rgba(120, 120, 120, 0.2)), color-stop(0.5, rgba(110, 110, 110, 0.2)), color-stop(1, rgba(10, 10, 10, 0.25)));
+}
+#search-flickr {
+    display: none;
+}
+* {
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+}
+
+
+/** Slider customization panel */
+/*
+.slider-custom {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.4);
+    color: white !important;
+    z-index: 10000;
+}*/
+#nav-bar legend {
+    margin: 0;
+    padding: 0;
+    border: none;
+    font-size: 15px;
+    line-height: 21px;
+}
+#nav-bar legend.inputEx-Group-legend,
+#nav-bar div.inputEx-fieldWrapper > div.inputEx-label label {
+    color: white !important;
+}
+#nav-bar div.inputEx-fieldWrapper input,
+#nav-bar div.inputEx-fieldWrapper select {
+    padding: 0 1px 0 2px;
+    height: auto;
+    margin: 0;
+}
+#nav-bar div.inputEx-fieldWrapper > div.inputEx-label {
+    width: 120px;
+}
+#nav-bar .inputEx-CombineField div.inputEx-fieldWrapper > div.inputEx-label {
+    width: auto;
+    width: 26px;
+    margin-left: 3px;
+}
+
+#nav-bar .inputEx-CombineField div.inputEx-fieldWrapper input {
+    width: 26px;
+}
+/** QR Styles **/
+.yui3-stalker-slider-hidden {
+    display: none;
+}
+/** Stats.js styles **/
+#stats {
+    position: fixed;
+    right: 180px;
+    top: 15px;
+}
+
+/*ABG*/
+
+#nav-bar{
+    display: none;
+}
