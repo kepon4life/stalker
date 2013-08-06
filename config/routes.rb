@@ -13,6 +13,7 @@ StalkerBackend::Application.routes.draw do
 
   match '/simple_slider', :controller =>"frontend", :action => "simple_slider"
   match '/web_slider', :controller =>"frontend", :action => "web_slider"
+  match '/web_slider_1', :controller =>"frontend", :action => "web_slider_1"
   match '/slider', :controller =>"frontend", :action => "slider"
   match '/draw', :controller => "frontend", :action => "draw"
   match '/drawtable', :controller => "frontend", :action => "drawtable"

@@ -32,6 +32,7 @@ YUI.add("stalker-webslider", function(Y) {
                 this.renderSliderRangeForDreams();
                 $('#preview-strip-nowebgl').css("display", "none")
                 $('#simpleImgSlider').css("display", "none");
+                $('#stats').css("display", "none");
             });
             Y.Stalker.WebSlider.superclass.renderUI.call(this);
         },
