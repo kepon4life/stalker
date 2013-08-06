@@ -9,7 +9,6 @@ YUI.add("stalker-slider", function(Y) {
             PHONEDRAWPATH = window.location.origin + "/drawsmartphone",
             //TIME_FOR_FADING = 3 + 1, // 3 + 2
             timeoutExplosion,
-            dreamAlbum = [],
             strip_width,
             photo_album,
             currently_playing = -1,
@@ -20,9 +19,9 @@ YUI.add("stalker-slider", function(Y) {
         "particles_vertex", "texture_fragment_simulation_shader",
         "texture_vertex_simulation_shader", "texture_cpu_to_gpu_vertex_shader",
         "texture_cpu_to_gpu_fragment_shader"],
-            camera, scene, renderer, debugRenderer, shadowCamera,
-            effectsComposer, particles, stopRenderering = false,
-            directionalLight, shadowPlane, planeTest, gl, cameraRTT,
+            camera, scene, renderer, shadowCamera,
+            effectsComposer, particles,
+            directionalLight, planeTest, gl, cameraRTT,
             sceneRTTPos, rtTexturePos, rtTexturePos2, positionShader,
             generatedTexturePos, textureColor, fboParticles, textureWidth,
             debugScene, startExplodingTime, renderCanvas,
@@ -50,9 +49,11 @@ YUI.add("stalker-slider", function(Y) {
          */
         initializer: function() {
             this.set("textureWidth", this.get("textureWidth"));                 // Force update
-
-            //textureWidth = this.get("textureWidth");
             Y.Stalker.slider = this;                                            // Set up singleton
+            this.dreamAlbum = [];
+        },
+        populateAlbum: function(pictures) {
+            populateAlbum(pictures);
         },
         /**
          *
@@ -74,6 +75,7 @@ YUI.add("stalker-slider", function(Y) {
                 //this.loadAlbum(ALBUMPATH);                                    // Load the album json final
                 //this.loadAlbumFromService(DREAMS_SERVICE_URL);
                 this.renderCustomization();                                     // Render side panel
+                this.fire("webglInitialized");
             });
         },
         /**
@@ -94,35 +96,24 @@ YUI.add("stalker-slider", function(Y) {
                         photo_url: PATH_TO_DREAMS + data.imgUrl
                     };
 
-                    if (dreamAlbum[0]["photo_url"].split("/")[2] === "sended") {
-                        dreamAlbum.splice(0, 1, data);
+                    if (this.dreamAlbum[0]["photo_url"].split("/")[2] === "sended") {
+                        this.dreamAlbum.splice(0, 1, data);
                     } else {
-                        dreamAlbum.splice(0, 0, data);
+                        this.dreamAlbum.splice(0, 0, data);
                     }
 
-                    populateAlbum(dreamAlbum);
+                    this.populateAlbum(dreamAlbum);
                     this.selectFirstPicture();
-//                    this.startSlideshow();
+                    //  this.startSlideshow();
                 }, this));
             }
 
             Y.delegate("click", function(e) {                                   // Thumbnail clicks
-                var node = e.currentTarget.getDOMNode(),
-                        metas,
-                        detailsNode = this.get("contentBox").one(".details"),
-                        date = new Date(Date.parse(node.info.created_at)),
-                        monthNames = ["January", "February", "March", "April", "May", "June",
-                    "July", "August", "September", "October", "November", "December"];
+                var node = e.currentTarget.getDOMNode();
+
                 currently_playing = node.info.index;
                 this.loadPicture(node.info.photo_url);
-                detailsNode.setContent(date.getHours() + ":" + date.getMinutes()
-                        + " " + date.getDate() + " " + monthNames[date.getMonth()] + " " + date.getFullYear());
-                try {
-                    metas = Y.JSON.parse(node.info.metadatas);
-                    detailsNode.append("<br />" + metas.event);
-                } catch (e) {
-                    // GOTCHA
-                }
+                this.showLegend(node.info);
             }, "#preview-strip", "li", this);
 
             Y.on("windowresize", function() {                                   // Window resize
@@ -144,8 +135,23 @@ YUI.add("stalker-slider", function(Y) {
         syncUI: function() {
             this.set("event", this.get("event"));
             this.set("trackCam", this.get("trackCam"));
-            this.set("visibleQr", this.get("visibleQr"));
+            this.set("showQr", this.get("showQr"));
             this.set("showLegend", this.get("showLegend"));
+        },
+        showLegend: function(pictureCfg) {
+            var metas,
+                    detailsNode = this.get("contentBox").one(".details"),
+                    date = new Date(Date.parse(pictureCfg.created_at)),
+                    monthNames = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"];
+            detailsNode.setContent(date.getHours() + ":" + date.getMinutes()
+                    + " " + date.getDate() + " " + monthNames[date.getMonth()] + " " + date.getFullYear());
+            try {
+                metas = Y.JSON.parse(pictureCfg.metadatas);
+                detailsNode.append("<br />" + metas.event);
+            } catch (e) {
+                // GOTCHA
+            }
         },
         loadAlbum: function(url) {
             this.status('Loading album: ' + url);
@@ -158,13 +164,13 @@ YUI.add("stalker-slider", function(Y) {
 
                         for (var i = 0; i < photos.photo.length; i++) {
                             photo = photos.photo[i];
-                            dreamAlbum.push({
+                            this.dreamAlbum.push({
                                 name: photo.url,
                                 thumbnail_url: YUI_config.stalkerbase + photo.url,
                                 photo_url: YUI_config.stalkerbase + photo.url
                             });
                         }
-                        populateAlbum(dreamAlbum);
+                        populateAlbum(this.dreamAlbum);
                         this.selectFirstPicture();
 //                        this.startSlideshow();
                     }
@@ -182,13 +188,13 @@ YUI.add("stalker-slider", function(Y) {
 
                         for (var i = 0; i < photos.length; i++) {
                             photo = photos[i];
-                            dreamAlbum.push(Y.mix(photo, {
+                            this.dreamAlbum.push(Y.mix(photo, {
                                 name: photo.id,
                                 thumbnail_url: PATH_TO_DREAMS + photo.id + DREAM_EXTENSION,
                                 photo_url: PATH_TO_DREAMS + photo.id + DREAM_EXTENSION
                             }));
                         }
-                        populateAlbum(dreamAlbum);
+                        populateAlbum(this.dreamAlbum);
                         this.selectFirstPicture();
 //                        this.startSlideshow();
                     }
@@ -760,7 +766,7 @@ YUI.add("stalker-slider", function(Y) {
                         name: "event",
                         label: "Event"
                     }, {
-                        name: "visibleQr",
+                        name: "showQr",
                         label: "Show QR",
                         type: "boolean"
                     }, {
@@ -910,7 +916,7 @@ YUI.add("stalker-slider", function(Y) {
                     return val;
                 }
             },
-            visibleQr: {
+            showQr: {
                 value: true,
                 setter: function(val) {
                     if (val) {

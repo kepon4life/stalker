@@ -31,12 +31,17 @@ YUI.add("stalker-canvas", function(Y) {
 
             //Pusher
             //Pusher.channel_auth_endpoint = 'pusher/auth';
-            var pusher = new Pusher(PUSHER_API_KEY);
-            this.privateChannel = pusher.subscribe(PUSHER_CHANEL);
 
-            this.privateChannel.bind('pusher:subscription_error', function(status) {
-                console.log("error " + status);
-            });
+            if (window.Pusher) {                                                // Init pusher
+                Pusher.channel_auth_endpoint = 'pusher/auth';
+                //var pusher = new Pusher(PUSHER_API_KEY);
+                var pusher = new Pusher(PUSHER_API_KEY);
+                this.privateChannel = pusher.subscribe(PUSHER_CHANEL);
+
+                this.privateChannel.bind('pusher:subscription_error', function(status) {
+                    console.log("error " + status);
+                });
+            }
 
             //Canvas
             // Bind canvas to listeners
@@ -54,10 +59,6 @@ YUI.add("stalker-canvas", function(Y) {
             color = defaultcolor;
         },
         bindUI: function() {
-            if (window.Pusher) {                                                // Init pusher
-                Pusher.channel_auth_endpoint = 'pusher/auth';
-                //var pusher = new Pusher(PUSHER_API_KEY);
-            }
 
             tuio.start();
 
@@ -122,14 +123,14 @@ YUI.add("stalker-canvas", function(Y) {
                 },
                 on: {
                     success: function(tId, e) {
-                        this.privateChannel.trigger('client-myevent', Y.JSON.parse(e.response));
                         this.clear();
+                        this.privateChannel.trigger('client-myevent', Y.JSON.parse(e.response));
                     }
                 }
             });
         },
         onCursorUpdate: function(cursors) {
-//            Y.log("CursorUpdate()");
+            //Y.log("CursorUpdate()");
             this.fire("cursorUpdate");
 
             if (!this.get("allowEdition")) {

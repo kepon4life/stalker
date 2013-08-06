@@ -13,17 +13,11 @@ $(document).ready(function () {
 	});
 
         // Set up logger
-        Pusher.log = function(msg) {
-            console.log(msg);
+        if (window.Pusher) {
+            Pusher.log = function(msg) {
+                console.log(msg);
+            }
         }
-
-	
-
-
-
-
-
-
 });
 
 //increment the number of dream in buble
