@@ -95,8 +95,10 @@ YUI.add("stalker-webslider", function(Y) {
             if (this.dreamAlbum != null || "undefined") {                       // Super faux, va toujourers retourner true, est évalué tel que (a || true)
                 var startDate = dates[0];
                 var endDate = dates[1];
-                console.log("start date " + startDate);
                 var photos = this.dreamAlbum;
+                console.log(photos)
+                photos.sort(Y.Stalker.WebSlider.superclass.comparePhotosDate)
+                console.log(photos)
                 dreamAlbum = [];
                 for (var i = 0; i < photos.length; i++) {
                     var a = photos[i];
@@ -139,7 +141,6 @@ YUI.add("stalker-webslider", function(Y) {
             var sliderTooltip = function(event, ui) {
                 var curValues = ui.values || initialValuesDates; // current value (when sliding) or initial value (at start)
                 if (!(curValues[0] instanceof Date)) { // if curValues are not instances of Date they should be in MS (int). We have to convert it in Date format to display it on the slider.
-                    console.log(curValues[0])
                     curValues[0] = new Date(curValues[0])
                 }
                 if (!(curValues[1] instanceof Date)) {
@@ -240,6 +241,7 @@ YUI.add("stalker-webslider", function(Y) {
             return true;
         }
         $('#preview-strip').append(ul);
+
         function createThumbnail(photo_album, index) {
             var info = photo_album[index],
                     name = info.name,
@@ -300,7 +302,7 @@ YUI.add("stalker-webslider", function(Y) {
             });
         }
 
-        nbThumbnailToLoad = 15; // number of thumbnail loaded at the beginning
+        nbThumbnailToLoad = 10; // number of thumbnail loaded at the beginning
         indexThumbnail = 0; // useful to know which thumbnail (index) was the last thumnail loaded
         $('.dreamslist').waypoint({
             context: "#preview-strip",
@@ -323,6 +325,18 @@ YUI.add("stalker-webslider", function(Y) {
             }
         });
         checks();
+
+    } 
+    function comparePhotosDate(a,b) {
+        var da = new Date(a.created_at);
+        var db = new Date(b.created_at);
+        da = da.getTime();
+        db = db.getTime();
+        if (da < db)
+            return 1;
+        if (da > db)
+            return -1;
+        return 0;
     }
 });
 (function($) {
@@ -382,7 +396,6 @@ YUI.add("stalker-webslider", function(Y) {
                     var datePhoto = new Date(val.created_at);
                     var datePhoto = datePhoto.getTime();
                     if (datePhoto > dates[0] && datePhoto < dates[1]) {
-                        console.log("ok")
                         dreamsAlbum.push({
                             name: photo,
                             thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
@@ -390,7 +403,6 @@ YUI.add("stalker-webslider", function(Y) {
                         });
                     }
                 })
-                console.log(dreamsAlbum)
                 populateAlbum(dreamsAlbum);
                 callback();
             })
@@ -467,7 +479,6 @@ YUI.add("stalker-webslider", function(Y) {
         }
 
         function populateAlbum(album) {
-            console.log("populateAlbum")
             $('#preview-strip-nowebgl').find('.dreamslist').remove();
 
             ul = $('<ul class="dreamslist"/>');

@@ -161,7 +161,7 @@ YUI.add("stalker-slider", function(Y) {
                     success: function(tId, e) {
                         var photo, photos = Y.JSON.parse(e.response).photos;
                         this.status(photos.photo.length + " photos found.");
-
+                        photos.sort(comparePhotosDate);
                         for (var i = 0; i < photos.photo.length; i++) {
                             photo = photos.photo[i];
                             this.dreamAlbum.push({
@@ -185,7 +185,7 @@ YUI.add("stalker-slider", function(Y) {
                     success: function(tId, e) {
                         var photos = Y.JSON.parse(e.response), photo;
                         this.status(photos.length + " photos found.");
-
+                        photos.sort(this.comparePhotosDate);
                         for (var i = 0; i < photos.length; i++) {
                             photo = photos[i];
                             this.dreamAlbum.push(Y.mix(photo, {
@@ -881,6 +881,19 @@ YUI.add("stalker-slider", function(Y) {
             //@fixme
             params.on("updated", this.setAttrs, this);
         },
+                //Sort pictures by date desc
+        comparePhotosDate: function(a,b) {
+            var da = new Date(a.created_at);
+            var db = new Date(b.created_at);
+            da = da.getTime();
+            db = db.getTime();
+            if (da < db)
+                return 1;
+            if (da > db)
+                return -1;
+            return 0;
+        },
+
         renderStats: function() {
             this.stats = new Stats();
             //this.stats.setMode(1);
