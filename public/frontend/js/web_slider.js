@@ -33,7 +33,7 @@ YUI.add("stalker-webslider", function(Y) {
                 $('#preview-strip-nowebgl').css("display", "none")
                 $('#simpleImgSlider').css("display", "none");
                 $('#stats').css("display", "none");
-
+                console.log(Y.Stalker.Slider.vartest)
             });
             Y.Stalker.WebSlider.superclass.renderUI.call(this);
         },
@@ -97,9 +97,7 @@ YUI.add("stalker-webslider", function(Y) {
                 var startDate = dates[0];
                 var endDate = dates[1];
                 var photos = this.dreamAlbum;
-                console.log(photos)
                 photos.sort(Y.Stalker.WebSlider.superclass.comparePhotosDate)
-                console.log(photos)
                 dreamAlbum = [];
                 for (var i = 0; i < photos.length; i++) {
                     var a = photos[i];
@@ -116,6 +114,8 @@ YUI.add("stalker-webslider", function(Y) {
                         });
                     }
                 }
+                console.log("POPULATE AVEC PHOTO_ALBUM")
+                console.log(dreamAlbum)
                 populateAlbum(dreamAlbum);
                 this.selectFirstPicture();
                 this.startSlideshow();
@@ -200,6 +200,9 @@ YUI.add("stalker-webslider", function(Y) {
     var start = true;
     function populateAlbum(the_album) {
         photo_album = the_album;
+
+        console.log("POPULATE ALBUM photo_album")
+        console.log(photo_album)
 
         $('#preview-strip').find('.dreamslist').remove();
 
@@ -351,8 +354,6 @@ YUI.add("stalker-webslider", function(Y) {
             return -1;
         return 0;
     }
-});
-(function($) {
 
     $.fn.slider_web = function() {
         DREAMS_SERVICE_URL = window.location.origin + "/services/dreamsvalidated";
@@ -402,6 +403,7 @@ YUI.add("stalker-webslider", function(Y) {
             clearTimeout(timeout);
             clearTimeout(timeoutFirstImg);
             dreamsAlbum = [];
+            console.log("loadAlbumByDate")
             $.getJSON(DREAMS_SERVICE_URL, function(data) {
                 $.each(data, function(key, val) {
                     var photo = val.id;
@@ -579,6 +581,6 @@ YUI.add("stalker-webslider", function(Y) {
 
     }
 
-}(jQuery));
+});
 
 

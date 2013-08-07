@@ -11,6 +11,7 @@ YUI.add("stalker-slider", function(Y) {
             timeoutExplosion,
             strip_width,
             photo_album,
+            vartest = 12000,
             currently_playing = -1,
             shaderMaterial,
             savedState,
@@ -210,6 +211,7 @@ YUI.add("stalker-slider", function(Y) {
         },
         selectNextPicture: function() {
             Y.log("selectNextPicture()");
+            console.log(photo_album)
             this.selectPicture((currently_playing + 1) % photo_album.length);
         },
         toggleSlideshow: function() {
@@ -271,7 +273,7 @@ YUI.add("stalker-slider", function(Y) {
          * @param {type} cfg
          */
         loadPicture: function(url, cb) {
-            //Y.log("loadPicture(" + info.photo_url + ")");
+            Y.log("loadPicture()");
 
             this.loadTexture(url, new THREE.UVMapping(), Y.bind(function(texture) {
                 Y.log("loadPicture.onLoadTexture");
@@ -1024,6 +1026,7 @@ YUI.add("stalker-slider", function(Y) {
 
     function populateAlbum(the_album) {
         photo_album = the_album;
+        console.log("POPULATE IN SLIDER SIMPLE")
         var ul = $('<ul />');
         var strip = $('#preview-strip');
         var autofire;
