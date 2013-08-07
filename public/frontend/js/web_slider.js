@@ -33,7 +33,6 @@ YUI.add("stalker-webslider", function(Y) {
                 $('#preview-strip-nowebgl').css("display", "none")
                 $('#simpleImgSlider').css("display", "none");
                 $('#stats').css("display", "none");
-                console.log(Y.Stalker.Slider.vartest)
             });
             Y.Stalker.WebSlider.superclass.renderUI.call(this);
         },
@@ -114,8 +113,6 @@ YUI.add("stalker-webslider", function(Y) {
                         });
                     }
                 }
-                console.log("POPULATE AVEC PHOTO_ALBUM")
-                console.log(dreamAlbum)
                 populateAlbum(dreamAlbum);
                 this.selectFirstPicture();
                 this.startSlideshow();
@@ -181,16 +178,15 @@ YUI.add("stalker-webslider", function(Y) {
                 verticalHandleClass: 'handle3'
             });
 
-            function sliderHeightAdjust(a){
+            function sliderHeightAdjust(){
                 var winH = $(window).height()-50;
                 $('.ui-slider-vertical').height(winH)
-                console.log("adjust"+a)
             }
 
-            sliderHeightAdjust('b');
+            sliderHeightAdjust();
             
             $(window).resize(function(){
-                sliderHeightAdjust('c');
+                sliderHeightAdjust();
             }) 
         }
     }, {
@@ -200,10 +196,6 @@ YUI.add("stalker-webslider", function(Y) {
     var start = true;
     function populateAlbum(the_album) {
         Y.Stalker.slider.photo_album = photo_album = the_album;
-
-
-        console.log("POPULATE ALBUM photo_album")
-        console.log(the_album)
 
         $('#preview-strip').find('.dreamslist').remove();
 
@@ -404,7 +396,6 @@ YUI.add("stalker-webslider", function(Y) {
             clearTimeout(timeout);
             clearTimeout(timeoutFirstImg);
             dreamsAlbum = [];
-            console.log("loadAlbumByDate")
             $.getJSON(DREAMS_SERVICE_URL, function(data) {
                 $.each(data, function(key, val) {
                     var photo = val.id;

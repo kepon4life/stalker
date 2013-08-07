@@ -211,7 +211,6 @@ YUI.add("stalker-slider", function(Y) {
         },
         selectNextPicture: function() {
             Y.log("selectNextPicture()");
-            console.log(this.photo_album)
             this.selectPicture((currently_playing + 1) % this.photo_album.length);
         },
         toggleSlideshow: function() {
@@ -1026,7 +1025,6 @@ YUI.add("stalker-slider", function(Y) {
 
     function populateAlbum(the_album) {
         Y.Stalker.slider.photo_album = the_album;
-        console.log("POPULATE IN SLIDER SIMPLE")
         var ul = $('<ul />');
         var strip = $('#preview-strip');
         var autofire;
