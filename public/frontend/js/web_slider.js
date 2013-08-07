@@ -33,6 +33,7 @@ YUI.add("stalker-webslider", function(Y) {
                 $('#preview-strip-nowebgl').css("display", "none")
                 $('#simpleImgSlider').css("display", "none");
                 $('#stats').css("display", "none");
+
             });
             Y.Stalker.WebSlider.superclass.renderUI.call(this);
         },
@@ -130,7 +131,7 @@ YUI.add("stalker-webslider", function(Y) {
         renderSliderRangeForDreams: function() {
             //We use the date in MS to deal with the date comparison
             var initialDate = new Date();
-            initialDate.setFullYear(2013, 4, 11); // Start date of exhibition
+            initialDate.setFullYear(2013, 1, 11); // Start date of exhibition
             var initialDateValinMs = initialDate.getTime();
 
             var currentDate = new Date()
@@ -179,6 +180,18 @@ YUI.add("stalker-webslider", function(Y) {
                 verticalTrackClass: 'track3',
                 verticalHandleClass: 'handle3'
             });
+
+            function sliderHeightAdjust(a){
+                var winH = $(window).height()-50;
+                $('.ui-slider-vertical').height(winH)
+                console.log("adjust"+a)
+            }
+
+            sliderHeightAdjust('b');
+            
+            $(window).resize(function(){
+                sliderHeightAdjust('c');
+            }) 
         }
     }, {
         ATTRS: {}
