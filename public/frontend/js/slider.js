@@ -103,7 +103,7 @@ YUI.add("stalker-slider", function(Y) {
                         this.dreamAlbum.splice(0, 0, data);
                     }
 
-                    this.populateAlbum(dreamAlbum);
+                    this.populateAlbum(this.dreamAlbum);
                     this.selectFirstPicture();
                     //  this.startSlideshow();
                 }, this));
@@ -211,8 +211,8 @@ YUI.add("stalker-slider", function(Y) {
         },
         selectNextPicture: function() {
             Y.log("selectNextPicture()");
-            console.log(photo_album)
-            this.selectPicture((currently_playing + 1) % photo_album.length);
+            console.log(this.photo_album)
+            this.selectPicture((currently_playing + 1) % this.photo_album.length);
         },
         toggleSlideshow: function() {
             this.set("slideshowRunning", !this.get("slideshowRunning"));
@@ -1025,7 +1025,7 @@ YUI.add("stalker-slider", function(Y) {
     });
 
     function populateAlbum(the_album) {
-        photo_album = the_album;
+        Y.Stalker.slider.photo_album = the_album;
         console.log("POPULATE IN SLIDER SIMPLE")
         var ul = $('<ul />');
         var strip = $('#preview-strip');
@@ -1135,8 +1135,8 @@ YUI.add("stalker-slider", function(Y) {
                 t.css('top', (80 - h) / 2 + 'px');
             });
         }
-        for (var i = 0; i < photo_album.length; i++) {
-            createThumbnail(photo_album, i);
+        for (var i = 0; i < the_album.length; i++) {
+            createThumbnail(the_album, i);
         }
         checks();
     }

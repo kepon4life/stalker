@@ -199,10 +199,11 @@ YUI.add("stalker-webslider", function(Y) {
 
     var start = true;
     function populateAlbum(the_album) {
-        photo_album = the_album;
+        Y.Stalker.slider.photo_album = photo_album = the_album;
+
 
         console.log("POPULATE ALBUM photo_album")
-        console.log(photo_album)
+        console.log(the_album)
 
         $('#preview-strip').find('.dreamslist').remove();
 
