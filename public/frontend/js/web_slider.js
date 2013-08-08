@@ -535,6 +535,7 @@ YUI.add("stalker-webslider", function(Y) {
 
         function renderSlider() {
             //We use the date in MS to deal with the date comparison
+            console.log("renderSlider")
             var initialDate = new Date();
             initialDate.setFullYear(2013, 4, 11); // Start date of exhibition
             var initialDateValinMs = initialDate.getTime();
@@ -566,6 +567,7 @@ YUI.add("stalker-webslider", function(Y) {
             $("#slider-dreams-nowebgl").slider({
                 values: initialValues,
                 orientation: "vertical",
+                animate: false,
                 range: true,
                 min: initialDateValinMs,
                 max: currentDateinMs,
@@ -580,6 +582,18 @@ YUI.add("stalker-webslider", function(Y) {
                 }
             });
         }
+
+        function sliderHeightAdjust(){
+            var winH = $(window).height()-50;
+            $('.ui-slider-vertical').height(winH)
+        }
+
+        sliderHeightAdjust();
+        
+        $(window).resize(function(){
+            sliderHeightAdjust();
+        }) 
+
 
     }
 
