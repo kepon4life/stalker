@@ -93,8 +93,17 @@ YUI.add("stalker-webslider", function(Y) {
 //        },
         loadAlbumByDate: function(dates) {
             if (this.dreamAlbum != null || "undefined") {                       // Super faux, va toujourers retourner true, est évalué tel que (a || true)
-                var startDate = dates[0];
-                var endDate = dates[1];
+                
+                var startDate,endDate;
+
+                if(dates[0]<dates[1]){
+                    startDate = dates[0];
+                    endDate = dates[1];
+                }else{
+                    startDate = dates[1];
+                    endDate = dates[0];
+                }
+                
                 var photos = this.dreamAlbum;
                 photos.sort(Y.Stalker.WebSlider.superclass.comparePhotosDate)
                 dreamAlbum = [];
@@ -105,7 +114,7 @@ YUI.add("stalker-webslider", function(Y) {
 
                     photo = photos[i]["id"];
 
-                    if (datePhoto > dates[0] && datePhoto < dates[1]) {
+                    if (datePhoto > startDate && datePhoto < endDate) {
                         dreamAlbum.push({
                             name: photo,
                             thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
@@ -158,13 +167,15 @@ YUI.add("stalker-webslider", function(Y) {
             $("#slider-dreams").slider({
                 values: initialValues,
                 orientation: "vertical",
-                range: true,
+                range: "min",
                 min: initialDateValinMs,
                 max: currentDateinMs,
                 create: sliderTooltip,
                 slide: sliderTooltip,
                 start: function(e, ui) {
                     $(ui.handle).toggleClass("moveHandle")
+                    $('body .lastHandled').each(function(){$(this).removeClass("lastHandled")})
+                    $(ui.handle).addClass("lastHandled")
                 }, // This class allow to display the moved handler over the other handle
                 stop: function(e, ui) {
                     $(ui.handle).toggleClass("moveHandle");

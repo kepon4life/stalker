@@ -42,6 +42,9 @@
     color:black !important;
     z-index: 12000 !important;
 }
+.lastHandled{
+    z-index: 11999 !important;
+}
 .even-display{
     clear: left;
 }
