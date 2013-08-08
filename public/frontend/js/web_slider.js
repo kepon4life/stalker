@@ -361,7 +361,7 @@ YUI.add("stalker-webslider", function(Y) {
 });
 (function($) {
     $.fn.slider_web = function() {
-        DREAMS_SERVICE_URL = window.location.origin + "/services/dreamsvalidated";
+        DREAMS_SERVICE_URL = window.location.protocol+'//'+window.location.host + "/services/dreamsvalidated";
         FADEOUTTIME = 2000;
         FADINTIME = 2000;
         PICTURETIME = 3000;
@@ -372,7 +372,6 @@ YUI.add("stalker-webslider", function(Y) {
         var customStartTimeout;
 
         this.each(function() {
-            console.log("slidersimple")
             init();
             renderSlider();
             loadAlbum(startImgSlider);
@@ -401,7 +400,6 @@ YUI.add("stalker-webslider", function(Y) {
                 populateAlbum(dreamsAlbum);
                 callback();
             })
-
         }
 
         function loadAlbumByDate(dates, callback) {
@@ -500,7 +498,6 @@ YUI.add("stalker-webslider", function(Y) {
 
         function populateAlbum(album) {
             $('#preview-strip-nowebgl').find('.dreamslist').remove();
-
             ul = $('<ul class="dreamslist"/>');
 
             $('#preview-strip-nowebgl').append(ul);
