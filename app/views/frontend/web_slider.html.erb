@@ -53,12 +53,14 @@
                         });
                     slider.render();                                            // Render slider
                     slider.loadAlbumFromService(window.location.origin + "/services/dreamsvalidated");// Load album
-
+                    
+                    //Y.one('#welcome').hide();
+                    //$("#preview-strip").slider_web();
                 } else {
                     Y.one('#welcome').hide();
                     $("#preview-strip").slider_web();
-                    /*Y.one('.loading').hide();
-                    Y.one('.fail').show();*/
+                    //Y.one('.loading').hide();
+                    //Y.one('.fail').show();
                 }
             });
         });
@@ -81,5 +83,16 @@
         </div>
     </div>
 </div>
+
+<div id="sink">
+    <div id="nav-bar">
+        <div id="status"></div>
+    </div>
+    <div id="preview-image"></div>
+    <div id="preview-strip"><div id="slider-dreams" class="ui-slider-vertical"></div></div>
+    <div id="preview-strip-nowebgl"><div id="slider-dreams-nowebgl" class="ui-slider-vertical"></div></div>
+    
+</div>
+<div id="simpleImgSlider"></div>
 
 

@@ -358,7 +358,8 @@ YUI.add("stalker-webslider", function(Y) {
             return -1;
         return 0;
     }
-
+});
+(function($) {
     $.fn.slider_web = function() {
         DREAMS_SERVICE_URL = window.location.origin + "/services/dreamsvalidated";
         FADEOUTTIME = 2000;
@@ -371,6 +372,7 @@ YUI.add("stalker-webslider", function(Y) {
         var customStartTimeout;
 
         this.each(function() {
+            console.log("slidersimple")
             init();
             renderSlider();
             loadAlbum(startImgSlider);
@@ -584,6 +586,6 @@ YUI.add("stalker-webslider", function(Y) {
 
     }
 
-});
+}(jQuery));
 
 
