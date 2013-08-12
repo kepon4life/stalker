@@ -1,0 +1,30 @@
+<% content_for :header_content do %>
+  <%= render 'layouts/header_admin' %>
+<% end %>
+<div id="content" class="container">
+  <h1>Dev Tests</h1>
+
+  <p>There is <b><%= @dreams_tot %></b> dreams in total</p>
+  <ul>
+    <li>There is <b><%= @dreams_untagged %></b> dreams untagged</li>
+    <li>There is <b><%= @dreams_tagged %></b> dreams tagged</li>
+    <ul>
+      <li>There is <b><%= @dreams_tagged_accepted %></b> dreams accepted</li>
+      <ul>
+        <li>There is <b><%= @dreams_tagged_accepted_special %></b> special dreams</li>
+        <li>There is <b><%= @dreams_tagged_just_accepted %></b> just accepted dreams</li>
+      </ul>
+      <li>There is <b><%= @dreams_tagged_unaccepted %></b> dreams unaccepted</li>
+    </ul>
+  </ul>
+
+  
+
+  <br />
+  <button class="btn btn-large btn-danger" type="button" onclick="location.href='drestroy_all'">Clean db</button>
+  <br /><br />
+  <button class="btn btn-large" type="button" onclick="location.href='populate'">Populate db (+1000)</button>
+
+
+
+</div>

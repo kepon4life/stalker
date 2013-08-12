@@ -1,5 +1,9 @@
 StalkerBackend::Application.routes.draw do
 
+  match '/dreams/drestroy_all', :controller => 'dreams', :action => 'destroy_all'
+  match '/dreams/populate', :controller => 'dreams', :action => 'populate_for_test'
+  match '/dreams/tests', :controller => 'dreams', :action => 'dev_tests'
+
   match '/dreams/tag', :controller => 'dreams', :action => 'tag'
   match '/dreams/tagDream', :controller => 'dreams', :action => 'tagDream'
 
