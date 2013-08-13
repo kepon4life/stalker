@@ -392,9 +392,11 @@ YUI.add("stalker-webslider", function(Y) {
                     var photo = val.id;
                     dreamsAlbum.push({
                         name: photo,
-                        thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + photo + DREAM_EXTENSION
+                        thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + photo + DREAM_EXTENSION,
+                        created_at: val.created_at
                     });
                 })
+                dreamsAlbum.sort(comparePhotosDate);
                 populateAlbum(dreamsAlbum);
                 callback();
             })
@@ -414,10 +416,12 @@ YUI.add("stalker-webslider", function(Y) {
                     if (datePhoto > dates[0] && datePhoto < dates[1]) {
                         dreamsAlbum.push({
                             name: photo,
-                            thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + photo + DREAM_EXTENSION
+                            thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + photo + DREAM_EXTENSION,
+                            created_at: val.created_at
                         });
                     }
                 })
+                dreamsAlbum.sort(comparePhotosDate)
                 populateAlbum(dreamsAlbum);
                 callback();
             })
@@ -594,6 +598,17 @@ YUI.add("stalker-webslider", function(Y) {
             sliderHeightAdjust();
         }) 
 
+        function comparePhotosDate(a,b) {
+            var da = new Date(a.created_at);
+            var db = new Date(b.created_at);
+            da = da.getTime();
+            db = db.getTime();
+            if (da < db)
+                return 1;
+            if (da > db)
+              return -1;
+            return 0;
+        }
 
     }
 

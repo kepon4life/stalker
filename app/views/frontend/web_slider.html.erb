@@ -42,7 +42,7 @@
             Y.on("domready", function() {
 
                 if (Y.hasWebgl()) {
-                    /*Y.one('#welcome').hide();
+                    Y.one('#welcome').hide();
                     var hash = window.location.hash,
                         slider = new Y.Stalker.WebSlider({
                             textureWidth: (hash.length > 1) ? +hash.substring(1) : 256, // 64, 128, 256, 512, 1024, 2048
@@ -53,9 +53,9 @@
                         });
                     slider.render();                                            // Render slider
                     slider.loadAlbumFromService(window.location.origin + "/services/dreamsvalidated");// Load album
-                    */
-                    Y.one('#welcome').hide();
-                    $("#preview-strip").slider_web();
+                    
+                    //Y.one('#welcome').hide();
+                    //$("#preview-strip").slider_web();
                 } else {
                     Y.one('#welcome').hide();
                     $("#preview-strip").slider_web();
