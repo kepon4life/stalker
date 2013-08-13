@@ -168,6 +168,10 @@ html {
     left: 0;
     right: 0;
 }
+#simpleImgSlider img{
+    max-width: 100%;
+    min-width: 100%;
+}
 .success {
     display: none;
 }
