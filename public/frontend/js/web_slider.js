@@ -117,8 +117,7 @@ YUI.add("stalker-webslider", function(Y) {
                     if (datePhoto > startDate && datePhoto < endDate) {
                         dreamAlbum.push({
                             name: photo,
-                            thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
-                            photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
+                            thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + photo + DREAM_EXTENSION
                         });
                     }
                 }
@@ -393,8 +392,7 @@ YUI.add("stalker-webslider", function(Y) {
                     var photo = val.id;
                     dreamsAlbum.push({
                         name: photo,
-                        thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
-                        photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
+                        thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + photo + DREAM_EXTENSION
                     });
                 })
                 populateAlbum(dreamsAlbum);
@@ -416,8 +414,7 @@ YUI.add("stalker-webslider", function(Y) {
                     if (datePhoto > dates[0] && datePhoto < dates[1]) {
                         dreamsAlbum.push({
                             name: photo,
-                            thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
-                            photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
+                            thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + photo + DREAM_EXTENSION
                         });
                     }
                 })
@@ -429,9 +426,9 @@ YUI.add("stalker-webslider", function(Y) {
 
         function startImgSlider() {
             $("#simpleImgSlider img").remove();
-            var src = ($(".dreamslist img").get(0).src);
+            var nameImg = ($(".dreamslist img").get(0).id);
             var img = new Image();
-            img.src = src;
+            img.src = PATH_TO_DREAMS + nameImg + DREAM_EXTENSION;
             img.id = 0;
             img.onload = function() {
                 $("#simpleImgSlider").append(img)
@@ -445,7 +442,7 @@ YUI.add("stalker-webslider", function(Y) {
             clearTimeout(customStartTimeout)
             var imgToDisplay = new Image();
             imgToDisplay.id = ($("li").index((imgClicked.parent())))
-            imgToDisplay.src = imgClicked.attr('src');
+            imgToDisplay.src = PATH_TO_DREAMS + imgClicked.attr('id') + DREAM_EXTENSION;
             clearTimeout(timeout);
             clearTimeout(timeoutFirstImg);
             $("#simpleImgSlider").find('img').remove();
@@ -462,7 +459,8 @@ YUI.add("stalker-webslider", function(Y) {
             if (idCurrentImg < dreamsAlbum.length - 1) {
                 idCurrentImg = parseInt(idCurrentImg);
                 var idNextImg = idCurrentImg + 1;
-                var src = ($("img").get(idNextImg).src);
+                var nameImg = ($("img").get(idNextImg).id);
+                var src = PATH_TO_DREAMS + nameImg + DREAM_EXTENSION;
                 $("#simpleImgSlider").append("<img id='" + idNextImg + "' src='" + src + "' style='display: none;'/>");
                 $("#" + idNextImg).bind("load", function() {
                     timeout = setTimeout(function() {
@@ -471,7 +469,8 @@ YUI.add("stalker-webslider", function(Y) {
                 })
             } else {
                 var idNextImg = 0;
-                var src = ($("img").get(idNextImg).src);
+                var nameImg = ($("img").get(idNextImg).id);
+                var src = PATH_TO_DREAMS + nameImg + DREAM_EXTENSION;
                 $("#simpleImgSlider").append("<img id='" + idNextImg + "' src='" + src + "' style='display: none;'/>");
                 $("#" + idNextImg).bind("load", function() {
                     timeout = setTimeout(function() {
@@ -513,6 +512,7 @@ YUI.add("stalker-webslider", function(Y) {
 
                 img.src = thumbnail_url;
                 info.index = index;
+                img.id = name;
 
                 if (name) {
                     img.alt = name;

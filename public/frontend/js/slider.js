@@ -93,7 +93,7 @@ YUI.add("stalker-slider", function(Y) {
                     //$('#content').append('<img src="'+data.imgUrl+'"/>');
                     var data = {
                         name: PATH_TO_DREAMS + data.imgUrl,
-                        thumbnail_url: PATH_TO_DREAMS + data.imgUrl,
+                        thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + data.imgUrl,
                         photo_url: PATH_TO_DREAMS + data.imgUrl
                     };
 
@@ -191,7 +191,7 @@ YUI.add("stalker-slider", function(Y) {
                             photo = photos[i];
                             this.dreamAlbum.push(Y.mix(photo, {
                                 name: photo.id,
-                                thumbnail_url: PATH_TO_DREAMS + photo.id + DREAM_EXTENSION,
+                                thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + photo.id + DREAM_EXTENSION,
                                 photo_url: PATH_TO_DREAMS + photo.id + DREAM_EXTENSION
                             }));
                         }
