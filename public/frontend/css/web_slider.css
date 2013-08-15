@@ -74,7 +74,7 @@ html {
     overflow: auto;
     position: fixed;
     z-index: 13;
-    bottom: 0;
+    top: 0;
     left: 0;
     background: rgba(0, 0, 0, 0.5);
     white-space: nowrap;
@@ -95,7 +95,7 @@ html {
     height: 100%;
     overflow: auto;
     position: fixed;
-    bottom: 0;
+    top: 0;
     left: 0;
     z-index: 13;
     background: rgba(0, 0, 0, 0.5);
@@ -307,6 +307,23 @@ a:hover {
     position: fixed;
     right: 180px;
     top: 15px;
+}
+.details {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    border-top: 1px solid white;
+    font-size: 10px;
+    text-align: right;
+    color: white;
+    z-index: 20000;
+    text-align: right;
+    height: 32px;
+    line-height: 1.2em;
+    padding-top: 5px;
+    width: 200px;
+    padding: 5px;
+
 }
 
 /*ABG*/
