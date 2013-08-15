@@ -131,7 +131,7 @@ html {
     margin-bottom: 8px;
     margin-right: 0px;
     list-style: none;
-    background: #111111;
+    background: #000;
     display: inline;
     width: 80px;
     height: 80px;
@@ -146,6 +146,10 @@ html {
     -khtml-opacity: 0.9;
     -webkit-opacity: 0.9;
     opacity: 0.9;
+    
+}
+#preview-strip-nowebgl ul li img {
+    margin-top: 12px;
 }
 #sink #preview-strip ul li img:hover {
     -moz-opacity: 1;
