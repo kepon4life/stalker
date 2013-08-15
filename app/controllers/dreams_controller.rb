@@ -1,6 +1,6 @@
 class DreamsController < ApplicationController
   require 'fileutils'
-
+  http_basic_authenticate_with :name => "admin", :password => "st4lk3r2013"
 
   # GET /dreams
   # GET /dreams.json
