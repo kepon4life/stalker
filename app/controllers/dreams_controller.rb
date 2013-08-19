@@ -226,21 +226,32 @@ class DreamsController < ApplicationController
 
   def populate_for_test
 
-    for i in 0..249
-      Dir.glob("public/tests/dreams/*.png") do |file|
-        dream = Dream.new(:is_valid => true, :secret_room => true, :metadatas => "{'datas':null}")
-        dream.save
+    nb_of_dreams_to_add = 1000
+    nb_of_dreams_to_copy = Dir.glob("public/tests/dreams/*.png").size
 
-        FileUtils.copy_file(file, "public" + PATH_TO_DREAMS + dream.id.to_s + DREAM_EXTENSION, preserve = false, dereference = true)
-        FileUtils.copy_file("public/tests/dreams-small/" + file.split("/")[3] , "public" + PATH_TO_DREAMS_THUMBNAILS + dream.id.to_s + DREAM_EXTENSION, preserve = false, dereference = true)
-      
-      end
+    if params[:nb_of_dreams_to_add].to_i > 0
+      nb_of_dreams_to_add = params[:nb_of_dreams_to_add].to_i
     end
 
-
+    for i in 0..nb_of_dreams_to_add-1
+      year = Time.now.year - rand(2)
+      month = rand(12) + 1
+      day = rand(31) + 1
+      date = Time.local(year, month, day)
+      today = Date.today
+      if(date > today)
+        date = Time.local(year-1, month, day)
+      end
+      random_number = rand(0..nb_of_dreams_to_copy-1)
+      file = Dir.glob("public/tests/dreams/*.png")[random_number]
+      dream = Dream.new(:is_valid => [true, false].sample, :secret_room => [true, false].sample, :metadatas => "{'datas':null}", :created_at => date)
+      dream.save
+      FileUtils.copy_file(file, "public" + PATH_TO_DREAMS + dream.id.to_s + DREAM_EXTENSION, preserve = false, dereference = true)
+      FileUtils.copy_file("public/tests/dreams-small/" + file.split("/")[3] , "public" + PATH_TO_DREAMS_THUMBNAILS + dream.id.to_s + DREAM_EXTENSION, preserve = false, dereference = true) 
+    end
 
     respond_to do |format|
-        flash[:success] = "Dreams successfully added!"
+        flash[:success] = nb_of_dreams_to_add.to_s + " dreams successfully added!"
         format.html { redirect_to action: 'dev_tests' }
         format.json { head :no_content }
 
