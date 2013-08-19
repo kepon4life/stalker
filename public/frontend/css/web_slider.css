@@ -312,8 +312,8 @@ a:hover {
     position: absolute;
     bottom: 0px;
     left: 0px;
-    border-top: 1px solid white;
     font-size: 10px;
+    font-family: 'Pathway Gothic One';
     text-align: right;
     color: white;
     z-index: 20000;
@@ -323,11 +323,20 @@ a:hover {
     padding-top: 5px;
     width: 200px;
     padding: 5px;
-
+    background-image: url('../img/barre.png');
+    letter-spacing: 1px;
 }
 
 /*ABG*/
 
 #nav-bar{
     display: none;
+}
+#stalkerlogo{
+    position: absolute;
+    z-index: 100;
+    top: 0;
+    right: 0;
+    margin-right: 10px;
+    margin-top: 15px;
 }

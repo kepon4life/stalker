@@ -186,7 +186,9 @@ YUI.add("stalker-webslider", function(Y) {
             $('#preview-strip').enscroll({
                 showOnHover: true,
                 verticalTrackClass: 'track3',
-                verticalHandleClass: 'handle3'
+                clickTrackToScroll: true,
+                verticalHandleClass: 'handle3',
+                showOnHover: false
             });
 
             function sliderHeightAdjust(){
@@ -621,7 +623,7 @@ YUI.add("stalker-webslider", function(Y) {
         sliderHeightAdjust();
         previewStripHeightAdjust();
         
-        $(window).resize(function(){
+        $(window).resizeresize(function(){
             sliderHeightAdjust();
             previewStripHeightAdjust();
         }) 
