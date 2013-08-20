@@ -7,12 +7,9 @@ YUI.add("stalker-canvas", function(Y) {
 
     var canvas, ctx, canvaswidth, canvasheight,
             defaultcolor = '#fff',
-            color = defaultcolor,
-            //permet de sauvegarder toutes les courbes dessinées
-            savedCurves = [],
-            //Permet de connaître combien de doigts sont actuellement sur la surface
-            nbdoigts = 0,
-            //Le nombre de courbes sauvrgardées et dessinées en live. Cela signifie que dans ce tableau on ne stock que les courbes
+            color = defaultcolor, //permet de sauvegarder toutes les courbes dessinées
+            savedCurves = [], //Permet de connaître combien de doigts sont actuellement sur la surface
+            nbdoigts = 0, //Le nombre de courbes sauvrgardées et dessinées en live. Cela signifie que dans ce tableau on ne stock que les courbes
             //que l'on est en train de dessiner, celles pour lesquelles on a encore le doigts posé sur l'écran
             stockpoints = [],
             nw, //Screen width
@@ -31,7 +28,6 @@ YUI.add("stalker-canvas", function(Y) {
 
             //Pusher
             //Pusher.channel_auth_endpoint = 'pusher/auth';
-
             if (window.Pusher) {                                                // Init pusher
                 Pusher.channel_auth_endpoint = 'pusher/auth';
                 //var pusher = new Pusher(PUSHER_API_KEY);
@@ -102,7 +98,7 @@ YUI.add("stalker-canvas", function(Y) {
             Y.all("#particleCanvas").on("mouseup", this.onCursorRemove, this);
 
             Y.one("#envoyer").on('click', this.sendTosave, this);
-            Y.one("#effacer").on('click', clear);
+            Y.one("#effacer").on('click', this.reset, this);
             Y.one("#undo").on('click', this.undo, this);
         },
         sendTosave: function() {
@@ -171,6 +167,11 @@ YUI.add("stalker-canvas", function(Y) {
 
                 stockpoints = [];
             }
+        },
+        reset: function() {
+            Y.log("canvas.reset()");
+            this.clear();
+            this.fire("reset");
         },
         clear: function() {
             clear();

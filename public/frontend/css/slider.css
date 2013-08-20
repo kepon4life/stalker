@@ -357,3 +357,15 @@ a:hover {
     right: 180px;
     top: 15px;
 }
+
+/* Cursor animation styles */
+.yui3-stalker-screensaver-content {
+    overflow: visible;
+}
+
+.yui3-stalker-screensaver-content > div {
+    margin: 0 0 0 -64px;
+    width: 97px;
+    height: 97px;
+    background: transparent url(../img/UI_pointer.png) no-repeat;
+}

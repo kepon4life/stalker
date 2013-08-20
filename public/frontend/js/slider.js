@@ -233,12 +233,12 @@ YUI.add("stalker-slider", function(Y) {
             positionShader.uniforms.tPositions2.texture = savedState;
         },
         advanceSlideshow: function() {
-            Y.log("advanceSlideshow()");
             if (this.slideshow_timer) {
                 this.slideshow_timer.cancel();
             }
             if (this.get("slideshowRunning")) {
 
+                Y.log("advanceSlideshow()");
                 implode = true;
                 this.slideshow_timer = Y.later(this.get("totalDuration") * 1000, this, this.selectNextPicture);
 
