@@ -1,6 +1,6 @@
 <% content_for :javascript_includes do %>
 	<%= javascript_include_tag "/javascripts/jquery.cookies.js" %>
-  <%= javascript_include_tag "/javascripts/tag_dreams.js" %>
+  	<%= javascript_include_tag "/javascripts/tag_dreams.js" %>
 <% end %>
 <% content_for :header_content do %>
 	<%= render 'layouts/header_admin' %>
@@ -38,7 +38,7 @@
 			<% @dreams.each do |dream| %>
 				<div class="dream" id="dream_<%= dream.id.to_s %>">
 					<div class="decision"></div>
-					<img  class="dream" src="<%= PATH_TO_DREAMS + dream.id.to_s + DREAM_EXTENSION %>" alt="<%= dream.id.to_s %>" />
+					<img  class="dream" src="<%= PATH_TO_DREAMS_THUMBNAILS + dream.id.to_s + DREAM_EXTENSION %>" alt="<%= dream.id.to_s %>" />
 				</div>
 				
 			<% end%>

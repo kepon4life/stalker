@@ -35,6 +35,15 @@ class FrontendController < ApplicationController
 		end
 	end
 
+	def show_dream
+		
+		@dream = Dream.find(params[:id])
+		
+		respond_to do |format|
+			format.html
+		end
+	end
+
 	def save
 		if params[:metadatas] && params[:imgNormal]
 			@dream = Dream.new(:metadatas => params[:metadatas])

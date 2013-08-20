@@ -27,7 +27,7 @@
         <% puts dream.created_at.class %>
           <tr>
             <td>
-              <img class="dream" class src="<%= PATH_TO_DREAMS + dream.id.to_s + DREAM_EXTENSION %>" alt="<%= dream.id.to_s %>" />
+              <img class="dream" class src="<%= PATH_TO_DREAMS_THUMBNAILS + dream.id.to_s + DREAM_EXTENSION %>" alt="<%= dream.id.to_s %>" />
             <td>
               <ul>
                 <%= dream.created_at.to_s(:standard) %>

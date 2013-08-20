@@ -1,5 +1,9 @@
 StalkerBackend::Application.routes.draw do
 
+  match '/dreams/drestroy_all', :controller => 'dreams', :action => 'destroy_all'
+  match '/dreams/populate', :controller => 'dreams', :action => 'populate_for_test'
+  match '/dreams/tests', :controller => 'dreams', :action => 'dev_tests'
+
   match '/dreams/tag', :controller => 'dreams', :action => 'tag'
   match '/dreams/tagDream', :controller => 'dreams', :action => 'tagDream'
 
@@ -10,6 +14,7 @@ StalkerBackend::Application.routes.draw do
 
   match '/frontend/index', :controller =>"frontend", :action => "index"
   match '/frontend/save', :controller =>"frontend", :action => "save"
+  match '/dream/:id', :controller =>"frontend", :action => "show_dream"
 
   match '/simple_slider', :controller =>"frontend", :action => "simple_slider"
   match '/web_slider', :controller =>"frontend", :action => "web_slider"

@@ -11,6 +11,7 @@ YUI.add("stalker-slider", function(Y) {
             timeoutExplosion,
             strip_width,
             photo_album,
+            vartest = 12000,
             currently_playing = -1,
             shaderMaterial,
             savedState,
@@ -92,7 +93,7 @@ YUI.add("stalker-slider", function(Y) {
                     //$('#content').append('<img src="'+data.imgUrl+'"/>');
                     var data = {
                         name: PATH_TO_DREAMS + data.imgUrl,
-                        thumbnail_url: PATH_TO_DREAMS + data.imgUrl,
+                        thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + data.imgUrl,
                         photo_url: PATH_TO_DREAMS + data.imgUrl
                     };
 
@@ -102,7 +103,7 @@ YUI.add("stalker-slider", function(Y) {
                         this.dreamAlbum.splice(0, 0, data);
                     }
 
-                    this.populateAlbum(dreamAlbum);
+                    this.populateAlbum(this.dreamAlbum);
                     this.selectFirstPicture();
                     //  this.startSlideshow();
                 }, this));
@@ -190,7 +191,7 @@ YUI.add("stalker-slider", function(Y) {
                             photo = photos[i];
                             this.dreamAlbum.push(Y.mix(photo, {
                                 name: photo.id,
-                                thumbnail_url: PATH_TO_DREAMS + photo.id + DREAM_EXTENSION,
+                                thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + photo.id + DREAM_EXTENSION,
                                 photo_url: PATH_TO_DREAMS + photo.id + DREAM_EXTENSION
                             }));
                         }
@@ -210,7 +211,7 @@ YUI.add("stalker-slider", function(Y) {
         },
         selectNextPicture: function() {
             Y.log("selectNextPicture()");
-            this.selectPicture((currently_playing + 1) % photo_album.length);
+            this.selectPicture((currently_playing + 1) % this.photo_album.length);
         },
         toggleSlideshow: function() {
             this.set("slideshowRunning", !this.get("slideshowRunning"));
@@ -271,7 +272,7 @@ YUI.add("stalker-slider", function(Y) {
          * @param {type} cfg
          */
         loadPicture: function(url, cb) {
-            //Y.log("loadPicture(" + info.photo_url + ")");
+            Y.log("loadPicture()");
 
             this.loadTexture(url, new THREE.UVMapping(), Y.bind(function(texture) {
                 Y.log("loadPicture.onLoadTexture");
@@ -1023,7 +1024,7 @@ YUI.add("stalker-slider", function(Y) {
     });
 
     function populateAlbum(the_album) {
-        photo_album = the_album;
+        Y.Stalker.slider.photo_album = the_album;
         var ul = $('<ul />');
         var strip = $('#preview-strip');
         var autofire;
@@ -1132,8 +1133,8 @@ YUI.add("stalker-slider", function(Y) {
                 t.css('top', (80 - h) / 2 + 'px');
             });
         }
-        for (var i = 0; i < photo_album.length; i++) {
-            createThumbnail(photo_album, i);
+        for (var i = 0; i < the_album.length; i++) {
+            createThumbnail(the_album, i);
         }
         checks();
     }

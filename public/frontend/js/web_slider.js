@@ -33,6 +33,7 @@ YUI.add("stalker-webslider", function(Y) {
                 $('#preview-strip-nowebgl').css("display", "none")
                 $('#simpleImgSlider').css("display", "none");
                 $('#stats').css("display", "none");
+                $("#sink").toggle();
             });
             Y.Stalker.WebSlider.superclass.renderUI.call(this);
         },
@@ -93,12 +94,19 @@ YUI.add("stalker-webslider", function(Y) {
 //        },
         loadAlbumByDate: function(dates) {
             if (this.dreamAlbum != null || "undefined") {                       // Super faux, va toujourers retourner true, est évalué tel que (a || true)
-                var startDate = dates[0];
-                var endDate = dates[1];
+                
+                var startDate,endDate;
+
+                if(dates[0]<dates[1]){
+                    startDate = dates[0];
+                    endDate = dates[1];
+                }else{
+                    startDate = dates[1];
+                    endDate = dates[0];
+                }
+                
                 var photos = this.dreamAlbum;
-                console.log(photos)
                 photos.sort(Y.Stalker.WebSlider.superclass.comparePhotosDate)
-                console.log(photos)
                 dreamAlbum = [];
                 for (var i = 0; i < photos.length; i++) {
                     var a = photos[i];
@@ -107,11 +115,10 @@ YUI.add("stalker-webslider", function(Y) {
 
                     photo = photos[i]["id"];
 
-                    if (datePhoto > dates[0] && datePhoto < dates[1]) {
+                    if (datePhoto > startDate && datePhoto < endDate) {
                         dreamAlbum.push({
                             name: photo,
-                            thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
-                            photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
+                            thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + photo + DREAM_EXTENSION
                         });
                     }
                 }
@@ -130,7 +137,7 @@ YUI.add("stalker-webslider", function(Y) {
         renderSliderRangeForDreams: function() {
             //We use the date in MS to deal with the date comparison
             var initialDate = new Date();
-            initialDate.setFullYear(2013, 4, 11); // Start date of exhibition
+            initialDate.setFullYear(2013, 1, 11); // Start date of exhibition
             var initialDateValinMs = initialDate.getTime();
 
             var currentDate = new Date()
@@ -160,13 +167,15 @@ YUI.add("stalker-webslider", function(Y) {
             $("#slider-dreams").slider({
                 values: initialValues,
                 orientation: "vertical",
-                range: true,
+                range: "min",
                 min: initialDateValinMs,
                 max: currentDateinMs,
                 create: sliderTooltip,
                 slide: sliderTooltip,
                 start: function(e, ui) {
                     $(ui.handle).toggleClass("moveHandle")
+                    $('body .lastHandled').each(function(){$(this).removeClass("lastHandled")})
+                    $(ui.handle).addClass("lastHandled")
                 }, // This class allow to display the moved handler over the other handle
                 stop: function(e, ui) {
                     $(ui.handle).toggleClass("moveHandle");
@@ -179,6 +188,23 @@ YUI.add("stalker-webslider", function(Y) {
                 verticalTrackClass: 'track3',
                 verticalHandleClass: 'handle3'
             });
+
+            function sliderHeightAdjust(){
+                var winH = $(window).height()-80;
+                $('.ui-slider-vertical').height(winH)
+            }
+            function previewStripHeightAdjust(){
+                var winH = $(window).height()-50;
+                $('#preview-strip').height(winH)
+            }
+
+            sliderHeightAdjust();
+            previewStripHeightAdjust();
+            
+            $(window).resize(function(){
+                sliderHeightAdjust();
+                previewStripHeightAdjust();
+            }) 
         }
     }, {
         ATTRS: {}
@@ -186,7 +212,7 @@ YUI.add("stalker-webslider", function(Y) {
 
     var start = true;
     function populateAlbum(the_album) {
-        photo_album = the_album;
+        Y.Stalker.slider.photo_album = photo_album = the_album;
 
         $('#preview-strip').find('.dreamslist').remove();
 
@@ -249,7 +275,6 @@ YUI.add("stalker-webslider", function(Y) {
                     img = new Image();
 
             info.index = index;
-
             img.visible = false;
             if (name) {
                 img.alt = name;
@@ -257,10 +282,14 @@ YUI.add("stalker-webslider", function(Y) {
             if (index % 2 === 0) {
                 var li = $('<li class="even-display"  />').append(img);
             } else {
-                var li = $('<li />').append(img);
+                var li = $('<li />').append(img); 
             }
 
             li[0].info = photo_album[index];
+
+            var date = new Date(Date.parse(info.created_at));
+            li.attr("title",prettyDate(date));
+
             ul.append(li);
             li.hover(function(e) {
                 return;
@@ -302,7 +331,7 @@ YUI.add("stalker-webslider", function(Y) {
             });
         }
 
-        nbThumbnailToLoad = 10; // number of thumbnail loaded at the beginning
+        nbThumbnailToLoad = 30; // number of thumbnail loaded at the beginning
         indexThumbnail = 0; // useful to know which thumbnail (index) was the last thumnail loaded
         $('.dreamslist').waypoint({
             context: "#preview-strip",
@@ -326,7 +355,14 @@ YUI.add("stalker-webslider", function(Y) {
         });
         checks();
 
-    } 
+    }
+    function prettyDate(date){
+        monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"];
+        return (date.getHours() + ":" + date.getMinutes()
+        + " " + date.getDate() + " " + monthNames[date.getMonth()] + " " + date.getFullYear());
+    }
+
     function comparePhotosDate(a,b) {
         var da = new Date(a.created_at);
         var db = new Date(b.created_at);
@@ -340,9 +376,8 @@ YUI.add("stalker-webslider", function(Y) {
     }
 });
 (function($) {
-
     $.fn.slider_web = function() {
-        DREAMS_SERVICE_URL = window.location.origin + "/services/dreamsvalidated";
+        DREAMS_SERVICE_URL = window.location.protocol+'//'+window.location.host + "/services/dreamsvalidated";
         FADEOUTTIME = 2000;
         FADINTIME = 2000;
         PICTURETIME = 3000;
@@ -374,14 +409,14 @@ YUI.add("stalker-webslider", function(Y) {
                     var photo = val.id;
                     dreamsAlbum.push({
                         name: photo,
-                        thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
-                        photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
+                        thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + photo + DREAM_EXTENSION,
+                        created_at: val.created_at
                     });
                 })
+                dreamsAlbum.sort(comparePhotosDate);
                 populateAlbum(dreamsAlbum);
                 callback();
             })
-
         }
 
         function loadAlbumByDate(dates, callback) {
@@ -398,11 +433,12 @@ YUI.add("stalker-webslider", function(Y) {
                     if (datePhoto > dates[0] && datePhoto < dates[1]) {
                         dreamsAlbum.push({
                             name: photo,
-                            thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
-                            photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
+                            thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + photo + DREAM_EXTENSION,
+                            created_at: val.created_at
                         });
                     }
                 })
+                dreamsAlbum.sort(comparePhotosDate)
                 populateAlbum(dreamsAlbum);
                 callback();
             })
@@ -411,9 +447,11 @@ YUI.add("stalker-webslider", function(Y) {
 
         function startImgSlider() {
             $("#simpleImgSlider img").remove();
-            var src = ($(".dreamslist img").get(0).src);
+            var li = $(".dreamslist li").get(0)
+            showLegend(li.info)
+            var nameImg = ($(".dreamslist img").get(0).id);
             var img = new Image();
-            img.src = src;
+            img.src = PATH_TO_DREAMS + nameImg + DREAM_EXTENSION;
             img.id = 0;
             img.onload = function() {
                 $("#simpleImgSlider").append(img)
@@ -427,7 +465,7 @@ YUI.add("stalker-webslider", function(Y) {
             clearTimeout(customStartTimeout)
             var imgToDisplay = new Image();
             imgToDisplay.id = ($("li").index((imgClicked.parent())))
-            imgToDisplay.src = imgClicked.attr('src');
+            imgToDisplay.src = PATH_TO_DREAMS + imgClicked.attr('id') + DREAM_EXTENSION;
             clearTimeout(timeout);
             clearTimeout(timeoutFirstImg);
             $("#simpleImgSlider").find('img').remove();
@@ -444,7 +482,8 @@ YUI.add("stalker-webslider", function(Y) {
             if (idCurrentImg < dreamsAlbum.length - 1) {
                 idCurrentImg = parseInt(idCurrentImg);
                 var idNextImg = idCurrentImg + 1;
-                var src = ($("img").get(idNextImg).src);
+                var nameImg = ($("img").get(idNextImg).id);
+                var src = PATH_TO_DREAMS + nameImg + DREAM_EXTENSION;
                 $("#simpleImgSlider").append("<img id='" + idNextImg + "' src='" + src + "' style='display: none;'/>");
                 $("#" + idNextImg).bind("load", function() {
                     timeout = setTimeout(function() {
@@ -453,7 +492,8 @@ YUI.add("stalker-webslider", function(Y) {
                 })
             } else {
                 var idNextImg = 0;
-                var src = ($("img").get(idNextImg).src);
+                var nameImg = ($("img").get(idNextImg).id);
+                var src = PATH_TO_DREAMS + nameImg + DREAM_EXTENSION;
                 $("#simpleImgSlider").append("<img id='" + idNextImg + "' src='" + src + "' style='display: none;'/>");
                 $("#" + idNextImg).bind("load", function() {
                     timeout = setTimeout(function() {
@@ -480,7 +520,6 @@ YUI.add("stalker-webslider", function(Y) {
 
         function populateAlbum(album) {
             $('#preview-strip-nowebgl').find('.dreamslist').remove();
-
             ul = $('<ul class="dreamslist"/>');
 
             $('#preview-strip-nowebgl').append(ul);
@@ -496,6 +535,7 @@ YUI.add("stalker-webslider", function(Y) {
 
                 img.src = thumbnail_url;
                 info.index = index;
+                img.id = name;
 
                 if (name) {
                     img.alt = name;
@@ -505,6 +545,9 @@ YUI.add("stalker-webslider", function(Y) {
                 } else {
                     var li = $('<li />').append(img);
                 }
+
+                var date = new Date(Date.parse(info.created_at));
+                li.attr("title",prettyDate(date));
 
                 li[0].info = photo_album[index];
                 ul.append(li);
@@ -518,6 +561,7 @@ YUI.add("stalker-webslider", function(Y) {
 
         function renderSlider() {
             //We use the date in MS to deal with the date comparison
+            console.log("renderSlider")
             var initialDate = new Date();
             initialDate.setFullYear(2013, 4, 11); // Start date of exhibition
             var initialDateValinMs = initialDate.getTime();
@@ -549,6 +593,7 @@ YUI.add("stalker-webslider", function(Y) {
             $("#slider-dreams-nowebgl").slider({
                 values: initialValues,
                 orientation: "vertical",
+                animate: false,
                 range: true,
                 min: initialDateValinMs,
                 max: currentDateinMs,
@@ -562,6 +607,59 @@ YUI.add("stalker-webslider", function(Y) {
                     loadAlbumByDate(ui.values, startImgSlider)
                 }
             });
+        }
+
+        function sliderHeightAdjust(){
+            var winH = $(window).height()-80;
+            $('.ui-slider-vertical').height(winH)
+        }
+        function previewStripHeightAdjust(){
+            var winH = $(window).height()-50;
+            $('#preview-strip-nowebgl').height(winH)
+        }
+
+        sliderHeightAdjust();
+        previewStripHeightAdjust();
+        
+        $(window).resize(function(){
+            sliderHeightAdjust();
+            previewStripHeightAdjust();
+        }) 
+
+        function comparePhotosDate(a,b) {
+            var da = new Date(a.created_at);
+            var db = new Date(b.created_at);
+            da = da.getTime();
+            db = db.getTime();
+            if (da < db)
+                return 1;
+            if (da > db)
+              return -1;
+            return 0;
+        }
+
+        $("#preview-strip-nowebgl").on("click","li",function(e){
+            var node = e.currentTarget;
+            showLegend(node.info)
+        })
+
+        function prettyDate(date){
+            monthNames = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"];
+            return (date.getHours() + ":" + date.getMinutes()
+            + " " + date.getDate() + " " + monthNames[date.getMonth()] + " " + date.getFullYear());
+        }
+        function showLegend (pictureCfg) {
+            var metas,
+                    detailsNode = $(".details"),
+                    date = new Date(Date.parse(pictureCfg.created_at));
+                    detailsNode.text(prettyDate(date));
+            try {
+                metas = Y.JSON.parse(pictureCfg.metadatas);
+                detailsNode.append("<br />" + metas.event);
+            } catch (e) {
+                // GOTCHA
+            }
         }
 
     }

@@ -1,0 +1,60 @@
+<% @title="Stalker - Show dream" %>
+<% content_for :stylesheet_includes do %>
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<%= stylesheet_link_tag '/frontend/css/slider.css'  %>
+<%= stylesheet_link_tag '/frontend/css/show_dream.css'  %>
+
+<% end %>
+<% content_for :javascript_includes_in_head do %>
+  <script>window["_GOOG_TRANS_EXT_VER"] = "1";</script>
+<% end %>
+<% content_for :javascript_includes do %>
+
+    <%= javascript_include_tag "/frontend/js/libs/three.min.js" %>
+
+    <%= javascript_include_tag "/frontend/js/libs/stats.min.js" %>
+
+    <!--<script src="http://yui.yahooapis.com/3.9.0/build/yui/yui-min.js"></script>-->
+    <%= javascript_include_tag "/frontend/js/libs/yui3/build/yui/yui-min.js" %>
+    <%= javascript_include_tag "/frontend/js/libs/inputex/src/loader.js" %>
+    <%= javascript_include_tag "/frontend/js/libs/jquery-1.8.3.min.js"%>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script src="http://js.pusher.com/1.12/pusher.min.js"></script>
+
+    <%= javascript_include_tag "/frontend/js/slider.js" %>
+    <%= javascript_include_tag "/frontend/js/show_dream.js" %>
+
+    <script type="text/javascript">
+        YUI_config.groups.inputex.base = "../frontend/js/libs/inputex/src/";
+        YUI_config.groups.inputex.filter = "raw";
+        YUI_config.stalkerbase = "../frontend/";
+
+        YUI().use("io", "json", "widget", "base", "event-resize",
+                "inputex-string", "inputex-select", "inputex-group",
+                "inputex-list", "inputex-combine", "inputex-checkbox",
+                "transition",
+                "stalker-slider", "stalker-showdream", function(Y) {
+
+            Y.on("domready", function() {
+
+            	if (Y.hasWebgl()) {
+            		$("#personaldream").hide();
+                    var hash = window.location.hash,
+                        slider = new Y.Stalker.ShowDream({
+                            textureWidth: (hash.length > 1) ? +hash.substring(1) : 256, // 64, 128, 256, 512, 1024, 2048
+                            particleSize: 13, // default: 10
+                            slideshowRunning: true,
+                            showLegend: false,
+                            showQr: false
+                        });
+                    slider.render();                                            // Render slider
+                }
+
+            });
+        });
+    </script>
+
+<% end %>
+<div id="personaldreamcontainer">
+	<img id="personaldream" src="<%=  PATH_TO_DREAMS + @dream.id.to_s  + DREAM_EXTENSION%>" />
+</div>

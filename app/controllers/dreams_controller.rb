@@ -1,6 +1,6 @@
 class DreamsController < ApplicationController
   require 'fileutils'
-
+  http_basic_authenticate_with :name => "admin", :password => "st4lk3r2013"
 
   # GET /dreams
   # GET /dreams.json
@@ -209,4 +209,75 @@ class DreamsController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+
+  def destroy_all
+    Dream.delete_all
+    FileUtils.rm_r Dir.glob("public" + PATH_TO_DREAMS + "*")
+    FileUtils.rm_r Dir.glob("public" + PATH_TO_DREAMS_THUMBNAILS + "*")
+    respond_to do |format|
+        flash[:success] = "Dreams successfully deleted!"
+        format.html { redirect_to action: 'dev_tests' }
+        format.json { head :no_content }
+
+    end
+  end
+
+
+  def populate_for_test
+
+    nb_of_dreams_to_add = 1000
+    nb_of_dreams_to_copy = Dir.glob("public/tests/dreams/*.png").size
+
+    if params[:nb_of_dreams_to_add].to_i > 0
+      nb_of_dreams_to_add = params[:nb_of_dreams_to_add].to_i
+    end
+
+    for i in 0..nb_of_dreams_to_add-1
+      year = Time.now.year - rand(2)
+      month = rand(12) + 1
+      day = rand(31) + 1
+      date = Time.local(year, month, day)
+      today = Date.today
+      if(date > today)
+        date = Time.local(year-1, month, day)
+      end
+      random_number = rand(0..nb_of_dreams_to_copy-1)
+      file = Dir.glob("public/tests/dreams/*.png")[random_number]
+      dream = Dream.new(:is_valid => [true, false].sample, :secret_room => [true, false].sample, :metadatas => "{'datas':null}", :created_at => date)
+      dream.save
+      FileUtils.copy_file(file, "public" + PATH_TO_DREAMS + dream.id.to_s + DREAM_EXTENSION, preserve = false, dereference = true)
+      FileUtils.copy_file("public/tests/dreams-small/" + file.split("/")[3] , "public" + PATH_TO_DREAMS_THUMBNAILS + dream.id.to_s + DREAM_EXTENSION, preserve = false, dereference = true) 
+    end
+
+    respond_to do |format|
+        flash[:success] = nb_of_dreams_to_add.to_s + " dreams successfully added!"
+        format.html { redirect_to action: 'dev_tests' }
+        format.json { head :no_content }
+
+    end
+  end
+
+
+  def dev_tests
+
+    count_dreams_tagged_accepted_special = Dream.where(:is_valid => true, :secret_room => true).count()
+    count_dreams_tagged_just_accepted = Dream.where(:is_valid => true, :secret_room => false).count()
+    count_dreams_tagged_unaccepted = Dream.where(:is_valid => false, :secret_room => false).count()
+
+    @dreams_tot = Dream.count()
+
+    @dreams_untagged = Dream.where(:is_valid => nil, :secret_room => nil).count()
+    @dreams_tagged = count_dreams_tagged_accepted_special + count_dreams_tagged_just_accepted  + count_dreams_tagged_unaccepted
+    @dreams_tagged_accepted = count_dreams_tagged_accepted_special + count_dreams_tagged_just_accepted
+    @dreams_tagged_accepted_special = count_dreams_tagged_accepted_special
+    @dreams_tagged_just_accepted = count_dreams_tagged_just_accepted
+    @dreams_tagged_unaccepted = count_dreams_tagged_unaccepted
+
+    respond_to do |format|
+        format.html # tag.html.erb
+    end
+
+  end
+
 end
