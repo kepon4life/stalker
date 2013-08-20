@@ -70,7 +70,7 @@ html {
     display: none;
 }
 #sink #preview-strip {
-    width: 195px;
+    width: 110px;
     overflow: auto;
     position: fixed;
     z-index: 13;
@@ -79,10 +79,11 @@ html {
     background: rgba(0, 0, 0, 0.5);
     white-space: nowrap;
     height: 100%;
-    border-top: 2px solid rgba(255, 255, 255, 0.8);
+    border-top: none;
     -webkit-transition: all 0.2s ease-out;
     -moz-transition: all 0.2s ease-out;
     transition: all 0.2s ease-out;
+    text-align: left;   
 }
 #sink #preview-strip:hover {
     bottom: 0;
@@ -91,7 +92,7 @@ html {
     transition: all 0.2s ease-out;
 }
 #sink #preview-strip-nowebgl {
-    width: 195px;
+    width: 110px;
     height: 100%;
     overflow: auto;
     position: fixed;
@@ -100,7 +101,7 @@ html {
     z-index: 13;
     background: rgba(0, 0, 0, 0.5);
     white-space: nowrap;
-    border-top: 2px solid rgba(255, 255, 255, 0.8);
+    border-top: none;
     -webkit-transition: all 0.2s ease-out;
     -moz-transition: all 0.2s ease-out;
     transition: all 0.2s ease-out;
@@ -111,10 +112,10 @@ html {
     position: relative;
     padding: 0;
     margin: 0;
-    -moz-opacity: 0.8;
-    -khtml-opacity: 0.8;
-    -webkit-opacity: 0.8;
-    opacity: 0.8;
+    -moz-opacity: 1;
+    -khtml-opacity: 1;
+    -webkit-opacity: 1;
+    opacity: 1;
 }
 #sink #preview-strip ul:hover {
     -moz-opacity: 1;
@@ -123,12 +124,12 @@ html {
     opacity: 1;
 }
 #sink #preview-strip ul li, #preview-strip-nowebgl ul li {
-    float: left;
-    border: 1px solid #fff;
+    clear: left;
+    border: 1px solid #ccc;
     border-radius: 4px;
-    margin-top: 8px;
+    margin-top: 2px;
     margin-left: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 2px;
     margin-right: 0px;
     list-style: none;
     background: #000;
@@ -136,6 +137,9 @@ html {
     width: 80px;
     height: 80px;
     cursor: pointer;
+}
+#sink #preview-strip-nowebgl ul li {
+    display: block;
 }
 #sink #preview-strip ul li img, #preview-strip-nowebgl ul li img {
     border-radius: 4px;
@@ -149,7 +153,9 @@ html {
     
 }
 #preview-strip-nowebgl ul li img {
-    margin-top: 12px;
+    width: 80px;
+    height: 40px;
+    top: 19.5px;
 }
 #sink #preview-strip ul li img:hover {
     -moz-opacity: 1;
@@ -312,8 +318,8 @@ a:hover {
     position: absolute;
     bottom: 0px;
     left: 0px;
-    border-top: 1px solid white;
     font-size: 10px;
+    font-family: 'Pathway Gothic One';
     text-align: right;
     color: white;
     z-index: 20000;
@@ -323,11 +329,24 @@ a:hover {
     padding-top: 5px;
     width: 200px;
     padding: 5px;
-
+    background-image: url('../img/barre.png');
+    letter-spacing: 1px;
 }
 
 /*ABG*/
 
 #nav-bar{
     display: none;
+}
+#stalkerlogo{
+    position: absolute;
+    z-index: 100;
+    top: 0;
+    right: 0;
+    margin-right: 10px;
+    margin-top: 15px;
+}
+#sink #preview-strip ul .dreamselected, #preview-strip-nowebgl ul .dreamselected{
+    border: 3px solid #4040cc;
+    margin: 2px 0 2px 6px;
 }
