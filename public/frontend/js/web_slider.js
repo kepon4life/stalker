@@ -209,15 +209,36 @@ YUI.add("stalker-webslider", function(Y) {
                 t.css('top', (80 - h) / 2 + 'px');
             });
         }
-        for (var i = 0; i < photo_album.length; i++) {
-            createThumbnail(photo_album, i);
-        }
-        $('li').waypoint({
+        nbThumbnailToLoad = 25; // number of thumbnail loaded at the beginning
+        indexThumbnail = 0; // useful to know which thumbnail (index) was the last thumnail loaded
+        $('.dreamslist').waypoint({
             context: "#preview-strip",
-            handler: function() {
-                addPrettyDateToScroll($(this).attr("title"))             
-          }
+            offset: "bottom-in-view", // waypoint is triggered when the bottom of .dreamslist is in view in the viewport
+            handler: function(direction) {
+                if (direction == "down") {  // we must load the next thumbnail only if the user is scrolling down
+                    $('.dreamslist').waypoint("disable") // Allow to load dynamically the next thumbnails into .dreamslist. Then the waypoint will be enabled again.
+                    if ((indexThumbnail + nbThumbnailToLoad) > photo_album.length) { // Useful when we have less thumbnails to load than nbThumbnailToLoad
+                        nbThumbnailToLoad = (photo_album.length - indexThumbnail);
+                    }
+                    for (var i = 0; i < nbThumbnailToLoad; i++) {
+                        createThumbnail(photo_album, indexThumbnail + i);
+                    }
+                }
+                indexThumbnail = indexThumbnail + nbThumbnailToLoad;
+                if (indexThumbnail < photo_album.length) {
+                    $('.dreamslist').waypoint("enable")
+                }
+
+                $('li').waypoint({
+                    context: "#preview-strip",
+                    handler: function() {
+                        addPrettyDateToScroll($(this).attr("title"))             
+                    }
+                });
+
+            }
         });
+        
         checks();
         /*Init value info for scroll*/
         var tooltip = '<div id="dateThumbnail" class="handle-tooltip"><div class="handle-tooltip-inner"></div></div>'
