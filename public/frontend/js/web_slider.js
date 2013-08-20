@@ -19,7 +19,7 @@ YUI.add("stalker-webslider", function(Y) {
                 + '</div>'
                 + '<div id="preview-image"></div>'
 //                + '<div id="preview-strip"><!-- prev next --></div>'
-                + '<div id="preview-strip"><div id="slider-dreams" class="ui-slider-vertical"></div></div>'
+                + '<div id="preview-strip"></div>'
                 + '<div id="preview-strip-nowebgl"><div id="slider-dreams-nowebgl" class="ui-slider-vertical"></div></div>'
                 + '</div>'
                 + '</div>',
@@ -29,7 +29,12 @@ YUI.add("stalker-webslider", function(Y) {
          */
         renderUI: function() {
             this.once("webglInitialized", function() {
-                this.renderSliderRangeForDreams();
+                $('#preview-strip').enscroll({
+                    verticalTrackClass: 'track4',
+                    verticalHandleClass: 'handle4',
+                    zIndex: 10000
+                });
+                previewStripHeightAdjust();
                 $('#preview-strip-nowebgl').css("display", "none")
                 $('#simpleImgSlider').css("display", "none");
                 $('#stats').css("display", "none");
@@ -40,58 +45,6 @@ YUI.add("stalker-webslider", function(Y) {
         populateAlbum: function(pictures) {
             populateAlbum(pictures);
         },
-        /**
-         *
-         * @returns {undefined}
-         */
-//        loadAlbum: function(url) {
-//            this.status('Loading album: ' + url);
-//            Y.io(url, {
-//                context: this,
-//                on: {
-//                    success: function(tId, e) {
-//                        var photo, photos = Y.JSON.parse(e.response).photos;
-//                        this.status(photos.photo.length + " photos found.");
-//
-//                        for (var i = 0; i < photos.photo.length; i++) {
-//                            photo = photos.photo[i];
-//                            dreamAlbum.push({
-//                                name: photo.url,
-//                                thumbnail_url: YUI_config.stalkerbase + photo.url,
-//                                photo_url: YUI_config.stalkerbase + photo.url
-//                            });
-//                        }
-//                        populateAlbum(dreamAlbum);
-//                        this.selectFirstPicture();
-//                        this.startSlideshow();
-//                    }
-//                }
-//            });
-//        },
-//        loadAlbumFromService: function(url) {
-//            this.status('Loading album: ' + url);
-//            Y.io(url, {
-//                context: this,
-//                on: {
-//                    success: function(tId, e) {
-//                        var photos = Y.JSON.parse(e.response), photo;
-//                        this.status(photos.length + " photos found.");
-//                        jsonPhotos = photos;
-//                        for (var i = 0; i < photos.length; i++) {
-//                            photo = photos[i]["id"];
-//                            dreamAlbum.push({
-//                                name: photo,
-//                                thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
-//                                photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
-//                            });
-//                        }
-//                        this.populateAlbum(dreamAlbum);
-//                        this.selectFirstPicture();
-//                        this.startSlideshow();
-//                    }
-//                }
-//            });
-//        },
         loadAlbumByDate: function(dates) {
             if (this.dreamAlbum != null || "undefined") {                       // Super faux, va toujourers retourner true, est évalué tel que (a || true)
                 
@@ -126,87 +79,6 @@ YUI.add("stalker-webslider", function(Y) {
                 this.selectFirstPicture();
                 this.startSlideshow();
             }
-        },
-        // ***************************
-        // *** SLIDER RANGE ***
-        // ***************************
-        /**
-         *
-         */
-
-        renderSliderRangeForDreams: function() {
-            //We use the date in MS to deal with the date comparison
-            var initialDate = new Date();
-            initialDate.setFullYear(2013, 1, 11); // Start date of exhibition
-            var initialDateValinMs = initialDate.getTime();
-
-            var currentDate = new Date()
-            var currentDateinMs = currentDate.getTime();
-
-            var initialValues = [initialDateValinMs, currentDateinMs]; // Value to init the slider
-            var initialValuesDates = [new Date(initialDateValinMs), new Date(currentDateinMs)];
-            var sliderTooltip = function(event, ui) {
-                var curValues = ui.values || initialValuesDates; // current value (when sliding) or initial value (at start)
-                if (!(curValues[0] instanceof Date)) { // if curValues are not instances of Date they should be in MS (int). We have to convert it in Date format to display it on the slider.
-                    curValues[0] = new Date(curValues[0])
-                }
-                if (!(curValues[1] instanceof Date)) {
-                    curValues[1] = new Date(curValues[1])
-                }
-
-                var tooltipOne = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[0].getDate() + "/" + ((curValues[0].getMonth()) + 1) + "/" + curValues[0].getFullYear() + '</div><div class="handle-tooltip-arrow"></div></div>';
-                var tooltipTwo = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[1].getDate() + "/" + ((curValues[1].getMonth()) + 1) + "/" + curValues[1].getFullYear() + '</div><div class="handle-tooltip-arrow"></div></div>';
-
-
-                $('.ui-slider-handle').first().html(tooltipOne); //attach tooltip to the slider handle
-                $('.ui-slider-handle').last().html(tooltipTwo); //attach tooltip to the slider handle
-
-
-            }
-
-            $("#slider-dreams").slider({
-                values: initialValues,
-                orientation: "vertical",
-                range: "min",
-                min: initialDateValinMs,
-                max: currentDateinMs,
-                create: sliderTooltip,
-                slide: sliderTooltip,
-                start: function(e, ui) {
-                    $(ui.handle).toggleClass("moveHandle")
-                    $('body .lastHandled').each(function(){$(this).removeClass("lastHandled")})
-                    $(ui.handle).addClass("lastHandled")
-                }, // This class allow to display the moved handler over the other handle
-                stop: function(e, ui) {
-                    $(ui.handle).toggleClass("moveHandle");
-                    Y.Stalker.slider.loadAlbumByDate(ui.values);
-                }
-            });
-
-            $('#preview-strip').enscroll({
-                showOnHover: true,
-                verticalTrackClass: 'track3',
-                clickTrackToScroll: true,
-                verticalHandleClass: 'handle3',
-                showOnHover: false
-            });
-
-            function sliderHeightAdjust(){
-                var winH = $(window).height()-80;
-                $('.ui-slider-vertical').height(winH)
-            }
-            function previewStripHeightAdjust(){
-                var winH = $(window).height()-50;
-                $('#preview-strip').height(winH)
-            }
-
-            sliderHeightAdjust();
-            previewStripHeightAdjust();
-            
-            $(window).resize(function(){
-                sliderHeightAdjust();
-                previewStripHeightAdjust();
-            }) 
         }
     }, {
         ATTRS: {}
@@ -281,17 +153,13 @@ YUI.add("stalker-webslider", function(Y) {
             if (name) {
                 img.alt = name;
             }
-            if (index % 2 === 0) {
-                var li = $('<li class="even-display"  />').append(img);
-            } else {
-                var li = $('<li />').append(img); 
-            }
+            var li = $('<li/>').append(img);
 
             li[0].info = photo_album[index];
 
             var date = new Date(Date.parse(info.created_at));
             li.attr("title",prettyDate(date));
-
+            li.attr('id',date.getDate())
             ul.append(li);
             li.hover(function(e) {
                 return;
@@ -332,38 +200,45 @@ YUI.add("stalker-webslider", function(Y) {
                 t.css('top', (80 - h) / 2 + 'px');
             });
         }
-
-        nbThumbnailToLoad = 30; // number of thumbnail loaded at the beginning
-        indexThumbnail = 0; // useful to know which thumbnail (index) was the last thumnail loaded
-        $('.dreamslist').waypoint({
+        for (var i = 0; i < photo_album.length; i++) {
+            createThumbnail(photo_album, i);
+        }
+        $('li').waypoint({
             context: "#preview-strip",
-            offset: "bottom-in-view", // waypoint is triggered when the bottom of .dreamslist is in view in the viewport
-            handler: function(direction) {
-                if (direction == "down") {  // we must load the next thumbnail only if the user is scrolling down
-                    $('.dreamslist').waypoint("disable") // Allow to load dynamically the next thumbnails into .dreamslist. Then the waypoint will be enabled again.
-                    if ((indexThumbnail + nbThumbnailToLoad) > photo_album.length) { // Useful when we have less thumbnails to load than nbThumbnailToLoad
-                        nbThumbnailToLoad = (photo_album.length - indexThumbnail);
-                    }
-                    for (var i = 0; i < nbThumbnailToLoad; i++) {
-                        createThumbnail(photo_album, indexThumbnail + i);
-                    }
-                }
-                indexThumbnail = indexThumbnail + nbThumbnailToLoad;
-                if (indexThumbnail < photo_album.length) {
-                    $('.dreamslist').waypoint("enable")
-                }
-
-            }
+            handler: function() {
+                prettyDateSlider($(this).attr("title"))             
+          }
         });
         checks();
-
+        /*Init value info for scroll*/
+        var tooltip = '<div id="dateThumbnail" class="handle-tooltip"><div class="handle-tooltip-inner"></div></div>'
+        $('.handle4').html(tooltip)
+        prettyDateSlider($(".dreamslist li").get(0).title);
     }
     function prettyDate(date){
+        console.log(date);
         monthNames = ["January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"];
         return (date.getHours() + ":" + date.getMinutes()
         + " " + date.getDate() + " " + monthNames[date.getMonth()] + " " + date.getFullYear());
     }
+
+    function prettyDateSlider(date){
+        date = date.split(" ")
+        date = (date[1]+" "+date[2]+" "+date[3])
+        $("#dateThumbnail .handle-tooltip-inner").html(date)
+    }
+
+    function previewStripHeightAdjust(){
+        var winH = $(window).height()-50;
+        $('#preview-strip').height(winH)
+    }
+
+    $(window).resize(function(){
+        previewStripHeightAdjust();
+    }) 
+
+    
 
     function comparePhotosDate(a,b) {
         var da = new Date(a.created_at);
@@ -391,18 +266,11 @@ YUI.add("stalker-webslider", function(Y) {
 
         this.each(function() {
             init();
-            renderSlider();
             loadAlbum(startImgSlider);
         });
 
         function init() {
             $('#sink').show();
-            $('#preview-strip').css("display", "none")
-            $('#preview-strip-nowebgl').enscroll({
-                showOnHover: true,
-                verticalTrackClass: 'track3',
-                verticalHandleClass: 'handle3'
-            });
         }
 
         function loadAlbum(callback) {
@@ -450,6 +318,8 @@ YUI.add("stalker-webslider", function(Y) {
         function startImgSlider() {
             $("#simpleImgSlider img").remove();
             var li = $(".dreamslist li").get(0)
+            prettyDateSlider(li.title)
+
             showLegend(li.info)
             var nameImg = ($(".dreamslist img").get(0).id);
             var img = new Image();
@@ -542,11 +412,9 @@ YUI.add("stalker-webslider", function(Y) {
                 if (name) {
                     img.alt = name;
                 }
-                if (index % 2 === 0) {
-                    var li = $('<li class="even-display"  />').append(img);
-                } else {
-                    var li = $('<li />').append(img);
-                }
+
+                var li = $('<li/>').append(img);
+
 
                 var date = new Date(Date.parse(info.created_at));
                 li.attr("title",prettyDate(date));
@@ -559,72 +427,31 @@ YUI.add("stalker-webslider", function(Y) {
                 customSliderStart($(this).find('img'));
             })
 
-        }
-
-        function renderSlider() {
-            //We use the date in MS to deal with the date comparison
-            console.log("renderSlider")
-            var initialDate = new Date();
-            initialDate.setFullYear(2013, 4, 11); // Start date of exhibition
-            var initialDateValinMs = initialDate.getTime();
-
-            var currentDate = new Date()
-            var currentDateinMs = currentDate.getTime();
-
-            var initialValues = [initialDateValinMs, currentDateinMs]; // Value to init the slider
-            var initialValuesDates = [new Date(initialDateValinMs), new Date(currentDateinMs)];
-            var sliderTooltip = function(event, ui) {
-                var curValues = ui.values || initialValuesDates; // current value (when sliding) or initial value (at start)
-                if (!(curValues[0] instanceof Date)) { // if curValues are not instances of Date they should be in MS (int). We have to convert it in Date format to display it on the slider.
-                    curValues[0] = new Date(curValues[0])
-                }
-                if (!(curValues[1] instanceof Date)) {
-                    curValues[1] = new Date(curValues[1])
-                }
-
-                var tooltipOne = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[0].getDate() + "/" + ((curValues[0].getMonth()) + 1) + "/" + curValues[0].getFullYear() + '</div><div class="handle-tooltip-arrow"></div></div>';
-                var tooltipTwo = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[1].getDate() + "/" + ((curValues[1].getMonth()) + 1) + "/" + curValues[1].getFullYear() + '</div><div class="handle-tooltip-arrow"></div></div>';
-
-
-                $('.ui-slider-handle').first().html(tooltipOne); //attach tooltip to the slider handle
-                $('.ui-slider-handle').last().html(tooltipTwo); //attach tooltip to the slider handle
-
-
-            }
-
-            $("#slider-dreams-nowebgl").slider({
-                values: initialValues,
-                orientation: "vertical",
-                animate: false,
-                range: true,
-                min: initialDateValinMs,
-                max: currentDateinMs,
-                create: sliderTooltip,
-                slide: sliderTooltip,
-                start: function(e, ui) {
-                    $(ui.handle).toggleClass("moveHandle")
-                }, // This class allow to display the moved handler over the other handle
-                stop: function(e, ui) {
-                    $(ui.handle).toggleClass("moveHandle");
-                    loadAlbumByDate(ui.values, startImgSlider)
+            $('#preview-strip-nowebgl').enscroll({
+                verticalTrackClass: 'track4',
+                verticalHandleClass: 'handle4',
+                zIndex: 10000
+            });
+            $('li').waypoint({
+            context: "#preview-strip-nowebgl",
+            handler: function() {
+                prettyDateSlider($(this).attr("title"))
                 }
             });
+            var tooltip = '<div id="dateThumbnail" class="handle-tooltip"><div class="handle-tooltip-inner"></div></div>'
+            $('.handle4').html(tooltip)
+
         }
 
-        function sliderHeightAdjust(){
-            var winH = $(window).height()-80;
-            $('.ui-slider-vertical').height(winH)
-        }
+
         function previewStripHeightAdjust(){
             var winH = $(window).height()-50;
             $('#preview-strip-nowebgl').height(winH)
         }
 
-        sliderHeightAdjust();
         previewStripHeightAdjust();
         
-        $(window).resizeresize(function(){
-            sliderHeightAdjust();
+        $(window).resize(function(){
             previewStripHeightAdjust();
         }) 
 
@@ -650,6 +477,12 @@ YUI.add("stalker-webslider", function(Y) {
                 "July", "August", "September", "October", "November", "December"];
             return (date.getHours() + ":" + date.getMinutes()
             + " " + date.getDate() + " " + monthNames[date.getMonth()] + " " + date.getFullYear());
+        }
+
+        function prettyDateSlider(date){
+            date = date.split(" ")
+            date = (date[1]+" "+date[2]+" "+date[3])
+            $("#dateThumbnail .handle-tooltip-inner").html(date)
         }
         function showLegend (pictureCfg) {
             var metas,
