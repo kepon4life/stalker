@@ -112,10 +112,10 @@ html {
     position: relative;
     padding: 0;
     margin: 0;
-    -moz-opacity: 0.8;
-    -khtml-opacity: 0.8;
-    -webkit-opacity: 0.8;
-    opacity: 0.8;
+    -moz-opacity: 1;
+    -khtml-opacity: 1;
+    -webkit-opacity: 1;
+    opacity: 1;
 }
 #sink #preview-strip ul:hover {
     -moz-opacity: 1;
@@ -125,7 +125,7 @@ html {
 }
 #sink #preview-strip ul li, #preview-strip-nowebgl ul li {
     clear: left;
-    border: 1px solid #fff;
+    border: 1px solid #ccc;
     border-radius: 4px;
     margin-top: 2px;
     margin-left: 8px;
@@ -156,9 +156,6 @@ html {
     width: 80px;
     height: 40px;
     top: 19.5px;
-}
-#preview-strip-nowebgl ul li img {
-    margin-top: 12px;
 }
 #sink #preview-strip ul li img:hover {
     -moz-opacity: 1;
@@ -348,4 +345,8 @@ a:hover {
     right: 0;
     margin-right: 10px;
     margin-top: 15px;
+}
+#sink #preview-strip ul .dreamselected, #preview-strip-nowebgl ul .dreamselected{
+    border: 3px solid #4040cc;
+    margin: 2px 0 2px 6px;
 }
