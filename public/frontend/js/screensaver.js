@@ -8,6 +8,7 @@ YUI.add("stalker-screensaver", function(Y) {
         CONTENT_TEMPLATE: "<div><div></div></div>",
         initializer: function() {
             var cb = this.get("contentBox");                                    // Retrieve current widget node, the one we animate
+            //cb.getDOMNode()
             this.anim = new Y.Anim({
                 node: this.get("contentBox"),
                 duration: 1.5
@@ -38,6 +39,7 @@ YUI.add("stalker-screensaver", function(Y) {
                 this.currentIndex += 1;                                         // Increment index
             } else {                                                            // No more points: animation is over
                 this.fire("drawingEnd");
+                this.hide();
             }
         },
         show: function() {
