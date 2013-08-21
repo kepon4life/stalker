@@ -250,7 +250,6 @@ YUI.add("stalker-webslider", function(Y) {
         })
     }
     function prettyDate(date){
-        console.log(date);
         monthNames = ["January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"];
         return (date.getHours() + ":" + date.getMinutes()
@@ -414,8 +413,7 @@ YUI.add("stalker-webslider", function(Y) {
 
         }
 
-        function fadeout(idLastImg, idImgToDisplay) {
-            console.log(idLastImg+" // "+idImgToDisplay)
+        function fadeout(idLastImg, idImgToDisplay){
             $("#" + idLastImg).fadeOut(FADEOUTTIME, function() {
                 $("#" + idLastImg).remove();
                 if (idImgToDisplay < 0) { // An idImgToDisplay negative means that the next image is not loaded
@@ -432,11 +430,41 @@ YUI.add("stalker-webslider", function(Y) {
         function populateAlbum(album) {
             $('#preview-strip-nowebgl').find('.dreamslist').remove();
             ul = $('<ul class="dreamslist"/>');
-
             $('#preview-strip-nowebgl').append(ul);
+            /*$('#preview-strip-nowebgl').append(ul);
             for (var i = 0; i < album.length; i++) {
                 createThumbnail(album, i);
-            }
+            }*/
+
+            nbThumbnailToLoad = 25; // number of thumbnail loaded at the beginning
+            indexThumbnail = 0; // useful to know which thumbnail (index) was the last thumnail loaded
+            $('.dreamslist').waypoint({
+                context: "#preview-strip-nowebgl",
+                offset: "bottom-in-view", // waypoint is triggered when the bottom of .dreamslist is in view in the viewport
+                handler: function(direction) {
+                    if (direction == "down") {  // we must load the next thumbnail only if the user is scrolling down
+                        $('.dreamslist').waypoint("disable") // Allow to load dynamically the next thumbnails into .dreamslist. Then the waypoint will be enabled again.
+                        if ((indexThumbnail + nbThumbnailToLoad) > album.length) { // Useful when we have less thumbnails to load than nbThumbnailToLoad
+                            nbThumbnailToLoad = (album.length - indexThumbnail);
+                        }
+                        for (var i = 0; i < nbThumbnailToLoad; i++) {
+                            createThumbnail(album, indexThumbnail + i);
+                        }
+                    }
+                    indexThumbnail = indexThumbnail + nbThumbnailToLoad;
+                    if (indexThumbnail < album.length) {
+                        $('.dreamslist').waypoint("enable")
+                    }
+
+                    $('li').waypoint({
+                        context: "#preview-strip-nowebgl",
+                        handler: function() {
+                            addPrettyDateToScroll($(this).attr("title"))             
+                        }
+                    });
+
+                }
+            });
 
             function createThumbnail(photo_album, index) {
                 var info = photo_album[index],
