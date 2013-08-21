@@ -303,6 +303,9 @@ YUI.add("stalker-webslider", function(Y) {
         });
 
         function init() {
+
+            $('body').append('<div id="sink"><div id="nav-bar"><div id="status"></div></div><div id="preview-image"></div><div id="preview-strip"></div><div id="preview-strip-nowebgl"></div></div><div class="details"></div><div id="simpleImgSlider"></div>')
+            
             $('#sink').show();
         }
 
