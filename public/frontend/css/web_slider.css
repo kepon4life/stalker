@@ -118,23 +118,35 @@
     right: 180px;
     top: 15px;
 }
-.details {
+#detailsandshare {
     position: absolute;
     bottom: 0px;
-    left: 0px;
+    right: 0px !important;
+    left: auto !important;
     font-size: 10px;
     font-family: 'Pathway Gothic One';
     text-align: right;
     color: white;
     z-index: 20000;
-    text-align: right;
     height: 32px;
     line-height: 1.2em;
     padding-top: 5px;
-    width: 200px;
+    width: 190px;
     padding: 5px;
     background-image: url('../img/barre.png');
     letter-spacing: 1px;
+}
+#detailsandshare .details{
+    position: absolute;
+    left: auto;
+    right: 0;
+    bottom: auto;
+    top: 0;
+    background: none;
+    background-image: none;
+    border: none; 
+    width: auto;
+    height: auto;
 }
 
 /*ABG*/
@@ -153,4 +165,23 @@
 #sink #preview-strip ul .dreamselected, #preview-strip-nowebgl ul .dreamselected{
     border: 3px solid #4040cc;
     margin: 2px 0 2px 6px;
+}
+#shares{
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding-top: 5px;
+}
+#sharefb{
+    background: url("../img/fb_hover.png");
+    display: inline-block;
+    width:31px;
+    height: 31px;
+}
+#sharewall{
+    background: url("../img/projo_hover.png");
+    display: inline-block;
+    width:31px;
+    height: 31px;
+    margin-left: 5px;
 }

@@ -11,7 +11,7 @@ YUI.add("stalker-webslider", function(Y) {
 
     Y.namespace("Stalker").WebSlider = Y.Base.create("stalker-slider", Y.Stalker.Slider, [], {
         CONTENT_TEMPLATE: '<div>'
-                + '<div class="details"></div>'
+                + '<div id="detailsandshare"><div id="shares"><span id="sharefb"></span><span id="sharewall"></span></div><span class="details"></span></div>'
                 + '<div class="qr"></div>'
                 + '<div id="sink">'
                 + '<div id="nav-bar">'
@@ -34,7 +34,6 @@ YUI.add("stalker-webslider", function(Y) {
                     verticalHandleClass: 'handle4',
                     zIndex: 10000
                 });
-                previewStripHeightAdjust();
                 $('#preview-strip-nowebgl').css("display", "none")
                 $('#simpleImgSlider').css("display", "none");
                 $('#stats').css("display", "none");
@@ -262,17 +261,6 @@ YUI.add("stalker-webslider", function(Y) {
         $("#dateThumbnail .handle-tooltip-inner").html(date)
     }
 
-    function previewStripHeightAdjust(){
-        var winH = $(window).height()-50;
-        $('#preview-strip').height(winH)
-    }
-
-    $(window).resize(function(){
-        previewStripHeightAdjust();
-    }) 
-
-    
-
     function comparePhotosDate(a,b) {
         var da = new Date(a.created_at);
         var db = new Date(b.created_at);
@@ -304,7 +292,8 @@ YUI.add("stalker-webslider", function(Y) {
 
         function init() {
 
-            $('body').append('<div id="sink"><div id="nav-bar"><div id="status"></div></div><div id="preview-image"></div><div id="preview-strip"></div><div id="preview-strip-nowebgl"></div></div><div class="details"></div><div id="simpleImgSlider"></div>')
+            $('body').append('<div id="sink"><div id="nav-bar"><div id="status"></div></div><div id="preview-image"></div><div id="preview-strip"></div><div id="preview-strip-nowebgl"></div></div>')
+            $('body').append('<div id="detailsandshare"><span class="details"></span></div><div id="simpleImgSlider"></div>')
             
             $('#sink').show();
         }
@@ -513,18 +502,6 @@ YUI.add("stalker-webslider", function(Y) {
 
         }
 
-
-        function previewStripHeightAdjust(){
-            var winH = $(window).height()-50;
-            $('#preview-strip-nowebgl').height(winH)
-        }
-
-        previewStripHeightAdjust();
-        
-        $(window).resize(function(){
-            previewStripHeightAdjust();
-        }) 
-
         function comparePhotosDate(a,b) {
             var da = new Date(a.created_at);
             var db = new Date(b.created_at);
@@ -556,7 +533,7 @@ YUI.add("stalker-webslider", function(Y) {
         }
         function showLegend (pictureCfg) {
             var metas,
-                    detailsNode = $(".details"),
+                    detailsNode = $("#detailsandshare"),
                     date = new Date(Date.parse(pictureCfg.created_at));
                     detailsNode.text(prettyDate(date));
             try {
