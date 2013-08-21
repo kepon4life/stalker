@@ -11,7 +11,7 @@ YUI.add("stalker-webslider", function(Y) {
 
     Y.namespace("Stalker").WebSlider = Y.Base.create("stalker-slider", Y.Stalker.Slider, [], {
         CONTENT_TEMPLATE: '<div>'
-                + '<div class="details"></div>'
+                + '<div id="detailsandshare"><div id="shares"><span id="sharefb"></span><span id="sharewall"></span></div><span class="details"></span></div>'
                 + '<div class="qr"></div>'
                 + '<div id="sink">'
                 + '<div id="nav-bar">'
@@ -34,7 +34,6 @@ YUI.add("stalker-webslider", function(Y) {
                     verticalHandleClass: 'handle4',
                     zIndex: 10000
                 });
-                previewStripHeightAdjust();
                 $('#preview-strip-nowebgl').css("display", "none")
                 $('#simpleImgSlider').css("display", "none");
                 $('#stats').css("display", "none");
@@ -209,15 +208,36 @@ YUI.add("stalker-webslider", function(Y) {
                 t.css('top', (80 - h) / 2 + 'px');
             });
         }
-        for (var i = 0; i < photo_album.length; i++) {
-            createThumbnail(photo_album, i);
-        }
-        $('li').waypoint({
+        nbThumbnailToLoad = 25; // number of thumbnail loaded at the beginning
+        indexThumbnail = 0; // useful to know which thumbnail (index) was the last thumnail loaded
+        $('.dreamslist').waypoint({
             context: "#preview-strip",
-            handler: function() {
-                addPrettyDateToScroll($(this).attr("title"))             
-          }
+            offset: "bottom-in-view", // waypoint is triggered when the bottom of .dreamslist is in view in the viewport
+            handler: function(direction) {
+                if (direction == "down") {  // we must load the next thumbnail only if the user is scrolling down
+                    $('.dreamslist').waypoint("disable") // Allow to load dynamically the next thumbnails into .dreamslist. Then the waypoint will be enabled again.
+                    if ((indexThumbnail + nbThumbnailToLoad) > photo_album.length) { // Useful when we have less thumbnails to load than nbThumbnailToLoad
+                        nbThumbnailToLoad = (photo_album.length - indexThumbnail);
+                    }
+                    for (var i = 0; i < nbThumbnailToLoad; i++) {
+                        createThumbnail(photo_album, indexThumbnail + i);
+                    }
+                }
+                indexThumbnail = indexThumbnail + nbThumbnailToLoad;
+                if (indexThumbnail < photo_album.length) {
+                    $('.dreamslist').waypoint("enable")
+                }
+
+                $('li').waypoint({
+                    context: "#preview-strip",
+                    handler: function() {
+                        addPrettyDateToScroll($(this).attr("title"))             
+                    }
+                });
+
+            }
         });
+        
         checks();
         /*Init value info for scroll*/
         var tooltip = '<div id="dateThumbnail" class="handle-tooltip"><div class="handle-tooltip-inner"></div></div>'
@@ -229,7 +249,6 @@ YUI.add("stalker-webslider", function(Y) {
         })
     }
     function prettyDate(date){
-        console.log(date);
         monthNames = ["January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"];
         return (date.getHours() + ":" + date.getMinutes()
@@ -241,17 +260,6 @@ YUI.add("stalker-webslider", function(Y) {
         date = (date[1]+" "+date[2]+" "+date[3])
         $("#dateThumbnail .handle-tooltip-inner").html(date)
     }
-
-    function previewStripHeightAdjust(){
-        var winH = $(window).height()-50;
-        $('#preview-strip').height(winH)
-    }
-
-    $(window).resize(function(){
-        previewStripHeightAdjust();
-    }) 
-
-    
 
     function comparePhotosDate(a,b) {
         var da = new Date(a.created_at);
@@ -283,6 +291,10 @@ YUI.add("stalker-webslider", function(Y) {
         });
 
         function init() {
+
+            $('body').append('<div id="sink"><div id="nav-bar"><div id="status"></div></div><div id="preview-image"></div><div id="preview-strip"></div><div id="preview-strip-nowebgl"></div></div>')
+            $('body').append('<div id="detailsandshare"><span class="details"></span></div><div id="simpleImgSlider"></div>')
+            
             $('#sink').show();
         }
 
@@ -393,8 +405,7 @@ YUI.add("stalker-webslider", function(Y) {
 
         }
 
-        function fadeout(idLastImg, idImgToDisplay) {
-            console.log(idLastImg+" // "+idImgToDisplay)
+        function fadeout(idLastImg, idImgToDisplay){
             $("#" + idLastImg).fadeOut(FADEOUTTIME, function() {
                 $("#" + idLastImg).remove();
                 if (idImgToDisplay < 0) { // An idImgToDisplay negative means that the next image is not loaded
@@ -411,11 +422,41 @@ YUI.add("stalker-webslider", function(Y) {
         function populateAlbum(album) {
             $('#preview-strip-nowebgl').find('.dreamslist').remove();
             ul = $('<ul class="dreamslist"/>');
-
             $('#preview-strip-nowebgl').append(ul);
+            /*$('#preview-strip-nowebgl').append(ul);
             for (var i = 0; i < album.length; i++) {
                 createThumbnail(album, i);
-            }
+            }*/
+
+            nbThumbnailToLoad = 25; // number of thumbnail loaded at the beginning
+            indexThumbnail = 0; // useful to know which thumbnail (index) was the last thumnail loaded
+            $('.dreamslist').waypoint({
+                context: "#preview-strip-nowebgl",
+                offset: "bottom-in-view", // waypoint is triggered when the bottom of .dreamslist is in view in the viewport
+                handler: function(direction) {
+                    if (direction == "down") {  // we must load the next thumbnail only if the user is scrolling down
+                        $('.dreamslist').waypoint("disable") // Allow to load dynamically the next thumbnails into .dreamslist. Then the waypoint will be enabled again.
+                        if ((indexThumbnail + nbThumbnailToLoad) > album.length) { // Useful when we have less thumbnails to load than nbThumbnailToLoad
+                            nbThumbnailToLoad = (album.length - indexThumbnail);
+                        }
+                        for (var i = 0; i < nbThumbnailToLoad; i++) {
+                            createThumbnail(album, indexThumbnail + i);
+                        }
+                    }
+                    indexThumbnail = indexThumbnail + nbThumbnailToLoad;
+                    if (indexThumbnail < album.length) {
+                        $('.dreamslist').waypoint("enable")
+                    }
+
+                    $('li').waypoint({
+                        context: "#preview-strip-nowebgl",
+                        handler: function() {
+                            addPrettyDateToScroll($(this).attr("title"))             
+                        }
+                    });
+
+                }
+            });
 
             function createThumbnail(photo_album, index) {
                 var info = photo_album[index],
@@ -461,18 +502,6 @@ YUI.add("stalker-webslider", function(Y) {
 
         }
 
-
-        function previewStripHeightAdjust(){
-            var winH = $(window).height()-50;
-            $('#preview-strip-nowebgl').height(winH)
-        }
-
-        previewStripHeightAdjust();
-        
-        $(window).resize(function(){
-            previewStripHeightAdjust();
-        }) 
-
         function comparePhotosDate(a,b) {
             var da = new Date(a.created_at);
             var db = new Date(b.created_at);
@@ -504,7 +533,7 @@ YUI.add("stalker-webslider", function(Y) {
         }
         function showLegend (pictureCfg) {
             var metas,
-                    detailsNode = $(".details"),
+                    detailsNode = $("#detailsandshare"),
                     date = new Date(Date.parse(pictureCfg.created_at));
                     detailsNode.text(prettyDate(date));
             try {

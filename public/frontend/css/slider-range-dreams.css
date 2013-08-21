@@ -22,8 +22,7 @@
 }
 
 .handle-tooltip-inner {
-    min-width: 70px;
-    max-width: 200px;
+    width: 100px;
     padding: 3px 8px;
     text-align: center;
     text-decoration: none;
