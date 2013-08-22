@@ -1,6 +1,17 @@
 <% @title="Stalker - Slider" %>
 <% content_for :stylesheet_includes do %>
   <%= stylesheet_link_tag '/frontend/css/slider.css'  %>
+
+    <style type="text/css">
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: transparent url(frontend/img/UI_logo_wall.png) no-repeat;
+            width:300px;
+            height:96px;
+        }
+    </style>
 <% end %>
 <% content_for :javascript_includes_in_head do %>
   <script>window["_GOOG_TRANS_EXT_VER"] = "1";</script>
@@ -50,7 +61,7 @@
 
 <% end %>
 
-
+<div class="logo"></div>
 <div class="overlay" id="welcome">
     <div class="wrap">
         <div class="messagebox">

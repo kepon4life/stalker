@@ -279,7 +279,7 @@ YUI.add("stalker-slider", function(Y) {
                 //Y.log("loadPicture.onLoadTexture");
                 this.showPicture(texture);
                 this.advanceSlideshow();
-               //cb();
+                //cb();
             }, this));
         },
         /**
@@ -954,9 +954,13 @@ YUI.add("stalker-slider", function(Y) {
                 value: "Secret room",
                 setter: function(val) {
                     var url = PHONEDRAWPATH + "?event=" + escape(val);
-                    this.get("contentBox").one(".qr").setHTML('<span>And what is YOUR dream? </span><img src="'
+                    this.get("contentBox").one(".qr").setHTML(
+//                            '<span>AND WHAT IS <br />YOUR WISH dream? </span>'
+                            '<img src="frontend/img/UI_wall_invite_150.png" style="padding: 10px 17px 0 0;"/><br />'
+                            + '<div class="qr-mask"></div>'
+                            + '<img src="'
 //                            + "http://chart.apis.google.com/chart?cht=qr&chs=130x130&chld=Q&choe=UTF-8&chl="
-                            + "http://qrickit.com/api/qr?fgdcolor=ffffff&bgdcolor=000000&qrsize=150&t=p&e=m&d="
+                            + "http://qrickit.com/api/qr?fgdcolor=ffffff&bgdcolor=000000&qrsize=180&t=p&e=m&d="
                             + encodeURIComponent(url) + '" />'
                             //+ '<br />scan this QR or go to <br /><a target="_blank" href="' + url + '">' + url + "</a>");
 //                            + '<br />Scan this or go to<br /><a href="' + url + '">' + url + "</a> with your mobile to tell us your dream"

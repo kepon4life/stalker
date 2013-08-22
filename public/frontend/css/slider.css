@@ -323,7 +323,16 @@ a:hover {
     color: white;
     z-index: 20000;
 }
-
+.yui3-stalker-slider .qr-mask {
+    position: absolute;
+    background: transparent url(../img/UI_wall_mask_150.png) no-repeat;
+    top: 133px;
+    right: 6px;
+    width: 150px;
+    height: 400px;
+    pointer-events: none;
+}
+/*
 .yui3-stalker-slider .qr span {
     margin-top: 15px;
     vertical-align: top;
@@ -331,14 +340,19 @@ a:hover {
     font-size: 1.7em;
     font-style: italic;
     font-weight: bold;
-}
+}*/
 /** Legend Styles **/
+@font-face {
+    font-family: RaleighRock;
+    src: url('../font/RaleighRock.ttf');
+}
 .yui3-stalker-slider .details {
+    font-family: RaleighRock, Helvetica;
     position: absolute;
-    bottom: 0px;
-    left: 0px;
+    bottom: 17px;
+    left: 10px;
     border-top: 1px solid white;
-    font-size: 10px;
+    font-size: 12px;
     text-align: right;
     color: white;
     z-index: 20000;
@@ -347,7 +361,7 @@ a:hover {
     line-height: 1.2em;
     padding-top: 5px;
     width: 200px;
-    padding: 5px;
+    line-height:1.7;
 
 }
 
