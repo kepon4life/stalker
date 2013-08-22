@@ -52,38 +52,104 @@
                 width: 200px;
             }
             /* Hide unused buttons */
+            .literally .toolbar {
+                height: 0px;
+            }
             .literally .toolbar .button,
             .literally .toolbar .tool-options-container,
-            .literally .toolbar .zoom-display{
+            .literally .toolbar .zoom-display {
                 display: none;
             }
-            .literally .toolbar .clear-button, .literally .toolbar .send-button {
+            .literally .toolbar .clear-button,
+            .literally .toolbar .send-button,
+            .literally .toolbar .undo-button {
                 display: inline-block;
+                border: none;
+                border-radius: 0;
+                width: 97px;
+                height: 97px;
+                padding: 0;
+                color: transparent;
+                text-shadow: none;
+                background: transparent url(frontend/img/UI_send.png);
             }
-
-            .invite {
+            .literally .toolbar .send-button {
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+            }
+            .literally .toolbar .clear-button:hover {
+                color: transparent;
+                background: transparent url(frontend/img/UI_newpage.png) no-repeat;
+            }
+            .literally .toolbar .clear-button {
+                background: transparent url(frontend/img/UI_newpage.png) no-repeat;
+                position: absolute;
+                left: 10px;
+                bottom: 10px;
+            }
+            .literally .toolbar .undo-button {
+                position: absolute;
+                bottom: 10px;
+                left: 120px;
+                background: transparent url(frontend/img/UI_undo.png) no-repeat;
+            }
+            .msg {
                 position: fixed;
-                padding-top: 13%;
                 width: 100%;
                 top: 0;
                 left: 0;
                 z-index: 1000;
                 pointer-events: none;
+                bottom:0px;
+                background:black;
+                text-align:center;
             }
+            .msg .logo {
+                position: absolute;
+                top: 10px;
+                left 10px;
+                background: transparent url(frontend/img/UI_logo_300.png) no-repeat;
+                width:300px;
+                height:114px;
+            }
+            @font-face {
+                font-family: RaleighRock;
+                src: url('frontend/font/RaleighRock.ttf');
+            }
+            .msg .text {
+                font-family: RaleighRock, Helvetica;
+                line-height: 53px;
+                top: 50%;
+                position: absolute;
+                width: 100%;
+                left: 0;
+                margin-top: -130px;
+            }
+            .msg .text a {
+                text-decoration: underline;
+                color:white;
+            }
+            .msg.invite .text {
+                line-height: 87px;
+                font-size: 1.9em;
+            }
+
         </style>
 <% end %>
 <% content_for :javascript_includes do %>
-	<%= javascript_include_tag "/frontend/js/libs/literallycanvas.fat.js" %>
-  	<script type="text/javascript">
-            // var DESTINATION_HEIGHT = 512,
-            // DESTINATION_WIDTH = 512;
+    <%= javascript_include_tag "/frontend/js/libs/literallycanvas.fat.js" %>
+    <script type="text/javascript">
+        // var DESTINATION_HEIGHT = 512,
+        // DESTINATION_WIDTH = 512;
 
-            $(document).ready(function() {
-                function getURLParameter(name) {
-                    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
-                }
+        $(document).ready(function() {
+            function getURLParameter(name) {
+                return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
+            }
 
-                //Pusher
+            //Pusher
+            if (window.Pusher) {
                 Pusher.channel_auth_endpoint = 'pusher/auth';
                 var pusher = new Pusher(PUSHER_API_KEY);
                 var privateChannel = pusher.subscribe(PUSHER_CHANEL);
@@ -92,53 +158,68 @@
                 privateChannel.bind('pusher:subscription_error', function(status) {
                     console.log("error "+status);
                 });
+            }
+            // disable scrolling on touch devices so we can actually draw
+            $(document).bind('touchmove', function(e) {
+                if (e.target === document.documentElement) {
+                    return e.preventDefault();
+                }
+            });
 
-                // disable scrolling on touch devices so we can actually draw
-                $(document).bind('touchmove', function(e) {
-                    if (e.target === document.documentElement) {
-                        return e.preventDefault();
+            $('.literally').literallycanvas({
+                imageURLPrefix: "img/",
+                backgroundColor: 'rgb(0, 0, 0)',
+                toolClasses: [LC.Pencil]
+            });
+
+            setTimeout(function() {
+              $('.invite').fadeOut(3000);
+            }, 500);
+
+            $('.clear-button').parent().prepend('<div class="button send-button">Send</div>');
+            $('.send-button').on("click", function() {
+                var canvas = $('.literally').canvasForExport();
+                //$('body').empty().append(canvas);
+                $.ajax({
+                    type: 'POST',
+                    url: '/frontend/save',
+                    data: {
+                        metadatas : JSON.stringify({
+                            event: getURLParameter("event")
+                        }),
+                        imgNormal: canvas.toDataURL("image/png")
+                    },
+                    success: function(data) {
+                        triggered = privateChannel.trigger('client-myevent', data);
+
+                        $('.msg-sent').fadeIn(1000);
                     }
                 });
-
-                $('.literally').literallycanvas({
-                    imageURLPrefix: "img/",
-                    backgroundColor: 'rgb(0, 0, 0)',
-                    toolClasses: [LC.Pencil]
-                });
-
-                setTimeout(function() {
-                    $('.invite').fadeOut(3000);
-                }, 1000);
-
-                $('.clear-button').parent().prepend('<div class="button send-button">Send</div>');
-                $('.send-button').
-                        on("click", function() {
-                            var canvas = $('.literally').canvasForExport();
-                            //$('body').empty().append(canvas);
-                            $.ajax({
-                                type: 'POST',
-                                url: '/frontend/save',
-                                data: {
-                                    metadatas : JSON.stringify({
-                                        event: getURLParameter("event")
-                                    }),
-                                    imgNormal: canvas.toDataURL("image/png")
-                                },
-                                success: function(data) {
-                                    triggered = privateChannel.trigger('client-myevent', data);
-                                    $('body').empty().
-                                    append("<div style=\"padding-top: 13%;\">Merci votre dessin a été sauvegardé. Maintenant, regardez l'écran.</div>");
-                                }
-                            });
-
-
-                });
-
             });
-        </script>
+$('.msg-sent').hide();
+//                        $('.msg-sent').fadeIn(1000);
+        });
+    </script>
 <% end %>
 
-<div class="invite">Dessinez votre rêve.</div>
+<div class="invite msg">
+    <div class="logo"></div>
+    <div class="text">
+        DESSINEZ VOTRE REVE.<br /><br />
+        DRAW YOUR WISH.
+    </div>
+</div>
+
+<div class="msg-sent msg">
+    <div class="logo"></div>
+    <div class="text">
+        MERCI DE VOTRE PARTICIPATION,<br />
+        RETROUVEZ-LA SUR <a href="#">PLACEHOLDER</a>.
+        <br /><br />
+        THANK FOR YOUR PARTICIPATION,<br />
+        FIND IT ON <a href="#">PLACEHOLDER</a>.
+    </div>
+</div>
 
 <div class="fs-container">
 	<div class="literally"><canvas></canvas></div>
