@@ -106,7 +106,7 @@
 
                     canvas.on("cursorUpdate", resetIdleTimer);                  // Idle screen saver
                     canvas.on("update", function() {                            // When an input is done on the canvas
-                        slider.loadPicture(canvas.canvasNode.toDataURL("image/png"));// Show its image in the slider
+                        slider.doReload = true;
                     });
                     canvas.on("reset", function() {                             // When canvas is resetted
                         slider.loadPicture(canvas.canvasNode.toDataURL("image/png"));// Show its image in the slider
@@ -156,19 +156,9 @@
         </div>
     </div>
 </div>
+
 <div id="draw-tool">
     <img class="controls" id="envoyer" src="/frontend/img/UI_send.png" />
     <img class="controls" id="undo" src="/frontend/img/UI_undo.png" />
     <img class="controls" id="effacer" src="/frontend/img/UI_newpage.png" />
 </div>
-
-<div id="screen-saver" style="display:none" >
-    <video id="asd" width="320" height="240"  loop="true">
-        <!--<source src="http://www.w3schools.com/html/movie.mp4" type="video/mp4" />-->
-        <source src="img/movie.mp4" type="video/mp4" />
-        <source src="http://www.w3schools.com/html/movie.ogg" type="video/ogg" />
-    </video>
-</div>
-
-<!--<object id="tuio" type="application/x-tuio">Plugin FAILED to load</object>-->
-

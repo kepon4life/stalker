@@ -52,6 +52,7 @@ YUI.add("stalker-slider", function(Y) {
             this.set("textureWidth", this.get("textureWidth"));                 // Force update
             Y.Stalker.slider = this;                                            // Set up singleton
             this.dreamAlbum = [];
+            this.loadPictureDelay = 0;
         },
         populateAlbum: function(pictures) {
             populateAlbum(pictures);
@@ -272,12 +273,13 @@ YUI.add("stalker-slider", function(Y) {
          * @param {type} cfg
          */
         loadPicture: function(url, cb) {
-            Y.log("loadPicture()");
-
+            //Y.log("loadPicture()");
+            //console.timeStamp("mm");
             this.loadTexture(url, new THREE.UVMapping(), Y.bind(function(texture) {
-                Y.log("loadPicture.onLoadTexture");
+                //Y.log("loadPicture.onLoadTexture");
                 this.showPicture(texture);
                 this.advanceSlideshow();
+               //cb();
             }, this));
         },
         /**
@@ -315,6 +317,14 @@ YUI.add("stalker-slider", function(Y) {
         },
         step: function() {
             //Y.log("step()");
+            if (this.doReload) {
+                if (this.loadPictureDelay === 0) {
+                    this.loadPicture(Y.Stalker.canvas.canvasNode.toDataURL("image/png"));// Show its image in the slider
+                    this.loadPictureDelay = 3;
+                    this.doReload = false;
+                }
+                this.loadPictureDelay -= 1;
+            }
 
             this.stats.begin();
 
@@ -882,8 +892,8 @@ YUI.add("stalker-slider", function(Y) {
             //@fixme
             params.on("updated", this.setAttrs, this);
         },
-                //Sort pictures by date desc
-        comparePhotosDate: function(a,b) {
+        //Sort pictures by date desc
+        comparePhotosDate: function(a, b) {
             var da = new Date(a.created_at);
             var db = new Date(b.created_at);
             da = da.getTime();
@@ -894,7 +904,6 @@ YUI.add("stalker-slider", function(Y) {
                 return -1;
             return 0;
         },
-
         renderStats: function() {
             this.stats = new Stats();
             //this.stats.setMode(1);

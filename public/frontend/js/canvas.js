@@ -23,6 +23,8 @@ YUI.add("stalker-canvas", function(Y) {
                 + '<!--<canvas id="mycanvasbis" width="600" height="600"></canvas>-->'
                 + '</div>',
         renderUI: function() {
+            Y.Stalker.canvas = this;
+
             nw = Y.DOM.winWidth() - 5;
             nh = Y.DOM.winHeight() - 5;
 
