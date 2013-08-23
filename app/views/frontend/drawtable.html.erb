@@ -38,6 +38,8 @@
 
             Y.on("domready", function() {
                 var canvas, slider, screenSaver,
+                    IDLETIMEOUT = 10000,
+                    screenSaverDisplayed = false,
                     hash = window.location.hash,idleTimer, hideUI = function () {
                         Y.one("#draw-tool #undo").hide(true);
                         Y.one("#draw-tool #envoyer").hide(true);
@@ -54,20 +56,22 @@
                         screenSaver.hide();
                     }, resetIdleTimer = function() {
                         //Y.log("resetIdleTimer");
+                        if (screenSaverDisplayed) {
+                            resetUI();
+                            screenSaverDisplayed = false;
+                        }
                         if (idleTimer) {
                             idleTimer.cancel();
                         }
-                        idleTimer = Y.later(10000, null, function() {
-                            //resetUI();
-
+                        idleTimer = Y.later(IDLETIMEOUT, null, function() {
+                            screenSaverDisplayed = true;
                             slider.get("boundingBox").hide(true, function () {
                                 canvas.clear();
+                                slider.loadPicture(canvas.canvasNode.toDataURL("image/png"));// Show its image in the slider
                                 canvas.set("allowEdition", true);
                                 slider.get("boundingBox").show(true);
-
                                 hideUI();
                                 screenSaver.run();
-                                //resetUI();
                             });
                         });
                     };
@@ -97,6 +101,7 @@
                     slider = new Y.Stalker.Slider({
                         textureWidth: (hash.length > 1) ? +hash.substring(1) : 256, // 64, 128, 256, 512, 1024, 2048
                         showQr: false,
+                        //trackCam: true,
                         slideshowRunning: false
                     });
                     slider.render();

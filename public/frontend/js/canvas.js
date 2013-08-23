@@ -57,22 +57,12 @@ YUI.add("stalker-canvas", function(Y) {
             color = defaultcolor;
         },
         bindUI: function() {
-
-            tuio.start();
-
-            //Tuio.cursor_remove == plus aucun doigts sur la surface
-            tuio.cursor_remove(this.onCursorRemove);
-
-            //Tuio.cursor_update == déplacement du doigts sur la surface
-            tuio.cursor_update(Y.bind(function(data) {
-                this.onCursorUpdate(tuio.cursors);
-            }, this));
+            tuio.start();                                                       // Initialize Tuio
 
             //privateChannel.bind('pusher:subscription_succeeded', function() {
             tuio.cursor_add(function(e) {
                 var x = e.x * nw,
                         y = e.y * nh;
-
                 nbdoigts++;
 
                 Y.one("#draw-tool").get("children").each(function(node) {
@@ -83,7 +73,14 @@ YUI.add("stalker-canvas", function(Y) {
                     }
                 });
             });
-//             });
+            //Tuio.cursor_update == déplacement du doigts sur la surface
+            tuio.cursor_update(Y.bind(function(data) {
+                //Y.log("CursorUpdate()");
+                this.fire("cursorUpdate");
+                this.onCursorUpdate(tuio.cursors);
+            }, this));
+
+            tuio.cursor_remove(this.onCursorRemove);                            //Tuio.cursor_remove == plus aucun doigts sur la surface
 
             /**
              * Mouse events (for dev)
@@ -91,11 +88,15 @@ YUI.add("stalker-canvas", function(Y) {
             Y.one("body").on("click", function() {
                 this.fire("cursorUpdate");
             }, this);
+
             Y.one("body").on("mousemove", function(e) {                         // Allow to draw on canvas w/ mouse
                 if (e.button === 1) {
+                    //Y.log("CursorUpdate()");
+                    this.fire("cursorUpdate");
                     this.onCursorUpdate([{x: e.clientX / Y.DOM.winWidth(), y: e.clientY / Y.DOM.winHeight()}]);
                 }
             }, this);
+
             Y.one("body").on("mouseup", this.onCursorRemove, this);
             Y.all("#particleCanvas").on("mouseup", this.onCursorRemove, this);
 
@@ -128,10 +129,12 @@ YUI.add("stalker-canvas", function(Y) {
             });
         },
         onCursorUpdate: function(cursors) {
-            //Y.log("CursorUpdate()");
-            this.fire("cursorUpdate");
 
             if (!this.get("allowEdition")) {
+
+
+//                Y.Stalker.slider.camera.position.x += 10;
+//                lastCursors = Y.clone(tuio.cursors);
                 return;
             }
 
@@ -227,6 +230,10 @@ YUI.add("stalker-canvas", function(Y) {
 
         ctx.moveTo(prevInter.x, prevInter.y);
         ctx.quadraticCurveTo(previousPoint.x, previousPoint.y, curInter.x, curInter.y);
+
+        //ctx.moveTo(previousPoint.x, previousPoint.y);
+        //ctx.quadraticCurveTo( curInter.x, curInter.y, currentPoint.x, currentPoint.y);
+
         ctx.stroke();
         ctx.closePath();
     }

@@ -526,15 +526,18 @@ YUI.add("stalker-slider", function(Y) {
             return t;
         },
         resetCamera: function() {
-            camera.position.x = 0;
-            camera.position.y = 0;
-            camera.position.z = 400;
-            camera.rotation.x = 0;
-            camera.rotation.y = 0;
-            camera.rotation.z = 0;
-            camera.scale.x = 1;
-            camera.scale.y = 1;
-            camera.scale.z = 1;
+            this.camera.position.x = 0;
+            this.camera.position.y = 0;
+            this.camera.position.z = 400;
+            this.camera.rotation.x = 0;
+            this.camera.rotation.y = 0;
+            this.camera.rotation.z = 0;
+            this.camera.scale.x = 1;
+            this.camera.scale.y = 1;
+            this.camera.scale.z = 1;
+            this.camera.up.x = 0;
+            this.camera.up.y = 1;
+            this.camera.up.z = 0;
         },
         /**
          *
@@ -544,6 +547,7 @@ YUI.add("stalker-slider", function(Y) {
 
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 100000);
+            this.camera = camera;
             this.resetCamera();
             scene.add(camera);
             shadowCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 100000);
