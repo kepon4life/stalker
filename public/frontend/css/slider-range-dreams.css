@@ -6,8 +6,8 @@
     font-size: 11px;
     visibility: visible;
     margin-top: -2px;
-    bottom:-8px;
-    margin-left: 2em;
+    bottom: 8px;
+    margin-left: 10px;
 }
 
 .handle-tooltip .handle-tooltip-arrow {
@@ -22,7 +22,7 @@
 }
 
 .handle-tooltip-inner {
-    max-width: 200px;
+    width: 100px;
     padding: 3px 8px;
     text-align: center;
     text-decoration: none;
@@ -48,31 +48,70 @@
 .even-display{
     clear: left;
 }
-.track3 {
+/* Enscroll */
+#scrollbox4 {
+    overflow: auto;
+    width: 400px;
+    height: 360px;
+    padding: 0 5px;
+    border: 1px solid #b7b7b7;
+}
+
+.track4 {
     width: 10px;
-    background: rgba(0, 0, 0, 0);
-    margin-right: 2px;
-    border-radius: 10px;
-    -webkit-transition: background 250ms linear;
-    transition: background 250ms linear;
+    background-clip: padding-box;
+    background: #000;
+    border-style: solid;
+    border-color: transparent;
+    border-width: 0;
+    border-left-width: 1px;
+    margin-left: 0px;
 }
 
-.track3:hover,
-.track3.dragging {
-    background: #d9d9d9; /* Browsers without rgba support */
-    background: rgba(0, 0, 0, 0.15);
+.track4.dragging,
+.track4:hover {
+    background: #D1D1E0; /* No RGBA support */
+    background: rgba(209, 204, 204, 0.3);
+    -webkit-box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.1);
+    box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.1);
+
 }
 
-.handle3 {
-    width: 7px;
-    right: 0;
-    background: #FF0066;
+.track4:active {
+    background: #D1D1E0; /* No RGBA support */
+    background: rgba(209, 204, 204, 0.3);
+    -webkit-box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.14),
+                        inset -1px -1px 0 rgba(0, 0, 0, 0.07);
+    box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.14),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.07);
+}
+
+.handle4 {
+    width: 10px;
+    height: 55px !important;
+    background-clip: padding-box;
+    background: #ccc; /* No RGBA support 
+    background: rgba(0, 0, 0, 0.2); */
+    -webkit-box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.1),
+                        inset 0 -1px 0 rgba(0, 0, 0, 0.07);
+    box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.1),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.07);
     border-radius: 7px;
-    -webkit-transition: width 250ms;
-    transition: width 250ms;
 }
 
-.track3:hover .handle3,
-.track3.dragging .handle3 {
-    width: 10px;
+.handle4:hover {
+    background: #999; /* No RGBA support 
+    background: rgba(0, 0, 0, 0.4); */
+    -webkit-box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.25);
+    box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.25);
+    color: white;
+    font-weight: normal;
+}
+
+.dragging .handle4,
+.handle4:active {
+    background: gray; /* No RGBA support 
+    background: rgba(0, 0, 0, 0.5); */
+    -webkit-box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.35);
+    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.35);
 }

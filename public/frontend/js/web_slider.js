@@ -11,7 +11,7 @@ YUI.add("stalker-webslider", function(Y) {
 
     Y.namespace("Stalker").WebSlider = Y.Base.create("stalker-slider", Y.Stalker.Slider, [], {
         CONTENT_TEMPLATE: '<div>'
-                + '<div class="details"></div>'
+                + '<div id="detailsandshare"><div id="shares"><span id="sharefb"></span><span id="sharewall"></span></div><span class="details"></span></div>'
                 + '<div class="qr"></div>'
                 + '<div id="sink">'
                 + '<div id="nav-bar">'
@@ -19,7 +19,7 @@ YUI.add("stalker-webslider", function(Y) {
                 + '</div>'
                 + '<div id="preview-image"></div>'
 //                + '<div id="preview-strip"><!-- prev next --></div>'
-                + '<div id="preview-strip"><div id="slider-dreams" class="ui-slider-vertical"></div></div>'
+                + '<div id="preview-strip"></div>'
                 + '<div id="preview-strip-nowebgl"><div id="slider-dreams-nowebgl" class="ui-slider-vertical"></div></div>'
                 + '</div>'
                 + '</div>',
@@ -29,7 +29,11 @@ YUI.add("stalker-webslider", function(Y) {
          */
         renderUI: function() {
             this.once("webglInitialized", function() {
-                this.renderSliderRangeForDreams();
+                $('#preview-strip').enscroll({
+                    verticalTrackClass: 'track4',
+                    verticalHandleClass: 'handle4',
+                    zIndex: 10000
+                });
                 $('#preview-strip-nowebgl').css("display", "none")
                 $('#simpleImgSlider').css("display", "none");
                 $('#stats').css("display", "none");
@@ -40,58 +44,6 @@ YUI.add("stalker-webslider", function(Y) {
         populateAlbum: function(pictures) {
             populateAlbum(pictures);
         },
-        /**
-         *
-         * @returns {undefined}
-         */
-//        loadAlbum: function(url) {
-//            this.status('Loading album: ' + url);
-//            Y.io(url, {
-//                context: this,
-//                on: {
-//                    success: function(tId, e) {
-//                        var photo, photos = Y.JSON.parse(e.response).photos;
-//                        this.status(photos.photo.length + " photos found.");
-//
-//                        for (var i = 0; i < photos.photo.length; i++) {
-//                            photo = photos.photo[i];
-//                            dreamAlbum.push({
-//                                name: photo.url,
-//                                thumbnail_url: YUI_config.stalkerbase + photo.url,
-//                                photo_url: YUI_config.stalkerbase + photo.url
-//                            });
-//                        }
-//                        populateAlbum(dreamAlbum);
-//                        this.selectFirstPicture();
-//                        this.startSlideshow();
-//                    }
-//                }
-//            });
-//        },
-//        loadAlbumFromService: function(url) {
-//            this.status('Loading album: ' + url);
-//            Y.io(url, {
-//                context: this,
-//                on: {
-//                    success: function(tId, e) {
-//                        var photos = Y.JSON.parse(e.response), photo;
-//                        this.status(photos.length + " photos found.");
-//                        jsonPhotos = photos;
-//                        for (var i = 0; i < photos.length; i++) {
-//                            photo = photos[i]["id"];
-//                            dreamAlbum.push({
-//                                name: photo,
-//                                thumbnail_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION,
-//                                photo_url: PATH_TO_DREAMS + photo + DREAM_EXTENSION
-//                            });
-//                        }
-//                        this.populateAlbum(dreamAlbum);
-//                        this.selectFirstPicture();
-//                        this.startSlideshow();
-//                    }
-//                }
-//            });
-//        },
         loadAlbumByDate: function(dates) {
             if (this.dreamAlbum != null || "undefined") {                       // Super faux, va toujourers retourner true, est évalué tel que (a || true)
                 
@@ -127,89 +79,19 @@ YUI.add("stalker-webslider", function(Y) {
                 this.startSlideshow();
             }
         },
-        // ***************************
-        // *** SLIDER RANGE ***
-        // ***************************
-        /**
-         *
-         */
-
-        renderSliderRangeForDreams: function() {
-            //We use the date in MS to deal with the date comparison
-            var initialDate = new Date();
-            initialDate.setFullYear(2013, 1, 11); // Start date of exhibition
-            var initialDateValinMs = initialDate.getTime();
-
-            var currentDate = new Date()
-            var currentDateinMs = currentDate.getTime();
-
-            var initialValues = [initialDateValinMs, currentDateinMs]; // Value to init the slider
-            var initialValuesDates = [new Date(initialDateValinMs), new Date(currentDateinMs)];
-            var sliderTooltip = function(event, ui) {
-                var curValues = ui.values || initialValuesDates; // current value (when sliding) or initial value (at start)
-                if (!(curValues[0] instanceof Date)) { // if curValues are not instances of Date they should be in MS (int). We have to convert it in Date format to display it on the slider.
-                    curValues[0] = new Date(curValues[0])
-                }
-                if (!(curValues[1] instanceof Date)) {
-                    curValues[1] = new Date(curValues[1])
-                }
-
-                var tooltipOne = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[0].getDate() + "/" + ((curValues[0].getMonth()) + 1) + "/" + curValues[0].getFullYear() + '</div><div class="handle-tooltip-arrow"></div></div>';
-                var tooltipTwo = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[1].getDate() + "/" + ((curValues[1].getMonth()) + 1) + "/" + curValues[1].getFullYear() + '</div><div class="handle-tooltip-arrow"></div></div>';
-
-
-                $('.ui-slider-handle').first().html(tooltipOne); //attach tooltip to the slider handle
-                $('.ui-slider-handle').last().html(tooltipTwo); //attach tooltip to the slider handle
-
-
-            }
-
-            $("#slider-dreams").slider({
-                values: initialValues,
-                orientation: "vertical",
-                range: "min",
-                min: initialDateValinMs,
-                max: currentDateinMs,
-                create: sliderTooltip,
-                slide: sliderTooltip,
-                start: function(e, ui) {
-                    $(ui.handle).toggleClass("moveHandle")
-                    $('body .lastHandled').each(function(){$(this).removeClass("lastHandled")})
-                    $(ui.handle).addClass("lastHandled")
-                }, // This class allow to display the moved handler over the other handle
-                stop: function(e, ui) {
-                    $(ui.handle).toggleClass("moveHandle");
-                    Y.Stalker.slider.loadAlbumByDate(ui.values);
-                }
-            });
-
-            $('#preview-strip').enscroll({
-                showOnHover: true,
-                verticalTrackClass: 'track3',
-                verticalHandleClass: 'handle3'
-            });
-
-            function sliderHeightAdjust(){
-                var winH = $(window).height()-80;
-                $('.ui-slider-vertical').height(winH)
-            }
-            function previewStripHeightAdjust(){
-                var winH = $(window).height()-50;
-                $('#preview-strip').height(winH)
-            }
-
-            sliderHeightAdjust();
-            previewStripHeightAdjust();
-            
-            $(window).resize(function(){
-                sliderHeightAdjust();
-                previewStripHeightAdjust();
-            }) 
-        }
+        selectPicture: function(index) {
+            Y.Stalker.WebSlider.superclass.selectPicture.call(this,index);
+            dreamselected(index);
+        },
     }, {
         ATTRS: {}
     });
-
+    
+    function dreamselected(index){
+        $('#preview-strip ul .dreamselected').removeClass("dreamselected");
+            var c = $('#preview-strip>ul>li').get(index);
+            c.className = c.className + "dreamselected";
+    }
     var start = true;
     function populateAlbum(the_album) {
         Y.Stalker.slider.photo_album = photo_album = the_album;
@@ -279,17 +161,13 @@ YUI.add("stalker-webslider", function(Y) {
             if (name) {
                 img.alt = name;
             }
-            if (index % 2 === 0) {
-                var li = $('<li class="even-display"  />').append(img);
-            } else {
-                var li = $('<li />').append(img); 
-            }
+            var li = $('<li/>').append(img);
 
             li[0].info = photo_album[index];
 
             var date = new Date(Date.parse(info.created_at));
             li.attr("title",prettyDate(date));
-
+            li.attr('id',date.getDate())
             ul.append(li);
             li.hover(function(e) {
                 return;
@@ -330,8 +208,7 @@ YUI.add("stalker-webslider", function(Y) {
                 t.css('top', (80 - h) / 2 + 'px');
             });
         }
-
-        nbThumbnailToLoad = 30; // number of thumbnail loaded at the beginning
+        nbThumbnailToLoad = 25; // number of thumbnail loaded at the beginning
         indexThumbnail = 0; // useful to know which thumbnail (index) was the last thumnail loaded
         $('.dreamslist').waypoint({
             context: "#preview-strip",
@@ -351,16 +228,37 @@ YUI.add("stalker-webslider", function(Y) {
                     $('.dreamslist').waypoint("enable")
                 }
 
+                $('li').waypoint({
+                    context: "#preview-strip",
+                    handler: function() {
+                        addPrettyDateToScroll($(this).attr("title"))             
+                    }
+                });
+
             }
         });
+        
         checks();
-
+        /*Init value info for scroll*/
+        var tooltip = '<div id="dateThumbnail" class="handle-tooltip"><div class="handle-tooltip-inner"></div></div>'
+        $('.handle4').html(tooltip)
+        addPrettyDateToScroll($(".dreamslist li").get(0).title);
+        /*Dream selected style*/
+        $('#preview-strip ul li').on("click","img",function(){
+            dreamselected($(this).parent().index());
+        })
     }
     function prettyDate(date){
         monthNames = ["January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"];
         return (date.getHours() + ":" + date.getMinutes()
         + " " + date.getDate() + " " + monthNames[date.getMonth()] + " " + date.getFullYear());
+    }
+
+    function addPrettyDateToScroll(date){
+        date = date.split(" ")
+        date = (date[1]+" "+date[2]+" "+date[3])
+        $("#dateThumbnail .handle-tooltip-inner").html(date)
     }
 
     function comparePhotosDate(a,b) {
@@ -389,18 +287,15 @@ YUI.add("stalker-webslider", function(Y) {
 
         this.each(function() {
             init();
-            renderSlider();
             loadAlbum(startImgSlider);
         });
 
         function init() {
+
+            $('body').append('<div id="sink"><div id="nav-bar"><div id="status"></div></div><div id="preview-image"></div><div id="preview-strip"></div><div id="preview-strip-nowebgl"></div></div>')
+            $('body').append('<div id="detailsandshare"><span class="details"></span></div><div id="simpleImgSlider"></div>')
+            
             $('#sink').show();
-            $('#preview-strip').css("display", "none")
-            $('#preview-strip-nowebgl').enscroll({
-                showOnHover: true,
-                verticalTrackClass: 'track3',
-                verticalHandleClass: 'handle3'
-            });
         }
 
         function loadAlbum(callback) {
@@ -448,6 +343,9 @@ YUI.add("stalker-webslider", function(Y) {
         function startImgSlider() {
             $("#simpleImgSlider img").remove();
             var li = $(".dreamslist li").get(0)
+            addPrettyDateToScroll(li.title)
+            dreamselected(0)
+
             showLegend(li.info)
             var nameImg = ($(".dreamslist img").get(0).id);
             var img = new Image();
@@ -462,6 +360,9 @@ YUI.add("stalker-webslider", function(Y) {
         }
 
         function customSliderStart(imgClicked) {
+
+            dreamselected($("li").index((imgClicked.parent())))
+
             clearTimeout(customStartTimeout)
             var imgToDisplay = new Image();
             imgToDisplay.id = ($("li").index((imgClicked.parent())))
@@ -478,34 +379,33 @@ YUI.add("stalker-webslider", function(Y) {
             }
         }
 
-        function loadingNextImg(idCurrentImg) {
-            if (idCurrentImg < dreamsAlbum.length - 1) {
-                idCurrentImg = parseInt(idCurrentImg);
-                var idNextImg = idCurrentImg + 1;
-                var nameImg = ($("img").get(idNextImg).id);
+        function loadingNextImg(indexCurrentImg) {
+            if (indexCurrentImg < dreamsAlbum.length - 1) {
+                iindexCurrentImg = parseInt(indexCurrentImg);
+                var indexNextImg = indexCurrentImg + 1;
+                var nameImg = ($(".dreamslist img").get(indexNextImg).id);
                 var src = PATH_TO_DREAMS + nameImg + DREAM_EXTENSION;
-                $("#simpleImgSlider").append("<img id='" + idNextImg + "' src='" + src + "' style='display: none;'/>");
-                $("#" + idNextImg).bind("load", function() {
-                    timeout = setTimeout(function() {
-                        fadeout(idCurrentImg, idNextImg);
+                $("#simpleImgSlider").append("<img id='" + indexNextImg + "' src='" + src + "' style='display: none;'/>");
+                $("#" + indexNextImg).bind("load", function() {
+                        timeout = setTimeout(function() {
+                        fadeout(indexCurrentImg, indexNextImg);
                     }, PICTURETIME)
                 })
             } else {
-                var idNextImg = 0;
-                var nameImg = ($("img").get(idNextImg).id);
+                var indexNextImg = 0;
+                var nameImg = ($(".dreamslist img").get(indexNextImg).id);
                 var src = PATH_TO_DREAMS + nameImg + DREAM_EXTENSION;
-                $("#simpleImgSlider").append("<img id='" + idNextImg + "' src='" + src + "' style='display: none;'/>");
-                $("#" + idNextImg).bind("load", function() {
+                $("#simpleImgSlider").append("<img id='" + indexNextImg + "' src='" + src + "' style='display: none;'/>");
+                $("#" + indexNextImg).bind("load", function() {
                     timeout = setTimeout(function() {
-                        fadeout(idCurrentImg, idNextImg);
+                        fadeout(indexCurrentImg, indexNextImg);
                     }, PICTURETIME)
                 })
             }
 
         }
 
-        function fadeout(idLastImg, idImgToDisplay) {
-
+        function fadeout(idLastImg, idImgToDisplay){
             $("#" + idLastImg).fadeOut(FADEOUTTIME, function() {
                 $("#" + idLastImg).remove();
                 if (idImgToDisplay < 0) { // An idImgToDisplay negative means that the next image is not loaded
@@ -514,6 +414,7 @@ YUI.add("stalker-webslider", function(Y) {
                     $("#" + idImgToDisplay).fadeIn(FADINTIME, function() {
                         loadingNextImg(idImgToDisplay);
                     });
+                    dreamselected(idImgToDisplay)
                 }
             })
         }
@@ -521,11 +422,41 @@ YUI.add("stalker-webslider", function(Y) {
         function populateAlbum(album) {
             $('#preview-strip-nowebgl').find('.dreamslist').remove();
             ul = $('<ul class="dreamslist"/>');
-
             $('#preview-strip-nowebgl').append(ul);
+            /*$('#preview-strip-nowebgl').append(ul);
             for (var i = 0; i < album.length; i++) {
                 createThumbnail(album, i);
-            }
+            }*/
+
+            nbThumbnailToLoad = 25; // number of thumbnail loaded at the beginning
+            indexThumbnail = 0; // useful to know which thumbnail (index) was the last thumnail loaded
+            $('.dreamslist').waypoint({
+                context: "#preview-strip-nowebgl",
+                offset: "bottom-in-view", // waypoint is triggered when the bottom of .dreamslist is in view in the viewport
+                handler: function(direction) {
+                    if (direction == "down") {  // we must load the next thumbnail only if the user is scrolling down
+                        $('.dreamslist').waypoint("disable") // Allow to load dynamically the next thumbnails into .dreamslist. Then the waypoint will be enabled again.
+                        if ((indexThumbnail + nbThumbnailToLoad) > album.length) { // Useful when we have less thumbnails to load than nbThumbnailToLoad
+                            nbThumbnailToLoad = (album.length - indexThumbnail);
+                        }
+                        for (var i = 0; i < nbThumbnailToLoad; i++) {
+                            createThumbnail(album, indexThumbnail + i);
+                        }
+                    }
+                    indexThumbnail = indexThumbnail + nbThumbnailToLoad;
+                    if (indexThumbnail < album.length) {
+                        $('.dreamslist').waypoint("enable")
+                    }
+
+                    $('li').waypoint({
+                        context: "#preview-strip-nowebgl",
+                        handler: function() {
+                            addPrettyDateToScroll($(this).attr("title"))             
+                        }
+                    });
+
+                }
+            });
 
             function createThumbnail(photo_album, index) {
                 var info = photo_album[index],
@@ -540,11 +471,9 @@ YUI.add("stalker-webslider", function(Y) {
                 if (name) {
                     img.alt = name;
                 }
-                if (index % 2 === 0) {
-                    var li = $('<li class="even-display"  />').append(img);
-                } else {
-                    var li = $('<li />').append(img);
-                }
+
+                var li = $('<li/>').append(img);
+
 
                 var date = new Date(Date.parse(info.created_at));
                 li.attr("title",prettyDate(date));
@@ -557,74 +486,21 @@ YUI.add("stalker-webslider", function(Y) {
                 customSliderStart($(this).find('img'));
             })
 
-        }
-
-        function renderSlider() {
-            //We use the date in MS to deal with the date comparison
-            console.log("renderSlider")
-            var initialDate = new Date();
-            initialDate.setFullYear(2013, 4, 11); // Start date of exhibition
-            var initialDateValinMs = initialDate.getTime();
-
-            var currentDate = new Date()
-            var currentDateinMs = currentDate.getTime();
-
-            var initialValues = [initialDateValinMs, currentDateinMs]; // Value to init the slider
-            var initialValuesDates = [new Date(initialDateValinMs), new Date(currentDateinMs)];
-            var sliderTooltip = function(event, ui) {
-                var curValues = ui.values || initialValuesDates; // current value (when sliding) or initial value (at start)
-                if (!(curValues[0] instanceof Date)) { // if curValues are not instances of Date they should be in MS (int). We have to convert it in Date format to display it on the slider.
-                    curValues[0] = new Date(curValues[0])
-                }
-                if (!(curValues[1] instanceof Date)) {
-                    curValues[1] = new Date(curValues[1])
-                }
-
-                var tooltipOne = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[0].getDate() + "/" + ((curValues[0].getMonth()) + 1) + "/" + curValues[0].getFullYear() + '</div><div class="handle-tooltip-arrow"></div></div>';
-                var tooltipTwo = '<div class="handle-tooltip"><div class="handle-tooltip-inner">' + curValues[1].getDate() + "/" + ((curValues[1].getMonth()) + 1) + "/" + curValues[1].getFullYear() + '</div><div class="handle-tooltip-arrow"></div></div>';
-
-
-                $('.ui-slider-handle').first().html(tooltipOne); //attach tooltip to the slider handle
-                $('.ui-slider-handle').last().html(tooltipTwo); //attach tooltip to the slider handle
-
-
-            }
-
-            $("#slider-dreams-nowebgl").slider({
-                values: initialValues,
-                orientation: "vertical",
-                animate: false,
-                range: true,
-                min: initialDateValinMs,
-                max: currentDateinMs,
-                create: sliderTooltip,
-                slide: sliderTooltip,
-                start: function(e, ui) {
-                    $(ui.handle).toggleClass("moveHandle")
-                }, // This class allow to display the moved handler over the other handle
-                stop: function(e, ui) {
-                    $(ui.handle).toggleClass("moveHandle");
-                    loadAlbumByDate(ui.values, startImgSlider)
+            $('#preview-strip-nowebgl').enscroll({
+                verticalTrackClass: 'track4',
+                verticalHandleClass: 'handle4',
+                zIndex: 10000
+            });
+            $('li').waypoint({
+            context: "#preview-strip-nowebgl",
+            handler: function() {
+                addPrettyDateToScroll($(this).attr("title"))
                 }
             });
-        }
+            var tooltip = '<div id="dateThumbnail" class="handle-tooltip"><div class="handle-tooltip-inner"></div></div>'
+            $('.handle4').html(tooltip)
 
-        function sliderHeightAdjust(){
-            var winH = $(window).height()-80;
-            $('.ui-slider-vertical').height(winH)
         }
-        function previewStripHeightAdjust(){
-            var winH = $(window).height()-50;
-            $('#preview-strip-nowebgl').height(winH)
-        }
-
-        sliderHeightAdjust();
-        previewStripHeightAdjust();
-        
-        $(window).resize(function(){
-            sliderHeightAdjust();
-            previewStripHeightAdjust();
-        }) 
 
         function comparePhotosDate(a,b) {
             var da = new Date(a.created_at);
@@ -649,9 +525,15 @@ YUI.add("stalker-webslider", function(Y) {
             return (date.getHours() + ":" + date.getMinutes()
             + " " + date.getDate() + " " + monthNames[date.getMonth()] + " " + date.getFullYear());
         }
+
+        function addPrettyDateToScroll(date){
+            date = date.split(" ")
+            date = (date[1]+" "+date[2]+" "+date[3])
+            $("#dateThumbnail .handle-tooltip-inner").html(date)
+        }
         function showLegend (pictureCfg) {
             var metas,
-                    detailsNode = $(".details"),
+                    detailsNode = $("#detailsandshare"),
                     date = new Date(Date.parse(pictureCfg.created_at));
                     detailsNode.text(prettyDate(date));
             try {
@@ -662,7 +544,13 @@ YUI.add("stalker-webslider", function(Y) {
             }
         }
 
-    }
+        function dreamselected(index){
+        $('#preview-strip-nowebgl ul .dreamselected').removeClass("dreamselected");
+            var c = $('#preview-strip-nowebgl>ul>li').get(index);
+            c.className = c.className + "dreamselected";
+        }
+
+    }   
 
 }(jQuery));
 
