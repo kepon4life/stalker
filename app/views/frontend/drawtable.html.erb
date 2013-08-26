@@ -55,11 +55,6 @@
 
                         screenSaver.hide();
                     }, resetIdleTimer = function() {
-                        //Y.log("resetIdleTimer");
-                        if (screenSaverDisplayed) {
-                            resetUI();
-                            screenSaverDisplayed = false;
-                        }
                         if (idleTimer) {
                             idleTimer.cancel();
                         }
@@ -67,10 +62,13 @@
                             screenSaverDisplayed = true;
                             slider.get("boundingBox").hide(true, function () {
                                 canvas.clear();
-                                slider.loadPicture(canvas.canvasNode.toDataURL("image/png"));// Show its image in the slider
                                 canvas.set("allowEdition", true);
+
+                                slider.loadPicture(canvas.canvasNode.toDataURL("image/png"));// Show its image in the slider
+                                slider.resetCamera();
                                 slider.get("boundingBox").show(true);
                                 hideUI();
+
                                 screenSaver.run();
                             });
                         });
@@ -91,7 +89,9 @@
                     }
                 });
                 screenSaver.on("drawingEnd", function () {                      // When the drawing is complete
+                     Y.log("drawingEnd");
                      Y.later(100, slider, slider.startImploding);               // explode it
+                     resetIdleTimer();
                 });
                 screenSaver.render();
 
@@ -109,7 +109,14 @@
                     //slider.loadAlbumFromService(window.location.origin + "/services/dreamssecretroom");// Load album
                     slider.loadPicture(canvas.canvasNode.toDataURL("image/png"));
 
-                    canvas.on("cursorUpdate", resetIdleTimer);                  // Idle screen saver
+                    canvas.on("cursorUpdate", function() {
+                        //Y.log("resetIdleTimer");
+                        if (screenSaverDisplayed) {
+                            resetUI();
+                            screenSaverDisplayed = false;
+                        };
+                        resetIdleTimer();
+                    });                                                         // Idle screen saver
                     canvas.on("update", function() {                            // When an input is done on the canvas
                         slider.doReload = true;
                     });
@@ -121,12 +128,12 @@
                         slider.loadPicture(canvas.canvasNode.toDataURL("image/png"));// Show its image in the slider
                         canvas.clear();
                         canvas.set("allowEdition", false);
-                        slider.set("trackCam", true);
+                        //slider.set("trackCam", true);
                         hideUI();
                         Y.later(1000, slider, slider.startImploding);
                     });
 
-                    screenSaver.run();
+                    //screenSaver.run();
 
                     var toggled = false;                                        // Debug mode, toggle canvas/slider on enter key press
                     Y.one('doc').on('key', function(e) {

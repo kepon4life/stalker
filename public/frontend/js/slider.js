@@ -92,6 +92,9 @@ YUI.add("stalker-slider", function(Y) {
 
                 privateChannel.bind('client-myevent', Y.bind(function(data) {   // Dream received events
                     //$('#content').append('<img src="'+data.imgUrl+'"/>');
+
+                    return; // DESACTIVATE THE EVENT
+                    
                     var data = {
                         name: PATH_TO_DREAMS + data.imgUrl,
                         thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + data.imgUrl,
