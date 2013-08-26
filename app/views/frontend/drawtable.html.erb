@@ -37,7 +37,7 @@
         function(Y) {
 
             Y.on("domready", function() {
-                var canvas, slider, screenSaver,
+                var canvas, slider, screenSaver, dreamsToDisplay,
                     IDLETIMEOUT = 10000,
                     screenSaverDisplayed = false,
                     hash = window.location.hash,idleTimer, hideUI = function () {
@@ -55,6 +55,26 @@
 
                         screenSaver.hide();
                     }, resetIdleTimer = function() {
+                        if(typeof dreamsToDisplay === 'undefined'){
+                        Y.io('/frontend/js/screensaver.json', {
+                        on : {
+                            success : function (tx, r) {
+                                // protected against malformed JSON response
+                                try {
+                                    runScreenSaver();
+                                }
+                                catch (e) {
+                                    console.log("JSON Parse failed!");
+                                    return;
+                                }
+                            }
+                        }
+                        });
+                        }else{
+                            runScreenSaver();
+                        }
+                        function runScreenSaver(){
+
                         if (idleTimer) {
                             idleTimer.cancel();
                         }
@@ -72,8 +92,11 @@
                                 screenSaver.run();
                             });
                         });
-                    };
 
+                        }
+                        
+                    };
+   
                 Y.one('#welcome').hide();
 
                 canvas = new Y.Stalker.Canvas();                                // Render canvas (gets input from tuio)
