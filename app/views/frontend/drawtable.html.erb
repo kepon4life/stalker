@@ -37,7 +37,7 @@
         function(Y) {
 
             Y.on("domready", function() {
-                var canvas, slider, screenSaver, dreamsToDisplay,
+                var canvas, slider, screenSaver, dreamsToDisplay, screensaverIndex=1,
                     IDLETIMEOUT = 10000,
                     screenSaverDisplayed = false,
                     hash = window.location.hash,idleTimer, hideUI = function () {
@@ -61,6 +61,8 @@
                             success : function (tx, r) {
                                 // protected against malformed JSON response
                                 try {
+                                    dreamsToDisplay = Y.JSON.parse(r.responseText);
+                                    screenSaver.set("dream",dreamsToDisplay[0])
                                     runScreenSaver();
                                 }
                                 catch (e) {
@@ -71,6 +73,13 @@
                         }
                         });
                         }else{
+                            if(screensaverIndex < dreamsToDisplay.length){
+                                screenSaver.set("dream",dreamsToDisplay[screensaverIndex])
+                            }else{
+                                screensaverIndex = 0;
+                                screenSaver.set("dream",dreamsToDisplay[screensaverIndex])
+                            }
+                            screensaverIndex++;
                             runScreenSaver();
                         }
                         function runScreenSaver(){
