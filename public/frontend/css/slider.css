@@ -50,26 +50,32 @@ object {
     margin-right: auto;
     margin-left: auto;
 }
-#draw-tool img {
+#draw-tool img,
+#draw-tool2 img {
     z-index: 40;
     position: absolute;
     cursor: pointer;
 }
-#draw-tool #envoyer {
+#draw-tool #envoyer,
+#draw-tool2 #newpage{
     right: 20px;
     bottom: 20px;
 }
-#draw-tool #effacer {
-    left: 20px;
-    bottom: 20px;
-}
-#draw-tool #effacer {
+#draw-tool #trash {
     left: 20px;
     bottom: 20px;
 }
 #draw-tool #undo {
     left: 130px;
     bottom: 20px;
+}
+#draw-tool2 .draw-invite div {
+    position: absolute;
+    top: 29px;
+    left: 19px;
+    font-family: RaleighRock, Helvetica;
+    font-size: 23px;
+    color: white;
 }
 /* Slider styles */
 .yui3-stalker-slider-hidden {
@@ -78,6 +84,9 @@ object {
 #sink {
     z-index: 10;
     position: absolute;
+    display: none;
+}
+#sink.sink-hidden img {
     display: none;
 }
 #sink #status {

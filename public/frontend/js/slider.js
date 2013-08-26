@@ -63,7 +63,7 @@ YUI.add("stalker-slider", function(Y) {
          */
         renderUI: function() {
             this.renderStats();
-            Y.one("#sink").hide();
+            Y.one("#sink").addClass("sink-hidden").hide();
 
             this.loadShaders(function() {                                       // After shaders are retrieved
                 this.initScene();                                               // Init Webgl scene
@@ -72,7 +72,7 @@ YUI.add("stalker-slider", function(Y) {
                 start = Date.now();                                             // Set noicse animation start time
                 last = start;                                                   // Activate explosion
 
-                this.toggleHome();                                                  // Paricles should go to initial position
+                this.toggleHome();                                              // Paricles should go to initial position
 
                 //this.loadAlbum(ALBUMPATH);                                    // Load the album json final
                 //this.loadAlbumFromService(DREAMS_SERVICE_URL);
@@ -87,14 +87,10 @@ YUI.add("stalker-slider", function(Y) {
         bindUI: function() {
             if (window.Pusher && window.PUSHER_API_KEY) {                       // Init pusher
                 Pusher.channel_auth_endpoint = 'pusher/auth';
-                var pusher = new Pusher(PUSHER_API_KEY),
-                        privateChannel = pusher.subscribe(PUSHER_CHANEL);
+                var privateChannel = Y.Stalker.Pusher.getChannel();
 
                 privateChannel.bind('client-myevent', Y.bind(function(data) {   // Dream received events
                     //$('#content').append('<img src="'+data.imgUrl+'"/>');
-
-                    return; // DESACTIVATE THE EVENT
-                    
                     var data = {
                         name: PATH_TO_DREAMS + data.imgUrl,
                         thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + data.imgUrl,
@@ -541,6 +537,7 @@ YUI.add("stalker-slider", function(Y) {
             this.camera.up.x = 0;
             this.camera.up.y = 1;
             this.camera.up.z = 0;
+            this.controls.reset();
         },
         /**
          *
@@ -551,7 +548,6 @@ YUI.add("stalker-slider", function(Y) {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 100000);
             this.camera = camera;
-            this.resetCamera();
             scene.add(camera);
             shadowCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 100000);
             shadowCamera.position.z = 500 + 500;
@@ -578,6 +574,8 @@ YUI.add("stalker-slider", function(Y) {
 
             this.controls = new THREE.TrackballControls(camera, renderCanvas);
             this.controls.enabled = this.get("trackCam");
+
+            this.resetCamera();
             //this.controls.noRotate = this.controls.noPan = !this.get("trackCam");
 
             var attributes = {
@@ -1132,7 +1130,7 @@ YUI.add("stalker-slider", function(Y) {
             function smartload() {
                 if (hasActivated)
                     return;
-                img.src = thumbnail_url;
+//                img.src = thumbnail_url;
                 hasActivated = true;
             }
             $(img).load(function(e) {
