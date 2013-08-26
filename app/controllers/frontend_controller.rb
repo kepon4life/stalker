@@ -38,7 +38,11 @@ class FrontendController < ApplicationController
 	def show_dream
 		
 		@dream = Dream.find(params[:id])
-		
+		puts params[:token]
+		if(!@dream.is_valid && params[:token] != @dream.token)
+			@dream = nil
+		end
+
 		respond_to do |format|
 			format.html
 		end
@@ -55,7 +59,7 @@ class FrontendController < ApplicationController
 					image = MiniMagick::Image.read(imgNormal)
 					image.resize "256x160"
 					image.write  "public" + PATH_TO_DREAMS_THUMBNAILS + @dream.id.to_s + DREAM_EXTENSION
-					render :json => {:imgUrl => @dream.id.to_s + DREAM_EXTENSION}
+					render :json => {:imgUrl => @dream.id.to_s + DREAM_EXTENSION, :token => @dream.token, :dream_id => @dream.id.to_s}
 				else
 					render :json => {:imgUrl => "PAS OK"}
 				end

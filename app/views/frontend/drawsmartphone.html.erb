@@ -191,7 +191,11 @@
                     },
                     success: function(data) {
                         triggered = privateChannel.trigger('client-myevent', data);
-
+                        console.log(data);
+                        var url = "dream/" + data.dream_id + "?token=" + data.token;
+                        $('.msg-sent .text a').each(function( index, element ) {
+                            $(element).attr("href", url);
+                        }); 
                         $('.msg-sent').fadeIn(1000);
                     }
                 });
@@ -214,10 +218,10 @@ $('.msg-sent').hide();
     <div class="logo"></div>
     <div class="text">
         MERCI DE VOTRE PARTICIPATION,<br />
-        RETROUVEZ-LA SUR <a href="#">PLACEHOLDER</a>.
+        RETROUVEZ-LA <a href="#">ICI</a>.
         <br /><br />
         THANK FOR YOUR PARTICIPATION,<br />
-        FIND IT ON <a href="#">PLACEHOLDER</a>.
+        FIND IT <a href="#">HERE</a>.
     </div>
 </div>
 
