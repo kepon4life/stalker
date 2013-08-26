@@ -75,7 +75,10 @@ $(document).ready(function () {
 
 
 
-	
+	$(document).on("dblclick", ".not_a_link", function(){
+    	window.open(this.id, 'nom_interne_de_la_fenetre', config='height=700, width=700, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no');
+	});
+
 
 	//lorsque l'on clique sur une image, son état change
 	$(document).on("click", "div.dream", function(){

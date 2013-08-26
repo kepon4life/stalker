@@ -38,7 +38,7 @@
 			<% @dreams.each do |dream| %>
 				<div class="dream" id="dream_<%= dream.id.to_s %>">
 					<div class="decision"></div>
-					<img  class="dream" src="<%= PATH_TO_DREAMS_THUMBNAILS + dream.id.to_s + DREAM_EXTENSION %>" alt="<%= dream.id.to_s %>" />
+					<a class="not_a_link" id="<%= PATH_TO_DREAMS + dream.id.to_s + DREAM_EXTENSION %>" alt="<%= dream.id.to_s %>"><img class="dream" src="<%= PATH_TO_DREAMS_THUMBNAILS + dream.id.to_s + DREAM_EXTENSION %>" alt="<%= dream.id.to_s %>" /></a>
 				</div>
 				
 			<% end%>
