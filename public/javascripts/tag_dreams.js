@@ -110,10 +110,7 @@ $(document).ready(function () {
 		}
 		
 
-/*
-		
 
-*/
 	});
 
 
