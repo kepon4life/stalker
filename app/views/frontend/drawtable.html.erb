@@ -26,8 +26,9 @@
 
 
     <%= javascript_include_tag "/frontend/js/slider.js" %>
-    <script src="/frontend/js/canvas.js" type="text/javascript"></script>
-    <script src="/frontend/js/screensaver.js" type="text/javascript"></script>
+    <%= javascript_include_tag "/frontend/js/canvas.js" %>
+    <%= javascript_include_tag "/frontend/js/screensaver.js" %>
+    <%= javascript_include_tag "/frontend/js/pusher.js" %>
 
     <script type="text/javascript">
 
@@ -39,7 +40,7 @@
                 "inputex-string", "inputex-select", "inputex-group",
                 "inputex-list", "inputex-combine", "inputex-checkbox",
                 "node-event-simulate", "transition",
-                "stalker-slider", "stalker-canvas", "stalker-screensaver",
+                "stalker-slider", "stalker-canvas", "stalker-screensaver", "stalker-pusher",
         function(Y) {
 
             Y.on("domready", function() {
@@ -103,6 +104,30 @@
                 });
                 screenSaver.render();
 
+                var inviteState = 0,                                            // Change the draw invite every so much seconds
+                    textState = 0,
+                    INVITETEXTS = [
+                        "Dessinez votre desir",                                 //é
+                        //"Нарисуйте своё желание",
+                        "Disegna il tuo desiderio",
+                        "Draw your wish",
+                        "Zeichnen Sie Ihre Wunsche",                            //ü
+                        //"Σχεδιάστε την επιθυμία σας",
+                        //"あなたの夢を描いてください。",
+                        "Desenati dorinta voastra",
+                        //"소원을 그리세요"
+                    ];
+                Y.later(5000, null, function () {
+                    var nodes = Y.one(".draw-invite").get("children");
+                    nodes.item(inviteState).hide(true);
+                    inviteState = (inviteState + 1 ) %2;
+                    textState = (textState + 1 ) % INVITETEXTS.length;
+
+                    nodes.item(inviteState).setHTML(INVITETEXTS[textState]);
+                    nodes.item(inviteState).show(true);
+                }, [], true);
+
+
                 if (Y.hasWebgl()) {
                     canvas.hide();
 
@@ -136,6 +161,7 @@
                         slider.loadPicture(canvas.canvasNode.toDataURL("image/png"));// Show its image in the slider
                         canvas.clear();
                         canvas.set("allowEdition", false);
+                        slider.set("trackCam", true);
                         //slider.set("trackCam", true);
                         hideUI();
                         Y.later(1000, slider, slider.startImploding);
@@ -181,5 +207,6 @@
     <img class="controls" id="trash" src="/frontend/img/UI_trash.png" />
 </div>
 <div id="draw-tool2">
+    <div class="draw-invite"><div>Dessinez votre desir</div><div></div></div>
     <img class="controls" id="newpage" src="/frontend/img/UI_newpage.png" />
 </div>

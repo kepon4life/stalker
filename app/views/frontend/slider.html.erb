@@ -26,6 +26,7 @@
     <script src="http://js.pusher.com/1.12/pusher.min.js"></script>
 
     <%= javascript_include_tag "/frontend/js/slider.js" %>
+    <%= javascript_include_tag "/frontend/js/pusher.js" %>
 
     <script type="text/javascript">
         YUI_config.groups.inputex.base = "frontend/js/libs/inputex/src/";
@@ -36,7 +37,7 @@
             "inputex-string", "inputex-select", "inputex-group",
             "inputex-list", "inputex-combine", "inputex-checkbox",
             "transition",
-            "stalker-slider", function(Y) {
+            "stalker-slider", "stalker-pusher", function(Y) {
 
             Y.on("domready", function() {
                 if (Y.hasWebgl()) {

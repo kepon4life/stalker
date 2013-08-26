@@ -56,18 +56,26 @@ object {
     position: absolute;
     cursor: pointer;
 }
-#draw-tool #envoyer {
+#draw-tool #envoyer,
+#draw-tool2 #newpage{
     right: 20px;
     bottom: 20px;
 }
-#draw-tool #trash,
-#draw-tool2 #newpage {
+#draw-tool #trash {
     left: 20px;
     bottom: 20px;
 }
 #draw-tool #undo {
     left: 130px;
     bottom: 20px;
+}
+#draw-tool2 .draw-invite div {
+    position: absolute;
+    top: 29px;
+    left: 19px;
+    font-family: RaleighRock, Helvetica;
+    font-size: 23px;
+    color: white;
 }
 /* Slider styles */
 .yui3-stalker-slider-hidden {
