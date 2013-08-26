@@ -31,8 +31,8 @@ YUI.add("stalker-screensaver", function(Y) {
 
             //from json setInitial position
             this.get("contentBox").setXY([obj.start.x, obj.start.y]);
-            
-            
+
+
 
 
 
@@ -51,10 +51,10 @@ YUI.add("stalker-screensaver", function(Y) {
                 y = obj.curves[i].y;
 
                 this.currentAnim.push({curve: [[x1, y1],[x2, y2],[x,y]]})
-                
+
 
             }
-           
+
             this._step();
         },
         _step: function() {
@@ -77,7 +77,7 @@ YUI.add("stalker-screensaver", function(Y) {
         hide: function() {
             ScreenSaver.superclass.hide.call(this);
             this.get("contentBox").hide(true);
-            this.anim.stop();
+            this.anim.pause();
 
             //Y.one('#screen-saver').hide();
             //$('#asd').trigger('pause');

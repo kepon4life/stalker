@@ -129,12 +129,74 @@ YUI.add("stalker-canvas", function(Y) {
             });
         },
         onCursorUpdate: function(cursors) {
-
+//            Y.log("onCursorUpdate");
+            function mult(a, b) {
+                a.x *= b;
+                a.y *= b;
+                return a;
+            }
+            function add(a, b) {
+                a.x += b.x;
+                a.y += b.y;
+                return a;
+            }
+            function getLength(a, b) {
+                return {
+                    x: a.x - b.x,
+                    y: a.y - b.y
+                };
+            }
+            function sub(a, b) {
+                return [a[0] - b[0], a[1] - b[1]];
+            }
+            function length(a) {
+                return Math.sqrt(Math.pow(a[0], 2) + Math.pow(a[1], 2));
+            }
             if (!this.get("allowEdition")) {
 
-
 //                Y.Stalker.slider.camera.position.x += 10;
-//                lastCursors = Y.clone(tuio.cursors);
+//                if (this.lastCursors) {
+//                var lcursors = this.lastCursors;
+//                if (cursors.length === 1 && cursors[0].path.length > 1) {
+//                    var path = cursors[0].path;
+////                    Y.log("onCursorUpdate: lc");
+//                    var delta = minus(array2vect(path[path.length - 1]), array2vect(path[path.length - 2]));
+//                    add(Y.Stalker.slider.camera.position, mult(delta, 5000));
+//                } else {
+                if (cursors.length > 0 && cursors[0].path.length > 1) {
+                    var maxScale = 0,
+                            move = [0, 0];
+                    for (var i = 0; i < cursors.length; i++) {
+
+                        var path1 = cursors[i].path,
+                                delta = sub(path1[path1.length - 1], path1[path1.length - 2]);
+                        move[0] = (move[0] + delta[0]) / 2;
+                        move[1] = (move[1] + delta[1]) / 2;
+                        if (cursors.length > 1) {
+                            for (var j = i + 1; j < cursors.length; j++) {
+                                var path2 = cursors[j].path;
+                                if (path1.length > 1 && path2.length > 1) {
+                                    var delta1 = sub(path1[path1.length - 2], path2[path2.length - 2]),
+                                            delta2 = sub(path1[path1.length - 1], path2[path2.length - 1]),
+                                            scale = length(delta1) - length(delta2);
+
+                                    if (Math.abs(scale) > Math.abs(maxScale)) {
+                                        maxScale = scale;
+                                    }
+                                    //maxScale = (maxScale + scale) / 2;
+                                }
+                            }
+                        }
+                    }
+                    console.log("max", maxScale, Y.Stalker.slider.camera.position.z);
+                    if (Math.abs(maxScale * 1000) > 3) {
+                        Y.Stalker.slider.camera.position.z = Math.min(Y.Stalker.slider.camera.position.z + (maxScale * 1000), 2000);
+                    } else {
+                        Y.Stalker.slider.camera.position.x -= move[0] * 3000;
+                        Y.Stalker.slider.camera.position.y += move[1] * 3000;
+                    }
+
+                }
                 return;
             }
 
