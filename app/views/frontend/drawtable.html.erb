@@ -1,6 +1,12 @@
 <% @title="Stalker - Slider" %>
 <% content_for :stylesheet_includes do %>
   <%= stylesheet_link_tag '/frontend/css/slider.css'  %>
+
+    <style type="text/css">
+        body {
+            cursor: none;
+        }
+    </style>
 <% end %>
 <% content_for :javascript_includes_in_head do %>
   <script>window["_GOOG_TRANS_EXT_VER"] = "1";</script>
@@ -41,10 +47,11 @@
                     IDLETIMEOUT = 10000,
                     screenSaverDisplayed = false,
                     hash = window.location.hash,idleTimer, hideUI = function () {
-                        Y.one("#draw-tool #undo").hide(true);
-                        Y.one("#draw-tool #envoyer").hide(true);
+                        Y.one("#draw-tool").hide(true);
+                        Y.one("#draw-tool2").show(true);
                     }, resetUI = function() {
-                        Y.all("#draw-tool img").show(true);
+                        Y.one("#draw-tool").show(true);
+                        Y.one("#draw-tool2").hide(true);
 
                         canvas.clear();
                         canvas.set("allowEdition", true);
@@ -74,6 +81,7 @@
                         });
                     };
 
+                Y.one("#draw-tool2").hide();
                 Y.one('#welcome').hide();
 
                 canvas = new Y.Stalker.Canvas();                                // Render canvas (gets input from tuio)
@@ -133,8 +141,6 @@
                         Y.later(1000, slider, slider.startImploding);
                     });
 
-                    //screenSaver.run();
-
                     var toggled = false;                                        // Debug mode, toggle canvas/slider on enter key press
                     Y.one('doc').on('key', function(e) {
                         toggled = !toggled;
@@ -172,5 +178,8 @@
 <div id="draw-tool">
     <img class="controls" id="envoyer" src="/frontend/img/UI_send.png" />
     <img class="controls" id="undo" src="/frontend/img/UI_undo.png" />
-    <img class="controls" id="effacer" src="/frontend/img/UI_newpage.png" />
+    <img class="controls" id="trash" src="/frontend/img/UI_trash.png" />
+</div>
+<div id="draw-tool2">
+    <img class="controls" id="newpage" src="/frontend/img/UI_newpage.png" />
 </div>

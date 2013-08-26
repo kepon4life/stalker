@@ -63,7 +63,7 @@ YUI.add("stalker-slider", function(Y) {
          */
         renderUI: function() {
             this.renderStats();
-            Y.one("#sink").hide();
+            Y.one("#sink").addClass("sink-hidden").hide();
 
             this.loadShaders(function() {                                       // After shaders are retrieved
                 this.initScene();                                               // Init Webgl scene
@@ -72,7 +72,7 @@ YUI.add("stalker-slider", function(Y) {
                 start = Date.now();                                             // Set noicse animation start time
                 last = start;                                                   // Activate explosion
 
-                this.toggleHome();                                                  // Paricles should go to initial position
+                this.toggleHome();                                              // Paricles should go to initial position
 
                 //this.loadAlbum(ALBUMPATH);                                    // Load the album json final
                 //this.loadAlbumFromService(DREAMS_SERVICE_URL);
@@ -94,7 +94,7 @@ YUI.add("stalker-slider", function(Y) {
                     //$('#content').append('<img src="'+data.imgUrl+'"/>');
 
                     return; // DESACTIVATE THE EVENT
-                    
+
                     var data = {
                         name: PATH_TO_DREAMS + data.imgUrl,
                         thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + data.imgUrl,
@@ -1132,7 +1132,7 @@ YUI.add("stalker-slider", function(Y) {
             function smartload() {
                 if (hasActivated)
                     return;
-                img.src = thumbnail_url;
+//                img.src = thumbnail_url;
                 hasActivated = true;
             }
             $(img).load(function(e) {

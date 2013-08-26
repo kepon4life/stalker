@@ -50,7 +50,8 @@ object {
     margin-right: auto;
     margin-left: auto;
 }
-#draw-tool img {
+#draw-tool img,
+#draw-tool2 img {
     z-index: 40;
     position: absolute;
     cursor: pointer;
@@ -59,11 +60,8 @@ object {
     right: 20px;
     bottom: 20px;
 }
-#draw-tool #effacer {
-    left: 20px;
-    bottom: 20px;
-}
-#draw-tool #effacer {
+#draw-tool #trash,
+#draw-tool2 #newpage {
     left: 20px;
     bottom: 20px;
 }
@@ -78,6 +76,9 @@ object {
 #sink {
     z-index: 10;
     position: absolute;
+    display: none;
+}
+#sink.sink-hidden img {
     display: none;
 }
 #sink #status {

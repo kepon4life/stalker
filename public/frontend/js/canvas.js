@@ -62,16 +62,18 @@ YUI.add("stalker-canvas", function(Y) {
             //privateChannel.bind('pusher:subscription_succeeded', function() {
             tuio.cursor_add(function(e) {
                 var x = e.x * nw,
-                        y = e.y * nh;
-                nbdoigts++;
-
-                Y.one("#draw-tool").get("children").each(function(node) {
+                        y = e.y * nh,
+                        simulateEvent= function(node) {
                     var nodeXY = node.getXY();
                     if (x > nodeXY[0] && x < nodeXY[0] + node.get("width")
                             && y > nodeXY[1] && y < nodeXY[1] + node.get("height")) {
                         node.simulate("click");
                     }
-                });
+                };
+                nbdoigts++;
+
+                Y.one("#draw-tool").get("children").each(simulateEvent);
+                Y.one("#draw-tool2").get("children").each(simulateEvent);
             });
             //Tuio.cursor_update == déplacement du doigts sur la surface
             tuio.cursor_update(Y.bind(function(data) {
@@ -101,7 +103,8 @@ YUI.add("stalker-canvas", function(Y) {
             Y.all("#particleCanvas").on("mouseup", this.onCursorRemove, this);
 
             Y.one("#envoyer").on('click', this.sendTosave, this);
-            Y.one("#effacer").on('click', this.reset, this);
+            Y.one("#newpage").on('click', this.reset, this);
+            Y.one("#trash").on('click', this.reset, this);
             Y.one("#undo").on('click', this.undo, this);
         },
         sendTosave: function() {
@@ -236,7 +239,7 @@ YUI.add("stalker-canvas", function(Y) {
             }
         },
         reset: function() {
-            Y.log("canvas.reset()");
+            Y.log("Canvas.reset()");
             this.clear();
             this.fire("reset");
         },
