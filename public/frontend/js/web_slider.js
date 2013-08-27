@@ -244,8 +244,8 @@ YUI.add("stalker-webslider", function(Y) {
         $('.handle4').html(tooltip)
         addPrettyDateToScroll($(".dreamslist li").get(0).title);
         /*Dream selected style*/
-        $('#preview-strip ul li').on("click","img",function(){
-            dreamselected($(this).parent().index());
+        $('#preview-strip ul').on("click","li",function(){
+            dreamselected($(this).index());
         })
     }
     function prettyDate(date){
