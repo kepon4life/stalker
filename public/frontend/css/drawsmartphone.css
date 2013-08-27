@@ -1,0 +1,130 @@
+@font-face {
+    font-family: RaleighRock;
+    src: url('../font/RaleighRock.ttf');
+}
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin: 0;
+    background: black;
+    color: white;
+    text-align:center;
+    font-size: 34px;
+}
+
+.fs-container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+.literally {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.literally canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: default;
+  width: 100%;
+  background-color: blue;
+}
+
+.literally .toolbar {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+}
+
+.literally .toolbar .row {
+    float: left;
+    width: 100%;
+    min-width: 65px;
+}
+
+
+.literally .toolbar .button {
+    display: inline-block;
+    border: none;
+    width: 34px;
+    height: 34px;
+    margin-left: -17px;
+    border-radius: 3px;
+    padding: 0;
+    color: transparent;
+    text-shadow: none;
+    position: absolute;
+    bottom: 10px;
+}
+.literally .toolbar .send-button {
+    background: rgba(255, 255, 255, 0.4) url(../img/UI_send.png) 2px 2px no-repeat;
+    left: 66%;
+}
+.literally .toolbar .clear-button {
+    background: rgba(255, 255, 255, 0.4)  url(../img/UI_newpage.png) 2px 2px  no-repeat;
+    left: 50%;
+}
+.literally .toolbar .undo-button {
+    background: rgba(255, 255, 255, 0.4) url(../img/UI_undo.png) 2px 2px  no-repeat;
+    left: 33%;
+}
+
+
+.msg {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    bottom:0px;
+    background:black;
+    text-align:center;
+}
+.msg .logo {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    background: transparent url(../img/UI_logo_300.png) 50% 50% no-repeat;
+    width:100%;
+    height:114px;
+}
+
+.msg .text {
+    font-family: RaleighRock, Helvetica;
+    font-style: capitalize;
+    line-height: 53px;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 140px;
+}
+.msg .text a {
+    text-decoration: underline;
+    color:white;
+}
+.msg.invite .text {
+    line-height: 1.7em;
+    font-size: 1.9em;
+}
+
+.msg.invite {
+    pointer-events: none;
+}
+
+
+
+/* Fix formatting in landscape mode */
+@media only screen and (orientation : landscape) {
+    .msg .logo {
+        top: 1px;
+        height: 100px;
+    }
+    .msg.invite .text, .msg.msg-sent .text {
+        top: 115px;
+        font-size: .7em;
+        line-height: 1.6em;
+    }
+}
+
