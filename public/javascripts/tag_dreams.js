@@ -125,9 +125,9 @@ $(document).ready(function () {
 
 //Recept pusher notifications
 var pusher = new Pusher(PUSHER_API_KEY);
-var channel = pusher.subscribe(PUSHER_CHANEL);
+var channel = pusher.subscribe(PUSHER_CHANEL_DREAM_CREATED);
 //Pusher.channel_auth_endpoint = '/pusher/auth';
-channel.bind(PUSHER_EVENT, function(data) {
+channel.bind(PUSHER_EVENT_DREAM_CREATED, function(data) {
 	informUserNewImgForReloadingPage();
 });
 

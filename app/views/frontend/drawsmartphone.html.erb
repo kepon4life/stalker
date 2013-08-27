@@ -23,17 +23,6 @@
                 return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
             }
 
-            //Pusher
-            if (window.Pusher) {
-                Pusher.channel_auth_endpoint = 'pusher/auth';
-                var pusher = new Pusher(PUSHER_API_KEY);
-                var privateChannel = pusher.subscribe(PUSHER_CHANEL);
-                var triggered;
-
-                privateChannel.bind('pusher:subscription_error', function(status) {
-                    console.log("error "+status);
-                });
-            }
             // disable scrolling on touch devices so we can actually draw
             $(document).bind('touchmove', function(e) {
                 if (e.target === document.documentElement) {
@@ -65,8 +54,8 @@
                         imgNormal: canvas.toDataURL("image/png")
                     },
                     success: function(data) {
-                        triggered = privateChannel.trigger('client-myevent', data);
-                        console.log(data);
+                        //triggered = privateChannel.trigger('client-myevent', data);
+                        //console.log(data);
                         var url = "dream/" + data.dream_id + "?token=" + data.token;
                         $('.msg-sent .text a').each(function( index, element ) {
                             $(element).attr("href", url);

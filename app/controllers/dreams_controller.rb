@@ -1,5 +1,11 @@
 class DreamsController < ApplicationController
   require 'fileutils'
+  require 'pusher'
+
+  Pusher.app_id = PUSHER_API_APP_ID
+  Pusher.key = PUSHER_API_KEY
+  Pusher.secret = PUSHER_API_SECRET
+  
   http_basic_authenticate_with :name => "admin", :password => "st4lk3r2013"
 
   # GET /dreams
@@ -147,9 +153,14 @@ class DreamsController < ApplicationController
             @dream.is_valid = true
             @dream.secret_room = true
           end
+
+          
         
           if @dream.save
             dreams.push @dream
+            if data[1] != "1"
+              Pusher[PUSHER_CHANEL_DREAM_VALIDATED].trigger(PUSHER_EVENT_DREAM_VALIDATED, {:imgUrl => @dream.id.to_s + DREAM_EXTENSION})
+            end
           end
         end
       end
