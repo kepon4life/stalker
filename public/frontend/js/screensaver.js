@@ -30,9 +30,13 @@ YUI.add("stalker-screensaver", function(Y) {
 
             var nbStrokes = obj.strokes.length;
 
+            console.log(this.get("dream"))
+
             for (var j = 0; j < nbStrokes; j++){
 
+                console.log("strokes"+j)
                 var nbCurves = obj.strokes[j].curves.length;
+                console.log(nbCurves)
                 //from json setInitial position
                 this.get("contentBox").setXY([obj.strokes[j].start.x, obj.strokes[j].start.y]);
 

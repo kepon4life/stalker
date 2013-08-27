@@ -37,7 +37,7 @@
         function(Y) {
 
             Y.on("domready", function() {
-                var canvas, slider, screenSaver, dreamsToDisplay, screensaverIndex=1,
+                var canvas, slider, screenSaver, dreamsToDisplay, screensaverIndex=1,first=true,
                     IDLETIMEOUT = 1000,
                     screenSaverDisplayed = false,
                     hash = window.location.hash,idleTimer, hideUI = function () {
@@ -55,6 +55,7 @@
 
                         screenSaver.hide();
                     }, resetIdleTimer = function() {
+                        console.log("resetIdleTimer")
                         if(typeof dreamsToDisplay === 'undefined'){
                         Y.io('/frontend/js/screensaver_multi.json', {
                         on : {
@@ -62,7 +63,7 @@
                                 // protected against malformed JSON response
                                 try {
                                     dreamsToDisplay = Y.JSON.parse(r.responseText);
-                                    screenSaver.set("dream",dreamsToDisplay.dreams[0])
+                                    //screenSaver.set("dream",dreamsToDisplay.dreams[0])
                                     runScreenSaver();
                                 }
                                 catch (e) {
@@ -73,12 +74,17 @@
                         }
                         });
                         }else{
-                            if(screensaverIndex < dreamsToDisplay.length){
+                            if(screensaverIndex < dreamsToDisplay.dreams.length){
+                                console.log("if")
+                                console.log(screensaverIndex)
                                 screenSaver.set("dream",dreamsToDisplay.dreams[screensaverIndex])
                             }else{
+                                console.log("else")
+                                console.log(screensaverIndex)
                                 screensaverIndex = 0;
                                 screenSaver.set("dream",dreamsToDisplay.dreams[screensaverIndex])
                             }
+                            console.log("screensaverIndex++")
                             screensaverIndex++;
                             runScreenSaver();
                         }
@@ -89,6 +95,11 @@
                         }
                         idleTimer = Y.later(IDLETIMEOUT, null, function() {
                             screenSaverDisplayed = true;
+                            if(first){
+                                screenSaver.set("dream",dreamsToDisplay.dreams[0]);
+                                screensaverIndex=0;
+                                first=false;
+                            }
                             slider.get("boundingBox").hide(true, function () {
                                 canvas.clear();
                                 canvas.set("allowEdition", true);
