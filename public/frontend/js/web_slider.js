@@ -249,15 +249,16 @@ YUI.add("stalker-webslider", function(Y) {
         })
     }
     function prettyDate(date){
-        monthNames = ["January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"];
+        var month = ("0" + (date.getMonth() + 1)).slice(-2);
+        var day = ("0" + date.getDate()).slice(-2)
         return (date.getHours() + ":" + date.getMinutes()
-        + " " + date.getDate() + " " + monthNames[date.getMonth()] + " " + date.getFullYear());
+        + " " + day + "/" + month + "/" + date.getFullYear());
     }
 
     function addPrettyDateToScroll(date){
         date = date.split(" ")
-        date = (date[1]+" "+date[2]+" "+date[3])
+        date = date[1].split("/")
+        date = (date[0]+"/"+date[1]+"/"+date[2])
         $("#dateThumbnail .handle-tooltip-inner").html(date)
     }
 
@@ -520,15 +521,16 @@ YUI.add("stalker-webslider", function(Y) {
         })
 
         function prettyDate(date){
-            monthNames = ["January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"];
+            var month = ("0" + (date.getMonth() + 1)).slice(-2);
+            var day = ("0" + date.getDate()).slice(-2)
             return (date.getHours() + ":" + date.getMinutes()
-            + " " + date.getDate() + " " + monthNames[date.getMonth()] + " " + date.getFullYear());
+            + " " + day + "/" + month + "/" + date.getFullYear());
         }
 
         function addPrettyDateToScroll(date){
             date = date.split(" ")
-            date = (date[1]+" "+date[2]+" "+date[3])
+            date = date[1].split("/")
+            date = (date[0]+"/"+date[1]+"/"+date[2])
             $("#dateThumbnail .handle-tooltip-inner").html(date)
         }
         function showLegend (pictureCfg) {
