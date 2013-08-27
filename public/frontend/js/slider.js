@@ -87,9 +87,9 @@ YUI.add("stalker-slider", function(Y) {
         bindUI: function() {
             if (window.Pusher && window.PUSHER_API_KEY) {                       // Init pusher
                 Pusher.channel_auth_endpoint = 'pusher/auth';
-                
+
                 var pusher = new Pusher(PUSHER_API_KEY),
-                privateChannel = Y.Stalker.Pusher.getChanelDreamValidated();
+                privateChannel = pusher.subscribe(PUSHER_CHANEL_DREAM_VALIDATED);
 
 
                 privateChannel.bind(PUSHER_EVENT_DREAM_VALIDATED, Y.bind(function(data) {   // Dream received events
