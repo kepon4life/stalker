@@ -7254,7 +7254,7 @@
         tb.selectTool(tb.tools[0]);
         resize = function() {
             if (opts.sizeToContainer) {
-                $c.css("height", "" + ($el.height() - $tbEl.height()) + "px");
+                $c.css("height", "" + ($el.height()) + "px");
             }
             $c.attr("width", $c.width());
             $c.attr("height", $c.height());
@@ -7591,14 +7591,25 @@
     LC.defaultColors = [ "rgba(255, 0, 0, 0.9)", "rgba(255, 128, 0, 0.9)", "rgba(255, 255, 0, 0.9)", "rgba(128, 255, 0, 0.9)", "rgba(0, 255, 0, 0.9)", "rgba(0, 255, 128, 0.9)", "rgba(0, 128, 255, 0.9)", "rgba(0, 0, 255, 0.9)", "rgba(128, 0, 255, 0.9)", "rgba(255, 0, 128, 0.9)", "rgba(0, 0, 0, 0.9)", "rgba(255, 255, 255, 0.9)" ];
     LC.defaultStrokeColor = "rgba(0, 0, 0, 0.9)";
     LC.defaultFillColor = "rgba(255, 255, 255, 0.9)";
-    LC.toolbarHTML = '  <div class="toolbar-row">    <div class="toolbar-row-left">      <div class="button color-square stroke-picker">&nbsp;</div>      <div class="tools button-group"></div>      <div class="tool-options-container"></div>    </div>    <div class="toolbar-row-right">      <div class="action-buttons">        <div class="button clear-button danger">Clear</div>        <div class="button-group">          <div class="button btn-warning undo-button">&larr;</div><div class="button btn-warning redo-button">&rarr;</div>        </div>        <div class="button-group">          <div class="button btn-inverse zoom-out-button">&ndash;</div><div class="button btn-inverse zoom-in-button">+</div>        </div>        <div class="zoom-display">1</div>      </div>    </div>    <div class="clearfix"></div>  </div>';
+    LC.toolbarHTML = '<div class="toolbar-row">' +
+                         '<div class="row row-left">' +
+                            '<div class="button clear-button">Clear</div>'+
+                         '</div>'+
+                         '<div class="row row-center">'+
+                            '<div class="button undo-button">&larr;</div>'+
+                         '</div>'+
+                         '<div class="row row-right">'+
+                            '<div class="button send-button">Send</div>'+
+                         '</div>'+
+                     '</div>'+
+                    '<div class="clearfix"></div>';
     LC.makeColorPicker = function($el, title, callback) {
         var cp;
         $el.data("color", "rgb(0, 0, 0)");
         cp = $el.colorpicker({
             format: "rgb"
         }).data("colorpicker");
-        cp.hide();
+        // cp.hide();
         $el.on("changeColor", function(e) {
             callback(e.color.toRGB());
             return $(document).one("click", function() {
@@ -7642,10 +7653,10 @@
                 return _this.lc.primaryColor = val;
             });
             this.lc.$canvas.mousedown(function() {
-                return cp.hide();
+                // return cp.hide();
             });
             this.lc.$canvas.on("touchstart", function() {
-                return cp.hide();
+                // return cp.hide();
             });
             return this.lc.on("colorChange", function(color) {
                 return $stroke.css("background-color", color);
