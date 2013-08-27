@@ -38,7 +38,7 @@
 
             Y.on("domready", function() {
                 var canvas, slider, screenSaver, dreamsToDisplay, screensaverIndex=1,
-                    IDLETIMEOUT = 10000,
+                    IDLETIMEOUT = 1000,
                     screenSaverDisplayed = false,
                     hash = window.location.hash,idleTimer, hideUI = function () {
                         Y.one("#draw-tool #undo").hide(true);
@@ -56,13 +56,13 @@
                         screenSaver.hide();
                     }, resetIdleTimer = function() {
                         if(typeof dreamsToDisplay === 'undefined'){
-                        Y.io('/frontend/js/screensaver.json', {
+                        Y.io('/frontend/js/screensaver_multi.json', {
                         on : {
                             success : function (tx, r) {
                                 // protected against malformed JSON response
                                 try {
                                     dreamsToDisplay = Y.JSON.parse(r.responseText);
-                                    screenSaver.set("dream",dreamsToDisplay[0])
+                                    screenSaver.set("dream",dreamsToDisplay.dreams[0])
                                     runScreenSaver();
                                 }
                                 catch (e) {
@@ -74,10 +74,10 @@
                         });
                         }else{
                             if(screensaverIndex < dreamsToDisplay.length){
-                                screenSaver.set("dream",dreamsToDisplay[screensaverIndex])
+                                screenSaver.set("dream",dreamsToDisplay.dreams[screensaverIndex])
                             }else{
                                 screensaverIndex = 0;
-                                screenSaver.set("dream",dreamsToDisplay[screensaverIndex])
+                                screenSaver.set("dream",dreamsToDisplay.dreams[screensaverIndex])
                             }
                             screensaverIndex++;
                             runScreenSaver();

@@ -24,38 +24,40 @@ YUI.add("stalker-screensaver", function(Y) {
 
             obj = JSON.parse(json);
 
+            this.show();            // Show the widget
 
             Y.log("ScreenSaver.run()");
 
-            this.show();            // Show the widget
+            var nbStrokes = obj.strokes.length;
 
-            //from json setInitial position
-            this.get("contentBox").setXY([obj.start.x, obj.start.y]);
+            for (var j = 0; j < nbStrokes; j++){
 
+                var nbCurves = obj.strokes[j].curves.length;
+                //from json setInitial position
+                this.get("contentBox").setXY([obj.strokes[j].start.x, obj.strokes[j].start.y]);
 
+                this.currentIndex = 0;
+                this.j = j;
+                this.nbstrokes = nbStrokes;
+                this.currentAnim = [];
 
+                for (var i = 0; i < nbCurves; i++) {
+                    x1 = obj.strokes[j].curves[i].x1;
+                    y1 = obj.strokes[j].curves[i].y1;
+                    x2 = obj.strokes[j].curves[i].x2;
+                    y2 = obj.strokes[j].curves[i].y2;
+                    x = obj.strokes[j].curves[i].x;
+                    y = obj.strokes[j].curves[i].y;
 
+                    this.currentAnim.push({curve: [[x1, y1],[x2, y2],[x,y]]})
 
-            this.currentIndex = 0;
+                }
 
-            var nbCurves = obj.curves.length;
-
-            this.currentAnim = [];
-
-            for (var i = 0; i < nbCurves; i++) {
-                x1 = obj.curves[i].x1;
-                y1 = obj.curves[i].y1;
-                x2 = obj.curves[i].x2;
-                y2 = obj.curves[i].y2;
-                x = obj.curves[i].x;
-                y = obj.curves[i].y;
-
-                this.currentAnim.push({curve: [[x1, y1],[x2, y2],[x,y]]})
-
+                this._step();
 
             }
 
-            this._step();
+            
         },
         _step: function() {
             var nextPoint = this.currentAnim[this.currentIndex];
@@ -65,9 +67,12 @@ YUI.add("stalker-screensaver", function(Y) {
                 this.anim.once("end", this._step, this);
                 this.anim.run();
                 this.currentIndex += 1;                                         // Increment index
-            } else {                                                            // No more points: animation is over
-                this.fire("drawingEnd");
-                this.hide();
+            }else {
+                if(parseInt(this.j,10) != parseInt((this.nbStrokes-1),10)){                     // No more points: animation is over
+                    this.fire("drawingEnd");
+                    this.hide();
+
+                }
             }
         },
         show: function() {
