@@ -11,13 +11,6 @@ $(document).ready(function () {
 	    	incrementNbDreams(parseInt(response.nbImg));
 	    }
 	});
-
-        // Set up logger
-        if (window.Pusher) {
-            Pusher.log = function(msg) {
-                console.log(msg);
-            }
-        }
 });
 
 //increment the number of dream in buble

@@ -67,7 +67,6 @@ YUI.add("stalker-slider", function(Y) {
 
             this.loadShaders(function() {                                       // After shaders are retrieved
                 this.initScene();                                               // Init Webgl scene
-                this.animate();                                                 // Start animation
 
                 start = Date.now();                                             // Set noicse animation start time
                 last = start;                                                   // Activate explosion
@@ -78,6 +77,8 @@ YUI.add("stalker-slider", function(Y) {
                 //this.loadAlbumFromService(DREAMS_SERVICE_URL);
                 this.renderCustomization();                                     // Render side panel
                 this.fire("webglInitialized");
+
+                this.animate();                                                 // Start animation
             });
         },
         /**
@@ -85,30 +86,6 @@ YUI.add("stalker-slider", function(Y) {
          * @returns {undefined}
          */
         bindUI: function() {
-            if (window.Pusher && window.PUSHER_API_KEY) {                       // Init pusher
-                Pusher.channel_auth_endpoint = 'pusher/auth';
-                var privateChannel = Y.Stalker.Pusher.getChannel();
-
-                privateChannel.bind('client-myevent', Y.bind(function(data) {   // Dream received events
-                    //$('#content').append('<img src="'+data.imgUrl+'"/>');
-                    var data = {
-                        name: PATH_TO_DREAMS + data.imgUrl,
-                        thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + data.imgUrl,
-                        photo_url: PATH_TO_DREAMS + data.imgUrl
-                    };
-
-                    if (this.dreamAlbum[0]["photo_url"].split("/")[2] === "sended") {
-                        this.dreamAlbum.splice(0, 1, data);
-                    } else {
-                        this.dreamAlbum.splice(0, 0, data);
-                    }
-
-                    this.populateAlbum(this.dreamAlbum);
-                    this.selectFirstPicture();
-                    //  this.startSlideshow();
-                }, this));
-            }
-
             Y.delegate("click", function(e) {                                   // Thumbnail clicks
                 var node = e.currentTarget.getDOMNode();
 
@@ -224,9 +201,9 @@ YUI.add("stalker-slider", function(Y) {
             //$('#play').html("Stop Slideshow");
         },
         startImploding: function() {
-//            implode = true;
-//            startExplodingTime = Date.now();
-//            home = false;
+            Y.log("Slider.startImploding");
+            //implode = true;
+            //startExplodingTime = Date.now();
 
             home = false;
             positionShader.uniforms.tPositions2.texture = positionShader.uniforms.tPositions.texture;
@@ -273,7 +250,6 @@ YUI.add("stalker-slider", function(Y) {
          */
         loadPicture: function(url, cb) {
             //Y.log("loadPicture()");
-            //console.timeStamp("mm");
             this.loadTexture(url, new THREE.UVMapping(), Y.bind(function(texture) {
                 //Y.log("loadPicture.onLoadTexture");
                 this.showPicture(texture);
@@ -286,13 +262,15 @@ YUI.add("stalker-slider", function(Y) {
          * @param {THREE.Texture} texture
          */
         showPicture: function(texture) {
-            planeTest.scale.x = texture.image.width / texture.image.height;
-            planeTest.material.map = texture;
-            planeTest.visible = !true;
-            positionShader.uniforms['photoTexture'].texture = texture;
-            positionShader.uniforms['photoDimensions'].value = new THREE.Vector2(texture.image.width, texture.image.height);
-            particles.material.uniforms.photoDimensions.value = positionShader.uniforms['photoDimensions'].value;
-            particles.material.uniforms['next_color_texture'].texture = texture;
+            //planeTest.scale.x = texture.image.width / texture.image.height;
+            //planeTest.material.map = texture;
+            //planeTest.visible = !true;
+            positionShader.uniforms.photoTexture.texture = texture;
+            positionShader.uniforms.photoDimensions.value = new THREE.Vector2(texture.image.width, texture.image.height);
+            particles.material.uniforms.photoDimensions.value = positionShader.uniforms.photoDimensions.value;
+
+//                    renderer.deallocateTexture(particles.material.uniforms.next_color_texture.texture);
+            particles.material.uniforms.next_color_texture.texture = texture;
             startExplodingTime = Date.now();
             if (!home) {
                 this.toggleHome();
@@ -319,7 +297,7 @@ YUI.add("stalker-slider", function(Y) {
             if (this.doReload) {
                 if (this.loadPictureDelay === 0) {
                     this.loadPicture(Y.Stalker.canvas.canvasNode.toDataURL("image/png"));// Show its image in the slider
-                    this.loadPictureDelay = 3;
+                    this.loadPictureDelay = 2;
                     this.doReload = false;
                 }
                 this.loadPictureDelay -= 1;
@@ -550,7 +528,7 @@ YUI.add("stalker-slider", function(Y) {
             this.camera = camera;
             scene.add(camera);
             shadowCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 100000);
-            shadowCamera.position.z = 500 + 500;
+            shadowCamera.position.z = 1000;
             scene.add(shadowCamera);
             var blank = THREE.ImageUtils.generateDataTexture(1, 1, new THREE.Color());
             planeTest = new THREE.Mesh(new THREE.PlaneGeometry(1000, 1000, 2, 2), new THREE.MeshBasicMaterial({
@@ -560,7 +538,7 @@ YUI.add("stalker-slider", function(Y) {
             planeTest.rotation.x = Math.PI / 2;
             planeTest.position.z = -500;
             planeTest.visible = false;
-            scene.add(planeTest);
+//            scene.add(planeTest); // Removed for optim
             directionalLight = new THREE.SpotLight(0xffffff);
             directionalLight.position = camera.position;
             renderer = new THREE.WebGLRenderer();
@@ -959,16 +937,17 @@ YUI.add("stalker-slider", function(Y) {
                 value: "Secret room",
                 setter: function(val) {
                     var url = PHONEDRAWPATH + "?event=" + escape(val);
+                    console.log("Rendering qr for link :", url);
                     this.get("contentBox").one(".qr").setHTML(
-//                            '<span>AND WHAT IS <br />YOUR WISH dream? </span>'
+                            //  '<span>AND WHAT IS <br />YOUR WISH dream? </span>'
                             '<img src="frontend/img/UI_wall_invite_150.png" style="padding: 10px 17px 0 0;"/><br />'
                             + '<div class="qr-mask"></div>'
                             + '<img src="'
-//                            + "http://chart.apis.google.com/chart?cht=qr&chs=130x130&chld=Q&choe=UTF-8&chl="
+                            //  + "http://chart.apis.google.com/chart?cht=qr&chs=130x130&chld=Q&choe=UTF-8&chl="
                             + "http://qrickit.com/api/qr?fgdcolor=ffffff&bgdcolor=000000&qrsize=180&t=p&e=m&d="
                             + encodeURIComponent(url) + '" />'
                             //+ '<br />scan this QR or go to <br /><a target="_blank" href="' + url + '">' + url + "</a>");
-//                            + '<br />Scan this or go to<br /><a href="' + url + '">' + url + "</a> with your mobile to tell us your dream"
+                            //  + '<br />Scan this or go to<br /><a href="' + url + '">' + url + "</a> with your mobile to tell us your dream"
                             );
 
                     return val;
@@ -1206,7 +1185,7 @@ YUI.add("stalker-slider", function(Y) {
             alert("No OES_texture_float support for float textures!");
             return;
         }
-        if (gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) == 0) {
+        if (gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) === 0) {
             alert("No support for vertex shader textures!");
             return;
         }

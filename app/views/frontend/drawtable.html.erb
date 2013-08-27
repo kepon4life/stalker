@@ -98,7 +98,7 @@
                     }
                 });
                 screenSaver.on("drawingEnd", function () {                      // When the drawing is complete
-                     Y.log("drawingEnd");
+                     Y.log("ScreenSaver.drawingEnd");
                      Y.later(100, slider, slider.startImploding);               // explode it
                      resetIdleTimer();
                 });
@@ -107,11 +107,11 @@
                 var inviteState = 0,                                            // Change the draw invite every so much seconds
                     textState = 0,
                     INVITETEXTS = [
-                        "Dessinez votre desir",                                 //é
+                        "Dessinez votre desir",                                 // é removed cause of font
                         //"Нарисуйте своё желание",
                         "Disegna il tuo desiderio",
                         "Draw your wish",
-                        "Zeichnen Sie Ihre Wunsche",                            //ü
+                        "Zeichnen Sie Ihre Wunsche",                            // ü removed
                         //"Σχεδιάστε την επιθυμία σας",
                         //"あなたの夢を描いてください。",
                         "Desenati dorinta voastra",
@@ -140,7 +140,7 @@
                     slider.render();
 
                     //slider.loadAlbumFromService(window.location.origin + "/services/dreamssecretroom");// Load album
-                    slider.loadPicture(canvas.canvasNode.toDataURL("image/png"));
+                    //slider.loadPicture(canvas.canvasNode.toDataURL("image/png"));
 
                     canvas.on("cursorUpdate", function() {
                         //Y.log("resetIdleTimer");

@@ -28,19 +28,6 @@ YUI.add("stalker-canvas", function(Y) {
             nw = Y.DOM.winWidth() - 5;
             nh = Y.DOM.winHeight() - 5;
 
-            //Pusher
-            //Pusher.channel_auth_endpoint = 'pusher/auth';
-            if (window.Pusher) {                                                // Init pusher
-                Pusher.channel_auth_endpoint = 'pusher/auth';
-                //var pusher = new Pusher(PUSHER_API_KEY);
-                var pusher = new Pusher(PUSHER_API_KEY);
-                this.privateChannel = pusher.subscribe(PUSHER_CHANEL);
-
-                this.privateChannel.bind('pusher:subscription_error', function(status) {
-                    console.log("error " + status);
-                });
-            }
-
             //Canvas
             // Bind canvas to listeners
             // Le canvas prend la taille de l'écran
@@ -59,7 +46,6 @@ YUI.add("stalker-canvas", function(Y) {
         bindUI: function() {
             tuio.start();                                                       // Initialize Tuio
 
-            //privateChannel.bind('pusher:subscription_succeeded', function() {
             tuio.cursor_add(function(e) {
                 var x = e.x * nw,
                         y = e.y * nh,
@@ -132,7 +118,7 @@ YUI.add("stalker-canvas", function(Y) {
                 on: {
                     success: function(tId, e) {
                         this.clear();
-                        this.privateChannel.trigger('client-myevent', Y.JSON.parse(e.response));
+                        Y.Stalker.Pusher.getChannel().trigger('client-myevent', Y.JSON.parse(e.response));
                     }
                 }
             });
