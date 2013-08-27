@@ -1,6 +1,11 @@
 require "base64"
 require "fileutils"
 require 'mini_magick'
+require 'pusher'
+
+Pusher.app_id = PUSHER_API_APP_ID
+Pusher.key = PUSHER_API_KEY
+Pusher.secret = PUSHER_API_SECRET
 
 class FrontendController < ApplicationController  
 
@@ -59,6 +64,7 @@ class FrontendController < ApplicationController
 					image = MiniMagick::Image.read(imgNormal)
 					image.resize "256x160"
 					image.write  "public" + PATH_TO_DREAMS_THUMBNAILS + @dream.id.to_s + DREAM_EXTENSION
+					Pusher[PUSHER_CHANEL_DREAM_CREATED].trigger(PUSHER_EVENT_DREAM_CREATED, {:imgUrl => @dream.id.to_s + DREAM_EXTENSION})
 					render :json => {:imgUrl => @dream.id.to_s + DREAM_EXTENSION, :token => @dream.token, :dream_id => @dream.id.to_s}
 				else
 					render :json => {:imgUrl => "PAS OK"}

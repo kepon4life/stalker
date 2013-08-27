@@ -87,9 +87,10 @@ YUI.add("stalker-slider", function(Y) {
         bindUI: function() {
             if (window.Pusher && window.PUSHER_API_KEY) {                       // Init pusher
                 Pusher.channel_auth_endpoint = 'pusher/auth';
-                var privateChannel = Y.Stalker.Pusher.getChannel();
+                var pusher = new Pusher(PUSHER_API_KEY);
+                var privateChannel = Y.Stalker.Pusher.getChanelDreamValidated();
 
-                privateChannel.bind('client-myevent', Y.bind(function(data) {   // Dream received events
+                privateChannel.bind(PUSHER_EVENT_DREAM_VALIDATED, Y.bind(function(data) {   // Dream received events
                     //$('#content').append('<img src="'+data.imgUrl+'"/>');
                     var data = {
                         name: PATH_TO_DREAMS + data.imgUrl,
@@ -97,11 +98,7 @@ YUI.add("stalker-slider", function(Y) {
                         photo_url: PATH_TO_DREAMS + data.imgUrl
                     };
 
-                    if (this.dreamAlbum[0]["photo_url"].split("/")[2] === "sended") {
-                        this.dreamAlbum.splice(0, 1, data);
-                    } else {
-                        this.dreamAlbum.splice(0, 0, data);
-                    }
+                    this.dreamAlbum.splice(0, 0, data);
 
                     this.populateAlbum(this.dreamAlbum);
                     this.selectFirstPicture();
