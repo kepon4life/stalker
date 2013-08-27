@@ -59,15 +59,15 @@ body {
     bottom: 10px;
 }
 .literally .toolbar .send-button {
-    background: rgba(255, 255, 255, 0.4) url(../img/UI_send.png) 2px 2px no-repeat;
+    background: rgba(255, 255, 255, 0.4) url(../img/UI_mobile_send.png) 2px 2px no-repeat;
     left: 66%;
 }
 .literally .toolbar .clear-button {
-    background: rgba(255, 255, 255, 0.4)  url(../img/UI_newpage.png) 2px 2px  no-repeat;
+    background: rgba(255, 255, 255, 0.4)  url(../img/UI_mobile_newpage.png) 2px 2px  no-repeat;
     left: 50%;
 }
 .literally .toolbar .undo-button {
-    background: rgba(255, 255, 255, 0.4) url(../img/UI_undo.png) 2px 2px  no-repeat;
+    background: rgba(255, 255, 255, 0.4) url(../img/UI_mobile_undo.png) 2px 2px  no-repeat;
     left: 33%;
 }
 
