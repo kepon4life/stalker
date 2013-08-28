@@ -114,7 +114,6 @@ YUI.add("stalker-canvas", function(Y) {
             //var imgBgColor = drawColorBg();
 //            var imgBgWhite = drawWhiteBg();
 
-            this.fire("saved");
       //      window.open(drawWhiteBg());
         //    window.open(this.canvasNode.toDataURL("image/png"));
             Y.io('/frontend/save', {
@@ -134,6 +133,7 @@ YUI.add("stalker-canvas", function(Y) {
                     }
                 }
             });
+            this.fire("saved");
         },
         /*
          * Manual camera position based on tuio inputs, NOT IN USE
