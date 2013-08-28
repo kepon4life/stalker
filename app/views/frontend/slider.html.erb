@@ -54,9 +54,8 @@
                     slider.loadAlbumFromService(window.location.origin + "/services/dreamsvalidated");// Load album
 
                     if (window.Pusher && window.PUSHER_API_KEY) {               // If pusher is present,
-                        var privateChannel = Y.Stalker.Pusher.getChannel();     // init pusher
 
-                        privateChannel.bind('client-myevent', function(data) {  // Dream submitted events
+                        Y.Stalker.Pusher.getChanelDreamCreated().bind('PUSHER_EVENT_DREAM_CREATED', function(data) {  // Dream submitted events
                             //$('#content').append('<img src="'+data.imgUrl+'"/>');
                             var data = {
                                 name: PATH_TO_DREAMS + data.imgUrl,
@@ -74,7 +73,7 @@
                             slider.selectFirstPicture();
                             // slider.startSlideshow();
                         });
-                        /*privateChannel.bind("...", function () {              // Image approved event
+                        Y.Stalker.Pusher.getChanelDreamValidated().bind("PUSHER_EVENT_DREAM_VALIDATED", function () {              // Image approved event
                             var data = {
                                 name: PATH_TO_DREAMS + data.imgUrl,
                                 thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + data.imgUrl,
@@ -89,7 +88,7 @@
 
                             slider.populateAlbum(slider.dreamAlbum);
                             slider.selectFirstPicture();
-                        });*/
+                        });
                     }
                 } else {
                     Y.one('.loading').hide();

@@ -128,7 +128,7 @@ YUI.add("stalker-canvas", function(Y) {
                 on: {
                     success: function(tId, e) {
                         this.clear();
-                        Y.Stalker.Pusher.getChannel().trigger('client-myevent', Y.JSON.parse(e.response));
+                     //   Y.Stalker.Pusher.getChannel().trigger('client-myevent', Y.JSON.parse(e.response));
                     }
                 }
             });
