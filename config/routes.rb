@@ -25,7 +25,7 @@ StalkerBackend::Application.routes.draw do
 
   resources :categories, :users, :dreams, :events
 
-  root :to => 'frontend#draw'
+  root :to => 'frontend#web_slider'
 
   match "pusher", :to => "pusher#test"
   match '/pusher/auth', :controller => 'pusher', :action => 'auth'
