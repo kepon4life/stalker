@@ -115,8 +115,8 @@ YUI.add("stalker-canvas", function(Y) {
 //            var imgBgWhite = drawWhiteBg();
 
             this.fire("saved");
-            window.open(drawWhiteBg());
-            window.open(this.canvasNode.toDataURL("image/png"));
+      //      window.open(drawWhiteBg());
+        //    window.open(this.canvasNode.toDataURL("image/png"));
             Y.io('/frontend/save', {
                 method: "POST",
                 context: this,
@@ -256,6 +256,7 @@ YUI.add("stalker-canvas", function(Y) {
             this.fire("reset");
         },
         clear: function() {
+            Y.log("Canvas.clear()");
             clear();
         },
         undo: function() {
