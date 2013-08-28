@@ -75,7 +75,10 @@ $(document).ready(function () {
 
 
 
-	
+	$(document).on("dblclick", ".not_a_link", function(){
+    	window.open(this.id, 'nom_interne_de_la_fenetre', config='height=700, width=700, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no');
+	});
+
 
 	//lorsque l'on clique sur une image, son état change
 	$(document).on("click", "div.dream", function(){
@@ -107,10 +110,7 @@ $(document).ready(function () {
 		}
 		
 
-/*
-		
 
-*/
 	});
 
 
@@ -125,9 +125,9 @@ $(document).ready(function () {
 
 //Recept pusher notifications
 var pusher = new Pusher(PUSHER_API_KEY);
-var channel = pusher.subscribe(PUSHER_CHANEL);
+var channel = pusher.subscribe(PUSHER_CHANEL_DREAM_CREATED);
 //Pusher.channel_auth_endpoint = '/pusher/auth';
-channel.bind(PUSHER_EVENT, function(data) {
+channel.bind(PUSHER_EVENT_DREAM_CREATED, function(data) {
 	informUserNewImgForReloadingPage();
 });
 
