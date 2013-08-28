@@ -52,6 +52,45 @@
                         });
                     slider.render();                                            // Render slider
                     slider.loadAlbumFromService(window.location.origin + "/services/dreamsvalidated");// Load album
+
+                    if (window.Pusher && window.PUSHER_API_KEY) {               // If pusher is present,
+                        var privateChannel = Y.Stalker.Pusher.getChannel();     // init pusher
+
+                        privateChannel.bind('client-myevent', function(data) {  // Dream submitted events
+                            //$('#content').append('<img src="'+data.imgUrl+'"/>');
+                            var data = {
+                                name: PATH_TO_DREAMS + data.imgUrl,
+                                thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + data.imgUrl,
+                                photo_url: PATH_TO_DREAMS + data.imgUrl
+                            };
+
+                            if (slider.dreamAlbum[0]["photo_url"].split("/")[2] === "sended") {
+                                slider.dreamAlbum.splice(0, 1, data);
+                            } else {
+                                slider.dreamAlbum.splice(0, 0, data);
+                            }
+
+                            slider.populateAlbum(slider.dreamAlbum);
+                            slider.selectFirstPicture();
+                            // slider.startSlideshow();
+                        });
+                        /*privateChannel.bind("...", function () {              // Image approved event
+                            var data = {
+                                name: PATH_TO_DREAMS + data.imgUrl,
+                                thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + data.imgUrl,
+                                photo_url: PATH_TO_DREAMS + data.imgUrl
+                            };
+
+                            if (slider.dreamAlbum[0]["photo_url"].split("/")[2] === "sended") {
+                                slider.dreamAlbum.splice(0, 1, data);
+                            } else {
+                                slider.dreamAlbum.splice(0, 0, data);
+                            }
+
+                            slider.populateAlbum(slider.dreamAlbum);
+                            slider.selectFirstPicture();
+                        });*/
+                    }
                 } else {
                     Y.one('.loading').hide();
                     Y.one('.fail').show();

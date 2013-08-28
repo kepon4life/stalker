@@ -11,6 +11,9 @@ YUI.add("stalker-pusher", function(Y) {
 
         getChanelDreamCreated: function() {
             if (!pusher) {
+                Pusher.channel_auth_endpoint = 'pusher/auth';
+                Pusher.log = Y.log;
+
                 pusher = new Pusher(PUSHER_API_KEY);
                 privateChannel = pusher.subscribe(PUSHER_CHANEL_DREAM_CREATED);
             }
