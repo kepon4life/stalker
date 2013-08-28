@@ -16,7 +16,7 @@ YUI.add("stalker-pusher", function(Y) {
             return pusher;
         },
         getChanelDreamCreated: function() {
-            if (privateChannel) {
+            if (!privateChannel) {
                 privateChannel = Y.Stalker.Pusher.getPusher().subscribe(PUSHER_CHANEL_DREAM_CREATED);
             }
             return privateChannel;

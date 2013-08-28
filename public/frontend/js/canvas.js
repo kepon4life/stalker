@@ -112,10 +112,10 @@ YUI.add("stalker-canvas", function(Y) {
         sendTosave: function() {
 
             //var imgBgColor = drawColorBg();
-            var imgBgWhite = drawWhiteBg();
+//            var imgBgWhite = drawWhiteBg();
 
-            this.fire("saved");
-
+      //      window.open(drawWhiteBg());
+        //    window.open(this.canvasNode.toDataURL("image/png"));
             Y.io('/frontend/save', {
                 method: "POST",
                 context: this,
@@ -123,7 +123,8 @@ YUI.add("stalker-canvas", function(Y) {
                     metadatas: Y.JSON.stringify({
                         event: Y.Stalker.slider.get("event")
                     }),
-                    imgNormal: imgBgWhite
+                    //imgNormal: imgBgWhite
+                    imgNormal: this.canvasNode.toDataURL("image/png")
                 },
                 on: {
                     success: function(tId, e) {
@@ -132,6 +133,7 @@ YUI.add("stalker-canvas", function(Y) {
                     }
                 }
             });
+            this.fire("saved");
         },
         /*
          * Manual camera position based on tuio inputs, NOT IN USE
@@ -254,6 +256,7 @@ YUI.add("stalker-canvas", function(Y) {
             this.fire("reset");
         },
         clear: function() {
+            Y.log("Canvas.clear()");
             clear();
         },
         undo: function() {
