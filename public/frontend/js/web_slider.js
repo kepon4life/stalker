@@ -12,7 +12,7 @@ YUI.add("stalker-webslider", function(Y) {
     Y.namespace("Stalker").WebSlider = Y.Base.create("stalker-slider", Y.Stalker.Slider, [], {
         CONTENT_TEMPLATE: '<div>'
                 + '<div id="detailsandshare"><div id="shares"><span id="sharefb"></span><a href="#myModal" role="button" data-toggle="modal"><span id="sharewall"></span></a></div><span class="details"></span></div>'
-                + '<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-header"><img src="frontend/img/projo_big.png" /> Projeter sur la paroi</div><div class="modal-body"><p>Choisir le type de paroi:</p><div id="walls_btn"><div class="wall_btn"><img src="frontend/img/cafet.png" /> La cafétéria de la HEIG-VD</div><div class="wall_btn"><img src="frontend/img/maison_ailleurs.png" /> La maison d\'ailleurs</div><div class="wall_btn"><img src="frontend/img/autre.png" /> Autre</div></div></div><div class="modal-footer"><span id="modal_back_btn"></span><span id="modal_ok_btn"></span></div></div>'
+                + '<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-header"><img src="frontend/img/projo_big.png" />Projeter sur la paroi</div><div class="modal-body"><p>Choisir le type de paroi:</p><div id="walls_btn"><div class="wall_btn"><img src="frontend/img/cafet.png" /><p>La cafétéria de la HEIG-VD</p></div><div class="wall_btn"><img src="frontend/img/maison_ailleurs.png" /><p>La maison d\'ailleurs</p></div><div class="wall_btn"><img src="frontend/img/autre.png" /> Autre</div></div></div><div class="modal-footer"><span id="modal_back_btn"></span><span id="modal_ok_btn"></span></div></div>'
                 + '<div class="qr"></div>'
                 + '<div id="sink">'
                 + '<div id="nav-bar">'
@@ -39,6 +39,9 @@ YUI.add("stalker-webslider", function(Y) {
                 $('#simpleImgSlider').css("display", "none");
                 $('#stats').css("display", "none");
                 $("#sink").toggle();
+                $("#walls_btn").on("click",".wall_btn",function(e){
+                    $(this).toggleClass('selected', !$(this).hasClass('selected') );
+                })
             });
             Y.Stalker.WebSlider.superclass.renderUI.call(this);
         },
@@ -520,6 +523,17 @@ YUI.add("stalker-webslider", function(Y) {
             var node = e.currentTarget;
             showLegend(node.info)
         })
+        
+
+        
+        $("#walls_btn").on("click",".wall_btn",function(e){
+            $(this).toggleClass('selected', !$(this).hasClass('selected') );
+        })
+        
+
+        
+
+
 
         function prettyDate(date){
             var month = ("0" + (date.getMonth() + 1)).slice(-2);
