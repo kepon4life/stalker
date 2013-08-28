@@ -29,19 +29,16 @@ YUI.add("stalker-screensaver", function(Y) {
             Y.log("ScreenSaver.run()");
 
             var nbStrokes = obj.strokes.length;
-
-            console.log(this.get("dream"))
+            console.log("Strokes "+nbStrokes)
 
             for (var j = 0; j < nbStrokes; j++){
 
-                console.log("strokes"+j)
                 var nbCurves = obj.strokes[j].curves.length;
                 console.log(nbCurves)
                 //from json setInitial position
                 this.get("contentBox").setXY([obj.strokes[j].start.x, obj.strokes[j].start.y]);
-
+                console.log("Index"+j)
                 this.currentIndex = 0;
-                this.j = j;
                 this.nbstrokes = nbStrokes;
                 this.currentAnim = [];
 
@@ -59,6 +56,10 @@ YUI.add("stalker-screensaver", function(Y) {
 
                 this._step();
 
+                if(j == (nbStrokes-1)){
+                    this.lastStroke = true;
+                }
+
             }
 
             
@@ -72,10 +73,9 @@ YUI.add("stalker-screensaver", function(Y) {
                 this.anim.run();
                 this.currentIndex += 1;                                         // Increment index
             }else {
-                if(parseInt(this.j,10) != parseInt((this.nbStrokes-1),10)){                     // No more points: animation is over
+                if(this.lastStroke){                     // No more points: animation is over
                     this.fire("drawingEnd");
                     this.hide();
-
                 }
             }
         },

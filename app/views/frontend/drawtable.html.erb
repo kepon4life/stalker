@@ -37,7 +37,7 @@
         function(Y) {
 
             Y.on("domready", function() {
-                var canvas, slider, screenSaver, dreamsToDisplay, screensaverIndex=1,first=true,
+                var canvas, slider, screenSaver, dreamsToDisplay, screensaverIndex=0,first=true,
                     IDLETIMEOUT = 1000,
                     screenSaverDisplayed = false,
                     hash = window.location.hash,idleTimer, hideUI = function () {
@@ -55,38 +55,25 @@
 
                         screenSaver.hide();
                     }, resetIdleTimer = function() {
-                        console.log("resetIdleTimer")
+
                         if(typeof dreamsToDisplay === 'undefined'){
-                        Y.io('/frontend/js/screensaver_multi.json', {
-                        on : {
-                            success : function (tx, r) {
-                                // protected against malformed JSON response
-                                try {
-                                    dreamsToDisplay = Y.JSON.parse(r.responseText);
-                                    //screenSaver.set("dream",dreamsToDisplay.dreams[0])
-                                    runScreenSaver();
-                                }
-                                catch (e) {
-                                    console.log("JSON Parse failed!");
-                                    return;
+                            Y.io('/frontend/js/screensaver_multi.json', {
+                            on : {
+                                success : function (tx, r) {
+                                    // protected against malformed JSON response
+                                    try {
+                                        dreamsToDisplay = Y.JSON.parse(r.responseText);
+                                        runScreenSaver();
+                                    }
+                                    catch (e) {
+                                        console.log("JSON Parse failed!");
+                                        return;
+                                    }
                                 }
                             }
-                        }
-                        });
-                        }else{
-                            if(screensaverIndex < dreamsToDisplay.dreams.length){
-                                console.log("if")
-                                console.log(screensaverIndex)
-                                screenSaver.set("dream",dreamsToDisplay.dreams[screensaverIndex])
+                            });
                             }else{
-                                console.log("else")
-                                console.log(screensaverIndex)
-                                screensaverIndex = 0;
-                                screenSaver.set("dream",dreamsToDisplay.dreams[screensaverIndex])
-                            }
-                            console.log("screensaverIndex++")
-                            screensaverIndex++;
-                            runScreenSaver();
+                                runScreenSaver();
                         }
                         function runScreenSaver(){
 
@@ -95,10 +82,12 @@
                         }
                         idleTimer = Y.later(IDLETIMEOUT, null, function() {
                             screenSaverDisplayed = true;
-                            if(first){
-                                screenSaver.set("dream",dreamsToDisplay.dreams[0]);
-                                screensaverIndex=0;
-                                first=false;
+                            if(screensaverIndex < dreamsToDisplay.dreams.length){
+                                screenSaver.set("dream",dreamsToDisplay.dreams[screensaverIndex])
+                                screensaverIndex++;
+                            }else{
+                                screensaverIndex = 0;
+                                screenSaver.set("dream",dreamsToDisplay.dreams[screensaverIndex])
                             }
                             slider.get("boundingBox").hide(true, function () {
                                 canvas.clear();
