@@ -162,7 +162,7 @@ YUI.add("stalker-slider", function(Y) {
                 on: {
                     success: function(tId, e) {
                         var photos = Y.JSON.parse(e.response), photo;
-                        this.status(photos.length + " photos found.");
+                        Y.log(photos.length + " photos found.");
                         photos.sort(this.comparePhotosDate);
                         for (var i = 0; i < photos.length; i++) {
                             photo = photos[i];
@@ -269,7 +269,7 @@ YUI.add("stalker-slider", function(Y) {
             positionShader.uniforms.photoDimensions.value = new THREE.Vector2(texture.image.width, texture.image.height);
             particles.material.uniforms.photoDimensions.value = positionShader.uniforms.photoDimensions.value;
 
-//                    renderer.deallocateTexture(particles.material.uniforms.next_color_texture.texture);
+            //renderer.deallocateTexture(particles.material.uniforms.next_color_texture.texture);
             particles.material.uniforms.next_color_texture.texture = texture;
             startExplodingTime = Date.now();
             if (!home) {

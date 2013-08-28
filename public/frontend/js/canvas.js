@@ -46,7 +46,7 @@ YUI.add("stalker-canvas", function(Y) {
         bindUI: function() {
             tuio.start();                                                       // Initialize Tuio
 
-            tuio.cursor_add(function(e) {
+            tuio.cursor_add(Y.bind(function(e) {
                 var x = e.x * nw,
                         y = e.y * nh,
                         simulateEvent = function(node) {
@@ -63,7 +63,17 @@ YUI.add("stalker-canvas", function(Y) {
                 } else {
                     Y.one("#draw-tool2").get("children").each(simulateEvent);
                 }
-            });
+                if (!this.get("allowEdition") && nbdoigts === 1) {              // Not in edit move -> move cam
+                    var e = {
+                        clientX: e.x * Y.DOM.winWidth(),
+                        clientY: e.y * Y.DOM.winHeight()
+                    }
+                    //Y.Stalker.slider.controls.setE(e);
+                    Y.one("#particleCanvas").simulate("mousedown", e);
+                    //moveCam(cursors);
+                    return;
+                }
+            }, this));
             //Tuio.cursor_update == déplacement du doigts sur la surface
             tuio.cursor_update(Y.bind(function(data) {
                 //Y.log("CursorUpdate()");
@@ -71,7 +81,7 @@ YUI.add("stalker-canvas", function(Y) {
                 this.onCursorUpdate(tuio.cursors);
             }, this));
 
-            tuio.cursor_remove(this.onCursorRemove);                            //Tuio.cursor_remove == plus aucun doigts sur la surface
+            tuio.cursor_remove(Y.bind(this.onCursorRemove, this));              // Tuio.cursor_remove == plus aucun doigts sur la surface
 
             /**
              * Mouse events (for dev)
@@ -123,6 +133,9 @@ YUI.add("stalker-canvas", function(Y) {
                 }
             });
         },
+        /*
+         * Manual camera position based on tuio inputs, NOT IN USE
+         */
         moveCam: function(cursors) {
 //            Y.log("onCursorUpdate");
             function mult(a, b) {
@@ -222,7 +235,10 @@ YUI.add("stalker-canvas", function(Y) {
         onCursorRemove: function(data) {
             nbdoigts -= nbdoigts;
             if (nbdoigts == 0) {
+                if (!this.get("allowEdition")) {
 
+                    Y.one("#particleCanvas").simulate("mouseup");
+                }
                 for (var i = 0; i < stockpoints.length; i++) {
                     if (stockpoints[i].length > 0) {
                         savedCurves.push(stockpoints[i]);
@@ -241,6 +257,7 @@ YUI.add("stalker-canvas", function(Y) {
             clear();
         },
         undo: function() {
+            Y.log("Canvas.undo()");
             ctx.clearRect(0, 0, canvaswidth, canvasheight);
             savedCurves.pop();
             //Redessin chacune des courbes avec la couleur (color) definie.
