@@ -210,6 +210,11 @@
 
 }
 
+#myModal .modal-footer button{
+    line-height: 0px;
+    background-color: transparent;
+}
+
 
 #detailsandshare .details{
     position: absolute;
