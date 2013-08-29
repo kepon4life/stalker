@@ -7,10 +7,10 @@ YUI.add("stalker-canvas", function(Y) {
 
     var canvas, ctx, canvaswidth, canvasheight,
             defaultcolor = '#fff',
-            color = defaultcolor, //permet de sauvegarder toutes les courbes dessinées
-            savedCurves = [], //Permet de connaître combien de doigts sont actuellement sur la surface
-            nbdoigts = 0, //Le nombre de courbes sauvrgardées et dessinées en live. Cela signifie que dans ce tableau on ne stock que les courbes
-            //que l'on est en train de dessiner, celles pour lesquelles on a encore le doigts posé sur l'écran
+            color = defaultcolor, //permet de sauvegarder toutes les courbes dessinÃ©es
+            savedCurves = [], //Permet de connaÃ®tre combien de doigts sont actuellement sur la surface
+            nbdoigts = 0, //Le nombre de courbes sauvrgardÃ©es et dessinÃ©es en live. Cela signifie que dans ce tableau on ne stock que les courbes
+            //que l'on est en train de dessiner, celles pour lesquelles on a encore le doigts posÃ© sur l'Ã©cran
             stockpoints = [],
             nw, //Screen width
             nh, // Screnn Height
@@ -30,7 +30,7 @@ YUI.add("stalker-canvas", function(Y) {
 
             //Canvas
             // Bind canvas to listeners
-            // Le canvas prend la taille de l'écran
+            // Le canvas prend la taille de l'Ã©cran
             canvas = Y.one('#mycanvas').getDOMNode();
             this.canvasNode = canvas;
             canvas.style.width = nw + 'px';
@@ -74,7 +74,7 @@ YUI.add("stalker-canvas", function(Y) {
                     return;
                 }
             }, this));
-            //Tuio.cursor_update == déplacement du doigts sur la surface
+            //Tuio.cursor_update == dÃ©placement du doigts sur la surface
             tuio.cursor_update(Y.bind(function(data) {
                 //Y.log("CursorUpdate()");
                 this.fire("cursorUpdate");
@@ -214,15 +214,15 @@ YUI.add("stalker-canvas", function(Y) {
 
             color = defaultcolor;
 
-            //Pour chaque doigts on détecte son déplacement
+            //Pour chaque doigts on dÃ©tecte son dÃ©placement
             for (var i = 0; i < cursors.length; i++) {
-                //Pour chaque nouveau doigt on crée un nouveau tableau dans lequel on va stocker la courbe que le doigt dessine
+                //Pour chaque nouveau doigt on crÃ©e un nouveau tableau dans lequel on va stocker la courbe que le doigt dessine
                 stockpoints[i] = stockpoints[i] || [];
 
                 var px = cursors[i].x;
                 var py = cursors[i].y;
 
-                //On contrôle si on se trouve à l'intérieur ou non de la surface de dessin. (Pour interdire à l'utilisateur de dessiner ailleurs)
+                //On contrÃ´le si on se trouve Ã  l'intÃ©rieur ou non de la surface de dessin. (Pour interdire Ã  l'utilisateur de dessiner ailleurs)
                 if (px * nw < nw - controlPanelWidth) {
                     stockpoints[i].push({
                         x: px * nw,
@@ -343,9 +343,9 @@ YUI.add("stalker-canvas", function(Y) {
 
     var compositeOperation;
 
-    //Permet d'ajouter un fond coloré à l'image envoyée au server
+    //Permet d'ajouter un fond colorÃ© Ã  l'image envoyÃ©e au server
     function drawColorBg() {
-        //Background color du canvas à envoyer
+        //Background color du canvas Ã  envoyer
         var gradient1 = ctx.createLinearGradient(0, 0, canvaswidth, canvasheight);
         gradient1.addColorStop(0, '#330936');
         gradient1.addColorStop(0.25, '#7b52ab');
@@ -354,7 +354,7 @@ YUI.add("stalker-canvas", function(Y) {
         gradient1.addColorStop(1, '#ffef24');
         ctx.stroke();
 
-        //Permet de remplacer la couleur des courbes dessinées
+        //Permet de remplacer la couleur des courbes dessinÃ©es
         //Efface le contenu du canvas (context) puis redessine chaque courbe avec la nouvelle couleur
 
         //La nouvelle couleur
@@ -368,7 +368,7 @@ YUI.add("stalker-canvas", function(Y) {
             drawPoints(ctx, curvestodraw);
         }
 
-        //Permet de modifier le backgroudColor du canvas qui est transparant par défaut
+        //Permet de modifier le backgroudColor du canvas qui est transparant par dÃ©faut
         //store the current globalCompositeOperation
         compositeOperation = ctx.globalCompositeOperation;
         //set to draw behind current content
@@ -376,16 +376,16 @@ YUI.add("stalker-canvas", function(Y) {
         //set background color
         ctx.fillStyle = gradient1;
 
-        /*var imagebg = document.createElement('img'); // Si on utilise pas un dégradé mais une background image
+        /*var imagebg = document.createElement('img'); // Si on utilise pas un dÃ©gradÃ© mais une background image
          imagebg.src = "todraw.png"*/
-        //ctx.drawImage(imagebg,0,0,canvaswidth,canvasheight); // Si on utilise pas une dégradé mais une image en background
+        //ctx.drawImage(imagebg,0,0,canvaswidth,canvasheight); // Si on utilise pas une dÃ©gradÃ© mais une image en background
 
         //draw background
         ctx.fillRect(0, 0, canvaswidth, canvasheight);
 
-        //Le canvas de base ne comprend pas seulement la surface de dessin, mais aussi la partie de contrôle (effacer/enregistrer)
-        //On doit créer un canvas temporaire de la taille exacte de la surface de dessin pour y "copier" la surface de dessin.
-        //On fait cela pour pouvoir utiliser la méthode .toDataUrl() qui permet d'enregister le contenu de la balise canvas pour l'envoyer ensuite au backend et au slider.
+        //Le canvas de base ne comprend pas seulement la surface de dessin, mais aussi la partie de contrÃ´le (effacer/enregistrer)
+        //On doit crÃ©er un canvas temporaire de la taille exacte de la surface de dessin pour y "copier" la surface de dessin.
+        //On fait cela pour pouvoir utiliser la mÃ©thode .toDataUrl() qui permet d'enregister le contenu de la balise canvas pour l'envoyer ensuite au backend et au slider.
         var imgData = ctx.getImageData(0, 0, nw - controlPanelWidth, nh);
         var pngCanvas = document.createElement('canvas');
         pngCanvas.width = nw - controlPanelWidth;
@@ -399,7 +399,7 @@ YUI.add("stalker-canvas", function(Y) {
         return imgBgColor;
     }
 
-    //Permet d'ajouter un fond blanc à l'image envoyée au server
+    //Permet d'ajouter un fond blanc Ã  l'image envoyÃ©e au server
     function drawWhiteBg() {
         color = "#fff";
         ctx.clearRect(0, 0, canvaswidth, canvasheight);
@@ -471,4 +471,3 @@ YUI.add("stalker-canvas", function(Y) {
 //        ctx.closePath();
 //    }
 });
-

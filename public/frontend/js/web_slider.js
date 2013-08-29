@@ -59,49 +59,27 @@ YUI.add("stalker-webslider", function(Y) {
                     }
                 });
             });
+            previewStripHeightAdjust()
             Y.Stalker.WebSlider.superclass.renderUI.call(this);
         },
         populateAlbum: function(pictures) {
             populateAlbum(pictures);
         },
-        loadAlbumByDate: function(dates) {
-            if (this.dreamAlbum != null || "undefined") {                       // Super faux, va toujourers retourner true, est évalué tel que (a || true)
-                
-                var startDate,endDate;
-
-                if(dates[0]<dates[1]){
-                    startDate = dates[0];
-                    endDate = dates[1];
-                }else{
-                    startDate = dates[1];
-                    endDate = dates[0];
-                }
-                
-                var photos = this.dreamAlbum;
-                photos.sort(Y.Stalker.WebSlider.superclass.comparePhotosDate)
-                dreamAlbum = [];
-                for (var i = 0; i < photos.length; i++) {
-                    var a = photos[i];
-                    var datePhoto = new Date(a.created_at);
-                    var datePhoto = datePhoto.getTime(), photo;
-
-                    photo = photos[i]["id"];
-
-                    if (datePhoto > startDate && datePhoto < endDate) {
-                        dreamAlbum.push({
-                            name: photo,
-                            thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + photo + DREAM_EXTENSION
-                        });
-                    }
-                }
-                populateAlbum(dreamAlbum);
-                this.selectFirstPicture();
-                this.startSlideshow();
-            }
-        },
         selectPicture: function(index) {
             Y.Stalker.WebSlider.superclass.selectPicture.call(this,index);
             dreamselected(index);
+        },
+        showLegend: function(pictureCfg) {
+            var metas,
+                    detailsNode = $("#detailsandshare .details"),
+                    date = new Date(Date.parse(pictureCfg.created_at));
+                    detailsNode.text(prettyDate(date));
+            try {
+                metas = Y.JSON.parse(pictureCfg.metadatas);
+                detailsNode.append("<br />" + metas.event);
+            } catch (e) {
+                // GOTCHA
+            }
         },
     }, {
         ATTRS: {}
@@ -268,31 +246,7 @@ YUI.add("stalker-webslider", function(Y) {
             dreamselected($(this).index());
         })
     }
-    function prettyDate(date){
-        var month = ("0" + (date.getMonth() + 1)).slice(-2);
-        var day = ("0" + date.getDate()).slice(-2)
-        return (date.getHours() + ":" + date.getMinutes()
-        + " " + day + "/" + month + "/" + date.getFullYear());
-    }
 
-    function addPrettyDateToScroll(date){
-        date = date.split(" ")
-        date = date[1].split("/")
-        date = (date[0]+"/"+date[1]+"/"+date[2])
-        $("#dateThumbnail .handle-tooltip-inner").html(date)
-    }
-
-    function comparePhotosDate(a,b) {
-        var da = new Date(a.created_at);
-        var db = new Date(b.created_at);
-        da = da.getTime();
-        db = db.getTime();
-        if (da < db)
-            return 1;
-        if (da > db)
-            return -1;
-        return 0;
-    }
 });
 (function($) {
     $.fn.slider_web = function() {
@@ -314,9 +268,11 @@ YUI.add("stalker-webslider", function(Y) {
         function init() {
 
             $('body').append('<div id="sink"><div id="nav-bar"><div id="status"></div></div><div id="preview-image"></div><div id="preview-strip"></div><div id="preview-strip-nowebgl"></div></div>')
-            $('body').append('<div id="detailsandshare"><span class="details"></span></div><div id="simpleImgSlider"></div>')
-            
+            $('body').append('<div id="detailsandshare"><div id="shares"><span id="sharefb"></span><a href="#myModal" role="button" data-toggle="modal"><span id="sharewall"></span></a></div><span class="details"></span></div>')
+            $('body').append('<div id="simpleImgSlider"></div>')
             $('#sink').show();
+
+            previewStripHeightAdjust();
         }
 
         function loadAlbum(callback) {
@@ -335,33 +291,8 @@ YUI.add("stalker-webslider", function(Y) {
             })
         }
 
-        function loadAlbumByDate(dates, callback) {
-            clearTimeout(customStartTimeout)
-            clearTimeout(timeout);
-            clearTimeout(timeoutFirstImg);
-            dreamsAlbum = [];
-            $.getJSON(DREAMS_SERVICE_URL, function(data) {
-                $.each(data, function(key, val) {
-                    var photo = val.id;
-
-                    var datePhoto = new Date(val.created_at);
-                    var datePhoto = datePhoto.getTime();
-                    if (datePhoto > dates[0] && datePhoto < dates[1]) {
-                        dreamsAlbum.push({
-                            name: photo,
-                            thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + photo + DREAM_EXTENSION,
-                            created_at: val.created_at
-                        });
-                    }
-                })
-                dreamsAlbum.sort(comparePhotosDate)
-                populateAlbum(dreamsAlbum);
-                callback();
-            })
-
-        }
-
         function startImgSlider() {
+            console.log("startImgSlider")
             $("#simpleImgSlider img").remove();
             var li = $(".dreamslist li").get(0)
             addPrettyDateToScroll(li.title)
@@ -369,10 +300,13 @@ YUI.add("stalker-webslider", function(Y) {
 
             showLegend(li.info)
             var nameImg = ($(".dreamslist img").get(0).id);
+            console.log(nameImg)
             var img = new Image();
             img.src = PATH_TO_DREAMS + nameImg + DREAM_EXTENSION;
             img.id = 0;
+            console.log("img.src "+img.src)
             img.onload = function() {
+                console.log("loaded")
                 $("#simpleImgSlider").append(img)
             }
             timeoutFirstImg = setTimeout(function() {
@@ -402,7 +336,7 @@ YUI.add("stalker-webslider", function(Y) {
 
         function loadingNextImg(indexCurrentImg) {
             if (indexCurrentImg < dreamsAlbum.length - 1) {
-                iindexCurrentImg = parseInt(indexCurrentImg);
+                indexCurrentImg = parseInt(indexCurrentImg);
                 var indexNextImg = indexCurrentImg + 1;
                 var nameImg = ($(".dreamslist img").get(indexNextImg).id);
                 var src = PATH_TO_DREAMS + nameImg + DREAM_EXTENSION;
@@ -444,10 +378,6 @@ YUI.add("stalker-webslider", function(Y) {
             $('#preview-strip-nowebgl').find('.dreamslist').remove();
             ul = $('<ul class="dreamslist"/>');
             $('#preview-strip-nowebgl').append(ul);
-            /*$('#preview-strip-nowebgl').append(ul);
-            for (var i = 0; i < album.length; i++) {
-                createThumbnail(album, i);
-            }*/
 
             nbThumbnailToLoad = 25; // number of thumbnail loaded at the beginning
             indexThumbnail = 0; // useful to know which thumbnail (index) was the last thumnail loaded
@@ -523,18 +453,6 @@ YUI.add("stalker-webslider", function(Y) {
 
         }
 
-        function comparePhotosDate(a,b) {
-            var da = new Date(a.created_at);
-            var db = new Date(b.created_at);
-            da = da.getTime();
-            db = db.getTime();
-            if (da < db)
-                return 1;
-            if (da > db)
-              return -1;
-            return 0;
-        }
-
         $("#preview-strip-nowebgl").on("click","li",function(e){
             var node = e.currentTarget;
             showLegend(node.info)
@@ -551,24 +469,11 @@ YUI.add("stalker-webslider", function(Y) {
 
 
 
-        function prettyDate(date){
-            var month = ("0" + (date.getMonth() + 1)).slice(-2);
-            var day = ("0" + date.getDate()).slice(-2)
-            return (date.getHours() + ":" + date.getMinutes()
-            + " " + day + "/" + month + "/" + date.getFullYear());
-        }
-
-        function addPrettyDateToScroll(date){
-            date = date.split(" ")
-            date = date[1].split("/")
-            date = (date[0]+"/"+date[1]+"/"+date[2])
-            $("#dateThumbnail .handle-tooltip-inner").html(date)
-        }
         function showLegend (pictureCfg) {
             var metas,
-                    detailsNode = $("#detailsandshare"),
-                    date = new Date(Date.parse(pictureCfg.created_at));
-                    detailsNode.text(prettyDate(date));
+                detailsNode = $("#detailsandshare .details"),
+                date = new Date(Date.parse(pictureCfg.created_at));
+                detailsNode.text(prettyDate(date));
             try {
                 metas = Y.JSON.parse(pictureCfg.metadatas);
                 detailsNode.append("<br />" + metas.event);
@@ -587,4 +492,38 @@ YUI.add("stalker-webslider", function(Y) {
 
 }(jQuery));
 
+function previewStripHeightAdjust(){
+        var winH = $(window).height()-40;
+        $('#preview-strip').height(winH)
+        $('#preview-strip-nowebgl').height(winH)
+    }
 
+$(window).resize(function(){
+    previewStripHeightAdjust();
+}) 
+
+function prettyDate(date){
+    var month = ("0" + (date.getMonth() + 1)).slice(-2);
+    var day = ("0" + date.getDate()).slice(-2)
+    return (date.getHours() + ":" + date.getMinutes()
+    + " "+day+"/"+ month+"/"+ date.getFullYear());
+}
+
+function addPrettyDateToScroll(date){
+    date = date.split(" ")
+    date = date[1].split("/")
+    date = (date[0]+"/"+date[1]+"/"+date[2])
+    $("#dateThumbnail .handle-tooltip-inner").html(date)
+}
+
+function comparePhotosDate(a,b) {
+    var da = new Date(a.created_at);
+    var db = new Date(b.created_at);
+    da = da.getTime();
+    db = db.getTime();
+    if (da < db)
+        return 1;
+    if (da > db)
+        return -1;
+    return 0;
+}
