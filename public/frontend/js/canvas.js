@@ -42,6 +42,8 @@ YUI.add("stalker-canvas", function(Y) {
 
             ctx = canvas.getContext('2d');
             color = defaultcolor;
+
+            this.clear();
         },
         bindUI: function() {
             tuio.start();                                                       // Initialize Tuio
@@ -112,10 +114,9 @@ YUI.add("stalker-canvas", function(Y) {
         sendTosave: function() {
 
             //var imgBgColor = drawColorBg();
-           var imgBgWhite = drawWhiteBg();
+            //var imgBgWhite = drawWhiteBg();
 
-      //      window.open(drawWhiteBg());
-        //    window.open(this.canvasNode.toDataURL("image/png"));
+            //window.open(this.canvasNode.toDataURL("image/png"));
             Y.io('/frontend/save', {
                 method: "POST",
                 context: this,
@@ -129,7 +130,6 @@ YUI.add("stalker-canvas", function(Y) {
                 on: {
                     success: function(tId, e) {
                         this.clear();
-                     //   Y.Stalker.Pusher.getChannel().trigger('client-myevent', Y.JSON.parse(e.response));
                     }
                 }
             });
@@ -252,16 +252,27 @@ YUI.add("stalker-canvas", function(Y) {
         },
         reset: function() {
             Y.log("Canvas.reset()");
+
+            savedCurves = [];
+            stockpoints = [];
             this.clear();
             this.fire("reset");
         },
         clear: function() {
             Y.log("Canvas.clear()");
-            clear();
+
+            ctx.clearRect(0, 0, canvaswidth, canvasheight);
+
+            //compositeOperation = ctx.globalCompositeOperation;
+            //ctx.globalCompositeOperation = "destination-over";
+            ctx.fillStyle = "000";
+            ctx.fillRect(0, 0, canvaswidth, canvasheight);
+
+            color = defaultcolor;
         },
         undo: function() {
             Y.log("Canvas.undo()");
-            ctx.clearRect(0, 0, canvaswidth, canvasheight);
+            this.clear();
             savedCurves.pop();
             //Redessin chacune des courbes avec la couleur (color) definie.
             for (var j = 0; j < savedCurves.length; j++) {
@@ -277,14 +288,6 @@ YUI.add("stalker-canvas", function(Y) {
             }
         }
     });
-
-    // clear both canvases!
-    function clear() {
-        ctx.clearRect(0, 0, canvaswidth, canvasheight);
-        savedCurves = [];
-        stockpoints = [];
-        color = defaultcolor;
-    }
 
 
     function drawLastSegment(ctx, points) {
