@@ -63,6 +63,19 @@
 
                             slider.loadPicture(PATH_TO_DREAMS + data.imgUrl)
                         });
+
+
+                        Y.Stalker.Pusher.getChanelDreamRequested().bind(PUSHER_EVENT_DREAM_REQUESTED, function(data) {  // Dream 
+                            console.log(data);
+                            if(slider.get("event") == data.eventName){
+                                slider.loadPicture(PATH_TO_DREAMS + data.dreamId + DREAM_EXTENSION);
+                            }
+
+
+                        });
+
+
+
                         Y.Stalker.Pusher.getChanelDreamValidated().bind(PUSHER_EVENT_DREAM_VALIDATED, function (data) {  
                             // Image approved event
                             var data = {

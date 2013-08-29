@@ -34,6 +34,7 @@ YUI.add("stalker-webslider", function(Y) {
          */
         renderUI: function() {
             this.once("webglInitialized", function() {
+                var channel = Y.Stalker.Pusher.getChanelDreamRequested();
                 $('#preview-strip').enscroll({
                     verticalTrackClass: 'track4',
                     verticalHandleClass: 'handle4',
@@ -43,8 +44,10 @@ YUI.add("stalker-webslider", function(Y) {
                 $('#simpleImgSlider').css("display", "none");
                 $('#stats').css("display", "none");
                 $("#sink").toggle();
+                $("#shares").on("click", "#sharewall", function(e){
+                    actual_dream_id = $('#preview-strip li.dreamselected img').attr("alt");
+                });
                 $("#walls_btn").on("click",".wall_btn",function(e){
-                    actual_dream_id = $('#preview-strip ul .dreamselected img').attr("alt");
                     $('#walls_btn').find('.wall_btn').each(function() {
                         if($(this).hasClass("selected")){
                             $(this).removeClass("selected");
@@ -55,7 +58,7 @@ YUI.add("stalker-webslider", function(Y) {
                 $(".modal-footer").on("click", "#modal_ok_btn", function(e){
                     var event_selected = $(".wall_btn.selected").children().eq(1).html();
                     if(event_selected != null){
-                        Y.Stalker.Pusher.getChanelDreamRequested().trigger(PUSHER_EVENT_DREAM_REQUESTED, {"dreamId" : parseInt(actual_dream_id), "eventName" : event_selected });  
+                        channel.trigger(PUSHER_EVENT_DREAM_REQUESTED, {"dreamId" : parseInt(actual_dream_id), "eventName" : event_selected });  
                     }
                 });
             });
@@ -272,6 +275,8 @@ YUI.add("stalker-webslider", function(Y) {
             $('body').append('<div id="simpleImgSlider"></div>')
             $('#sink').show();
 
+            var channel = Y.Stalker.Pusher.getChanelDreamRequested();
+
             previewStripHeightAdjust();
         }
 
@@ -460,8 +465,11 @@ YUI.add("stalker-webslider", function(Y) {
         
 
         
+        $("#shares").on("click", "#sharewall", function(e){
+            actual_dream_id = $('#preview-strip li.dreamselected img').attr("alt");
+        });
+        
         $("#walls_btn").on("click",".wall_btn",function(e){
-            actual_dream_id = $('#preview-strip ul .dreamselected img').attr("alt");
             $('#walls_btn').find('.wall_btn').each(function() {
                 if($(this).hasClass("selected")){
                     $(this).removeClass("selected");
@@ -469,12 +477,11 @@ YUI.add("stalker-webslider", function(Y) {
             });
             $(this).addClass("selected");
         });
-
-
+        
         $(".modal-footer").on("click", "#modal_ok_btn", function(e){
             var event_selected = $(".wall_btn.selected").children().eq(1).html();
             if(event_selected != null){
-                Y.Stalker.Pusher.getChanelDreamRequested().trigger(PUSHER_EVENT_DREAM_REQUESTED, {"dreamId" : parseInt(actual_dream_id), "eventName" : event_selected });  
+                channel.trigger(PUSHER_EVENT_DREAM_REQUESTED, {"dreamId" : parseInt(actual_dream_id), "eventName" : event_selected });  
             }
         });
 
