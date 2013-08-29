@@ -51,7 +51,7 @@ YUI.add("stalker-webslider", function(Y) {
                         }
                     });
                     $(this).addClass("selected");
-                })
+                });
                 $(".modal-footer").on("click", "#modal_ok_btn", function(e){
                     var event_selected = $(".wall_btn.selected").children().eq(1).html();
                     if(event_selected != null){
@@ -461,13 +461,22 @@ YUI.add("stalker-webslider", function(Y) {
 
         
         $("#walls_btn").on("click",".wall_btn",function(e){
-            $(this).toggleClass('selected', !$(this).hasClass('selected') );
-        })
-        
+            actual_dream_id = $('#preview-strip ul .dreamselected img').attr("alt");
+            $('#walls_btn').find('.wall_btn').each(function() {
+                if($(this).hasClass("selected")){
+                    $(this).removeClass("selected");
+                }
+            });
+            $(this).addClass("selected");
+        });
 
-        
 
-
+        $(".modal-footer").on("click", "#modal_ok_btn", function(e){
+            var event_selected = $(".wall_btn.selected").children().eq(1).html();
+            if(event_selected != null){
+                Y.Stalker.Pusher.getChanelDreamRequested().trigger(PUSHER_EVENT_DREAM_REQUESTED, {"dreamId" : parseInt(actual_dream_id), "eventName" : event_selected });  
+            }
+        });
 
         function showLegend (pictureCfg) {
             var metas,
