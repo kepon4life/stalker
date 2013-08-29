@@ -44,8 +44,8 @@
         function(Y) {
 
             Y.on("domready", function() {
-                var canvas, slider, screenSaver,
-                    IDLETIMEOUT = 10000,
+                var canvas, slider, screenSaver, dreamsToDisplay, screensaverIndex=0,first=true,
+                    IDLETIMEOUT = 1000,
                     screenSaverDisplayed = false,
                     hash = window.location.hash,idleTimer, hideUI = function () {
                         Y.one("#draw-tool").hide(true);
@@ -63,11 +63,40 @@
 
                         screenSaver.hide();
                     }, resetIdleTimer = function() {
+                        //dreamstodisplay contains the pictures for the screensaver
+                        if(typeof dreamsToDisplay === 'undefined'){
+                            Y.io('/frontend/js/screensaver_multi.json', {
+                            on : {
+                                success : function (tx, r) {
+                                    // protected against malformed JSON response
+                                    try {
+                                        dreamsToDisplay = Y.JSON.parse(r.responseText);
+                                        runScreenSaver();
+                                    }
+                                    catch (e) {
+                                        console.log("JSON Parse failed!");
+                                        return;
+                                    }
+                                }
+                            }
+                            });
+                            }else{
+                                runScreenSaver();
+                        }
+                        function runScreenSaver(){
+
                         if (idleTimer) {
                             idleTimer.cancel();
                         }
                         idleTimer = Y.later(IDLETIMEOUT, null, function() {
                             screenSaverDisplayed = true;
+                            if(screensaverIndex < dreamsToDisplay.dreams.length){
+                                screenSaver.set("dream",dreamsToDisplay.dreams[screensaverIndex])
+                                screensaverIndex++;
+                            }else{
+                                screensaverIndex = 0;
+                                screenSaver.set("dream",dreamsToDisplay.dreams[screensaverIndex])
+                            }
                             slider.get("boundingBox").hide(true, function () {
                                 canvas.clear();
                                 canvas.set("allowEdition", true);
@@ -80,7 +109,8 @@
                                 screenSaver.run();
                             });
                         });
-                    };
+                    }
+                };
 
                 Y.one("#draw-tool2").hide();
                 Y.one('#welcome').hide();
@@ -108,14 +138,14 @@
                     textState = 0,
                     INVITETEXTS = [
                         "Dessinez votre desir",                                 // é removed cause of font
-                        //"Нарисуйте своё желание",
+                        //"�?ари�?уйте �?воё желание",
                         "Disegna il tuo desiderio",
                         "Draw your wish",
                         "Zeichnen Sie Ihre Wunsche",                            // ü removed
                         //"Σχεδιάστε την επιθυμία σας",
-                        //"あなたの夢を描いてください。",
+                        //"�?��?��?��?�夢を�??�?��?��??�?��?��?�。",
                         "Desenati dorinta voastra",
-                        //"소원을 그리세요"
+                        //"소�?�?� 그리세요"
                     ];
                 Y.later(5000, null, function () {
                     var nodes = Y.one(".draw-invite").get("children");
