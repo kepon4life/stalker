@@ -4,7 +4,7 @@
  */
 YUI.add("stalker-pusher", function(Y) {
 
-    var pusher, privateChannel, createdChannel;
+    var pusher, privateChannel, createdChannel, requestChannel;
 
     Y.namespace("Stalker").Pusher = Y.Base.create("stalker-pusher", Y.Base, [], {}, {
         getPusher: function() {
@@ -26,6 +26,12 @@ YUI.add("stalker-pusher", function(Y) {
                 createdChannel = Y.Stalker.Pusher.getPusher().subscribe(PUSHER_CHANEL_DREAM_VALIDATED);
             }
             return createdChannel;
+        },
+        getChanelDreamRequested: function() {
+            if (!requestChannel) {
+                requestChannel = Y.Stalker.Pusher.getPusher().subscribe(PUSHER_CHANEL_DREAM_REQUESTED);
+            }
+            return requestChannel;
         }
     });
 

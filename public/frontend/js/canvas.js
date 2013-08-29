@@ -112,7 +112,7 @@ YUI.add("stalker-canvas", function(Y) {
         sendTosave: function() {
 
             //var imgBgColor = drawColorBg();
-//            var imgBgWhite = drawWhiteBg();
+           var imgBgWhite = drawWhiteBg();
 
       //      window.open(drawWhiteBg());
         //    window.open(this.canvasNode.toDataURL("image/png"));
