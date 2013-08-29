@@ -273,7 +273,7 @@ YUI.add("stalker-webslider", function(Y) {
 
             $('body').append('<div id="sink"><div id="nav-bar"><div id="status"></div></div><div id="preview-image"></div><div id="preview-strip"></div><div id="preview-strip-nowebgl"></div></div>')
             $('body').append('<div id="detailsandshare"><div id="shares"><span id="sharefb"></span><a href="#myModal" role="button" data-toggle="modal"><span id="sharewall"></span></a></div><span class="details"></span></div>')
-            
+            $('body').append('<div id="simpleImgSlider"></div>')
             $('#sink').show();
 
             previewStripHeightAdjust();
@@ -296,6 +296,7 @@ YUI.add("stalker-webslider", function(Y) {
         }
 
         function startImgSlider() {
+            console.log("startImgSlider")
             $("#simpleImgSlider img").remove();
             var li = $(".dreamslist li").get(0)
             addPrettyDateToScroll(li.title)
@@ -303,10 +304,13 @@ YUI.add("stalker-webslider", function(Y) {
 
             showLegend(li.info)
             var nameImg = ($(".dreamslist img").get(0).id);
+            console.log(nameImg)
             var img = new Image();
             img.src = PATH_TO_DREAMS + nameImg + DREAM_EXTENSION;
             img.id = 0;
+            console.log("img.src "+img.src)
             img.onload = function() {
+                console.log("loaded")
                 $("#simpleImgSlider").append(img)
             }
             timeoutFirstImg = setTimeout(function() {
@@ -336,7 +340,7 @@ YUI.add("stalker-webslider", function(Y) {
 
         function loadingNextImg(indexCurrentImg) {
             if (indexCurrentImg < dreamsAlbum.length - 1) {
-                iindexCurrentImg = parseInt(indexCurrentImg);
+                indexCurrentImg = parseInt(indexCurrentImg);
                 var indexNextImg = indexCurrentImg + 1;
                 var nameImg = ($(".dreamslist img").get(indexNextImg).id);
                 var src = PATH_TO_DREAMS + nameImg + DREAM_EXTENSION;
@@ -470,7 +474,6 @@ YUI.add("stalker-webslider", function(Y) {
 
 
         function showLegend (pictureCfg) {
-            console.log($("#detailsandshare .details"))
             var metas,
                 detailsNode = $("#detailsandshare .details"),
                 date = new Date(Date.parse(pictureCfg.created_at));
