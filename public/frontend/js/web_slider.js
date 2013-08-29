@@ -275,7 +275,8 @@ YUI.add("stalker-webslider", function(Y) {
             $('body').append('<div id="simpleImgSlider"></div>')
             $('#sink').show();
 
-            var channel = Y.Stalker.Pusher.getChanelDreamRequested();
+            var pusher = new Pusher(PUSHER_API_KEY);
+            channel = pusher.subscribe(PUSHER_CHANEL_DREAM_REQUESTED);
 
             previewStripHeightAdjust();
         }
