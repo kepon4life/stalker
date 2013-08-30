@@ -1,6 +1,6 @@
 $(document).ready(function () {
 	//on charge les categories
-	getCategoriesCheckboxes();
+	//getCategoriesCheckboxes();
 
 	//Buble with dreams number initialization
 	$.ajax({
@@ -48,6 +48,7 @@ function addImgToTagg(imgUrl){
 	initPopover();
 }
 */
+/*
 function getCategoriesCheckboxes(){
 	$.getJSON("/services/categories", function(data) {
 		var c = "";
@@ -57,6 +58,7 @@ function getCategoriesCheckboxes(){
    		$("#content").append("<div id='cat_for_add' style='display:none;'>" + c + "<br></div>");
  	});
 }
+*/
 
 
 
