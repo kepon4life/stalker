@@ -7,36 +7,33 @@
     <table class="table table-bordered">
       <thead>
         <tr>
+          <th>Image</th>
           <th>Name</th>
-          <th>Categories</th>
-          <th>Service</th>
+          <th>Is active</th>
+          <th>Display only accepted dreams</th>
           <th></th>
           <th></th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Secret room</td>
-          <td>No categories for this event</td>
-          <td><%= link_to "Link", {:controller => "services", :action => "get_dreams_for_secret_room"} %></td>
-          <td>Can't edit this event</td>
-          <td>Can't destroy this event</td>
-        </tr>
         <% @events.each do |event| %>
           <tr>
+            <td><img src="events/<%= event.image_file_name%>" /></td>
             <td><%= event.name %></td>
             <td>
-              <% if event.categories.empty? %>
-              All categories
+              <% if event.is_active? %>
+                YES
               <% else %>
-                <ul>
-                  <%  event.categories.each do |category| %>
-                    <li><%= link_to "#{category.name}", :controller => "categories", :action => "show", :id => category %></li>
-                  <% end %>
-                </ul>
+                NO
               <% end %>
             </td>
-            <td><%= link_to "Link", {:controller => "services", :action => "get_dreams_for_event", :id => event.id} %></td>
+            <td>
+              <% if event.display_only_accepted? %>
+                YES
+              <% else %>
+                NO
+              <% end %>
+            </td>
             <td><%= link_to "Edit", {:controller => "events", :action => "edit", :id => event.id}, :class => 'btn' %></td>
             <td><%= button_to( 'Destroy', event, :confirm => 'Are you sure?', :method => :delete, :class => "btn btn-danger")%></td>
           </tr>

@@ -30,6 +30,15 @@
 
     <%= javascript_include_tag "/frontend/js/pusher.js" %>
     <%= javascript_include_tag "/frontend/js/slider.js" %>
+
+
+    <script type="text/javascript">
+        var events = new Array();
+        <% @events.each do |event| %>
+            events.push({name:"<%= event.name %>", id: <%= event.id %>, image: "<%= event.image_file_name %>"});
+        <% end %>
+    </script>
+
     <%= javascript_include_tag "/frontend/js/web_slider.js" %>
 
     <script type="text/javascript">

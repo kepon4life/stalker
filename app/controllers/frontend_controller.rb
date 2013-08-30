@@ -10,6 +10,7 @@ Pusher.secret = PUSHER_API_SECRET
 class FrontendController < ApplicationController
 
 	def slider
+		@events = Event.find(:all, :conditions => { :is_active => true })
 		respond_to do |format|
 			format.html
 		end
@@ -23,6 +24,7 @@ class FrontendController < ApplicationController
 	end
 
 	def web_slider
+		@events = Event.find(:all, :conditions => { :is_active => true })
 		respond_to do |format|
 			format.html
 		end
