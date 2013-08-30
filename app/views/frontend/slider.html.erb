@@ -24,7 +24,12 @@
     <%= javascript_include_tag "/frontend/js/libs/yui3/build/yui/yui-min.js" %>
     <%= javascript_include_tag "/frontend/js/libs/inputex/src/loader.js" %>
     <script src="http://js.pusher.com/1.12/pusher.min.js"></script>
-
+    <script type="text/javascript">
+        var events = new Array();
+        <% @events.each do |event| %>
+            events.push({name:"<%= event.name %>", id: <%= event.id %>, image: "<%= event.image_file_name %>", display_only_accepted: <%= event.display_only_accepted %>});
+        <% end %>
+    </script>
     <%= javascript_include_tag "/frontend/js/slider.js" %>
     <%= javascript_include_tag "/frontend/js/pusher.js" %>
 
@@ -57,21 +62,20 @@
                         // If pusher is present,
                         Y.Stalker.Pusher.getChanelDreamCreated().bind(PUSHER_EVENT_DREAM_CREATED, function(data) {  // Dream submitted events
 
-                            //
-                            // Condition (which slider can do that ;-) (toDo)
-                            //
-
-                            slider.loadPicture(PATH_TO_DREAMS + data.imgUrl)
+                            for(var i= 0; i < events.length; i++){
+                                if(parseInt(events[i]["id"]) == parseInt(slider.get("event"))){
+                                    if(!events[i]["display_only_accepted"]){
+                                        slider.loadPicture(PATH_TO_DREAMS + data.imgUrl)
+                                    }
+                                }
+                            }
                         });
 
 
-                        Y.Stalker.Pusher.getChanelDreamRequested().bind(PUSHER_EVENT_DREAM_REQUESTED, function(data) {  // Dream 
-                            console.log(data);
-                            if(slider.get("event") == data.eventName){
+                         Y.Stalker.Pusher.getChanelDreamRequested().bind(PUSHER_EVENT_DREAM_REQUESTED, function(data) {  // Dream 
+                            if(parseInt(slider.get("event")) == parseInt(data.eventId)){
                                 slider.loadPicture(PATH_TO_DREAMS + data.dreamId + DREAM_EXTENSION);
                             }
-
-
                         });
 
 

@@ -752,13 +752,19 @@ YUI.add("stalker-slider", function(Y) {
          *
          */
         renderCustomization: function() {
+            var choices = new Array();
+            for(var i= 0; i < events.length; i++){
+                choices.push({label: events[i]["name"], value: events[i]["id"]});
+            }
             var params = new Y.inputEx.Group({
                 parentEl: Y.one("#nav-bar"),
                 legend: "Options (space to toogle)",
                 collapsible: true,
                 fields: [{
+                        type: "select",
                         name: "event",
-                        label: "Event"
+                        label: "Event",
+                        choices:choices
                     }, {
                         name: "showQr",
                         label: "Show QR",

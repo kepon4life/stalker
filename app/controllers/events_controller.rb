@@ -49,7 +49,6 @@ class EventsController < ApplicationController
   # PUT /events/1
   # PUT /events/1.json
   def update
-    params[:event][:category_ids] = params[:event][:category_ids] || [] #fix l'update en déselectionnant tout équivaut à params[:event][:category_ids] ||= [] 
     @event = Event.find(params[:id])
 
     respond_to do |format|
