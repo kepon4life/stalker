@@ -8,7 +8,7 @@ YUI.add("stalker-screensaver", function(Y) {
         CONTENT_TEMPLATE: "<div><div></div></div>",
         initializer: function() {
 
-            this.cDreamIndex = 2;
+            this.cDreamIndex = 0;
 
             var cb = this.get("contentBox");                                    // Retrieve current widget node, the one we animate
             //cb.getDOMNode()
