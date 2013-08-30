@@ -22,7 +22,8 @@
 }
 
 .handle-tooltip-inner {
-    width: 100px;
+    width: 80px;
+    font-size: 12px;
     padding: 3px 8px;
     text-align: center;
     text-decoration: none;
@@ -30,6 +31,7 @@
     -webkit-border-radius: 4px;
        -moz-border-radius: 4px;
             border-radius: 4px;
+    color: #fff;
 }
 .ui-slider a {outline:none;} /* discard the border when you click on the handle's slider */
 .ui-slider-vertical {height: 300px;}
@@ -60,6 +62,7 @@
 .track4 {
     width: 10px;
     background-clip: padding-box;
+    opacity: 0.7;
     background: #000;
     border-style: solid;
     border-color: transparent;
@@ -89,6 +92,7 @@
 .handle4 {
     width: 10px;
     height: 55px !important;
+    color: #fff;
     background-clip: padding-box;
     background: #ccc; /* No RGBA support 
     background: rgba(0, 0, 0, 0.2); */
@@ -114,4 +118,10 @@
     background: rgba(0, 0, 0, 0.5); */
     -webkit-box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.35);
     box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.35);
+}
+.dragging .handle4 .handle-tooltip-inner {
+    background-color: gray; /* No RGBA support 
+    background: rgba(0, 0, 0, 0.5); */
+    color: white;
+    opacity: 1;
 }
