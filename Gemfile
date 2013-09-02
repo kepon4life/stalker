@@ -11,6 +11,7 @@ gem 'vlad-git'
 gem 'kaminari'
 gem 'kaminari-bootstrap'
 gem "mini_magick"
+gem "pg"
 gem "paperclip", :git => "git://github.com/thoughtbot/paperclip.git"
 
 group :assets do
