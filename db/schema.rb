@@ -11,27 +11,42 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130118120616) do
+ActiveRecord::Schema.define(:version => 20130826091957) do
+
+  create_table "categories", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "categories_dreams", :id => false, :force => true do |t|
+    t.integer "dream_id"
+    t.integer "category_id"
+  end
+
+  add_index "categories_dreams", ["dream_id", "category_id"], :name => "index_dreams_categories_on_dream_id_and_category_id"
+
+  create_table "categories_events", :id => false, :force => true do |t|
+    t.integer "category_id"
+    t.integer "event_id"
+  end
+
+  add_index "categories_events", ["category_id", "event_id"], :name => "index_categories_events_on_category_id_and_event_id"
 
   create_table "dreams", :force => true do |t|
     t.boolean  "is_valid"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
     t.binary   "metadatas"
     t.boolean  "secret_room"
     t.string   "token"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
   end
 
   create_table "events", :force => true do |t|
     t.string   "name"
-    t.boolean  "display_only_accepted"
-    t.boolean  "is_active"
-    t.string   "image_file_name"
-    t.string   "image_content_type"
-    t.string   "image_file_size"
-    t.string   "image_updated_at"
-    t.datetime "created_at",            :null => false
-    t.datetime "updated_at",            :null => false
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+    t.boolean  "allCategories", :default => false
   end
 
 end
