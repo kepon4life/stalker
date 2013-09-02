@@ -15,10 +15,10 @@
 
     <%= javascript_include_tag "/frontend/js/libs/three.min.js" %>
     <%= javascript_include_tag "/frontend/js/libs/stats.min.js" %>
-    <!--<script src="http://yui.yahooapis.com/3.9.0/build/yui/yui-min.js"></script>-->
-    <%= javascript_include_tag "/frontend/js/libs/yui3/build/yui/yui-min.js" %>
+    <script src="http://yui.yahooapis.com/3.9.0/build/yui/yui-min.js"></script>
+    <!--<%= javascript_include_tag "/frontend/js/libs/yui3/build/yui/yui-min.js" %>-->
     <%= javascript_include_tag "/frontend/js/libs/inputex/src/loader.js" %>
-    <script src="http://js.pusher.com/1.12/pusher.min.js"></script>
+    <!--<script src="http://js.pusher.com/1.12/pusher.min.js"></script>-->
 
     <!-- Canvas dependencies -->
     <script src="/frontend/js/libs/tuiojs.js" type="text/javascript"></script>
@@ -47,9 +47,9 @@
         function(Y) {
 
             Y.on("domready", function() {
-                var canvas, slider, screenSaver,
-                    IDLETIMEOUT = 10000,
-                    screenSaverDisplayed = false,
+                var canvas, slider, screenSaver, dreamsToDisplay, screensaverIndex=0,first=true,
+                    screenSaverRunning = false,
+                    IDLETIMEOUT = 20000,
                     hash = window.location.hash,idleTimer, hideUI = function () {
                         Y.one("#draw-tool").hide(true);
                         Y.one("#draw-tool2").show(true);
@@ -57,22 +57,22 @@
                         Y.one("#draw-tool").show(true);
                         Y.one("#draw-tool2").hide(true);
 
-                        canvas.clear();
+                        canvas.reset();
                         canvas.set("allowEdition", true);
 
                         slider.resetCamera();
                         slider.get("boundingBox").show(true);
                         slider.set("trackCam", false);
 
-                        screenSaver.hide();
+                        screenSaver.stop();
                     }, resetIdleTimer = function() {
                         if (idleTimer) {
                             idleTimer.cancel();
                         }
                         idleTimer = Y.later(IDLETIMEOUT, null, function() {
-                            screenSaverDisplayed = true;
+                            screenSaverRunning = true;
                             slider.get("boundingBox").hide(true, function () {
-                                canvas.clear();
+                                canvas.reset();
                                 canvas.set("allowEdition", true);
 
                                 slider.loadPicture(canvas.canvasNode.toDataURL("image/png"));// Show its image in the slider
@@ -84,6 +84,8 @@
                             });
                         });
                     };
+
+                resetIdleTimer();
 
                 Y.one("#draw-tool2").hide();
                 Y.one('#welcome').hide();
@@ -100,6 +102,9 @@
                         canvas.onCursorUpdate([{x: node.getX() / Y.DOM.winWidth(), y: node.getY() / Y.DOM.winHeight()}]); //  draw it on the canvas
                     }
                 });
+                screenSaver.on("strokeEnd", function () {
+                    canvas.onCursorRemove();
+                });
                 screenSaver.on("drawingEnd", function () {                      // When the drawing is complete
                      Y.log("ScreenSaver.drawingEnd");
                      Y.later(100, slider, slider.startImploding);               // explode it
@@ -110,17 +115,13 @@
                 var inviteState = 0,                                            // Change the draw invite every so much seconds
                     textState = 0,
                     INVITETEXTS = [
-                        "Dessinez votre desir",                                 // é removed cause of font
-                        //"Нарисуйте своё желание",
+                        "Dessinez votre desir",                                 //
                         "Disegna il tuo desiderio",
                         "Draw your wish",
-                        "Zeichnen Sie Ihre Wunsche",                            // ü removed
-                        //"Σχεδιάστε την επιθυμία σας",
-                        //"あなたの夢を描いてください。",
+                        "Zeichnen Sie Ihre Wunsche",
                         "Desenati dorinta voastra",
-                        //"소원을 그리세요"
                     ];
-                Y.later(5000, null, function () {
+                Y.later(10000, null, function () {
                     var nodes = Y.one(".draw-invite").get("children");
                     nodes.item(inviteState).hide(true);
                     inviteState = (inviteState + 1 ) %2;
@@ -147,22 +148,25 @@
 
                     canvas.on("cursorUpdate", function() {
                         //Y.log("resetIdleTimer");
-                        if (screenSaverDisplayed) {
+                        if (screenSaverRunning) {
+                            screenSaverRunning = false;
                             resetUI();
-                            screenSaverDisplayed = false;
                         };
                         resetIdleTimer();
                     });                                                         // Idle screen saver
                     canvas.on("update", function() {                            // When an input is done on the canvas
                         slider.doReload = true;
                     });
-                    canvas.on("reset", function() {                             // When canvas is resetted
-                        slider.loadPicture(canvas.canvasNode.toDataURL("image/png"));// Show its image in the slider
+                    canvas.on("newDream", function() {                          // When canvas new dream button is pressed
                         resetUI();
                     });
+                    canvas.on("reset", function() {                             // When canvas is resetted
+                        slider.loadPicture(canvas.canvasNode.toDataURL("image/png"));// Show its image in the slider
+                    });
+
                     canvas.on("saved", function() {                             // When the canvas is saved
                         slider.loadPicture(canvas.canvasNode.toDataURL("image/png"));// Show its image in the slider
-                        canvas.clear();
+                        //canvas.reset();
                         canvas.set("allowEdition", false);
                         slider.set("trackCam", true);
                         //slider.set("trackCam", true);

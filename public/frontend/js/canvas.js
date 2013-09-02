@@ -42,18 +42,22 @@ YUI.add("stalker-canvas", function(Y) {
 
             ctx = canvas.getContext('2d');
             color = defaultcolor;
+
+            this.clear();
         },
         bindUI: function() {
             tuio.start();                                                       // Initialize Tuio
-
+            var inputPrevented = false;
             tuio.cursor_add(Y.bind(function(e) {
+                inputPrevented = false;
                 var x = e.x * nw,
                         y = e.y * nh,
                         simulateEvent = function(node) {
-                    var nodeXY = node.getXY();
-                    if (x > nodeXY[0] && x < nodeXY[0] + node.get("width")
-                            && y > nodeXY[1] && y < nodeXY[1] + node.get("height")) {
+                    var xy = node.getXY();
+                    if (x > xy[0] && x < xy[0] + node.get("width")
+                            && y > xy[1] && y < xy[1] + node.get("height")) {
                         node.simulate("click");
+                        inputPrevented = true;
                     }
                 };
                 nbdoigts++;
@@ -78,10 +82,21 @@ YUI.add("stalker-canvas", function(Y) {
             tuio.cursor_update(Y.bind(function(data) {
                 //Y.log("CursorUpdate()");
                 this.fire("cursorUpdate");
-                this.onCursorUpdate(tuio.cursors);
+                if (!inputPrevented) {
+                    this.onCursorUpdate(tuio.cursors);
+                }
             }, this));
 
-            tuio.cursor_remove(Y.bind(this.onCursorRemove, this));              // Tuio.cursor_remove == plus aucun doigts sur la surface
+            tuio.cursor_remove(Y.bind(function() {
+                nbdoigts -= 1;
+                if (!inputPrevented && nbdoigts === 0) {
+                    //Y.log("Canva.on")
+                    if (!this.get("allowEdition")) {
+                        Y.one("#particleCanvas").simulate("mouseup");
+                    }
+                    this.onCursorRemove();
+                }
+            }, this));                                                           // Tuio.cursor_remove == plus aucun doigts sur la surface
 
             /**
              * Mouse events (for dev)
@@ -104,42 +119,119 @@ YUI.add("stalker-canvas", function(Y) {
             Y.one("body").on("mouseup", this.onCursorRemove, this);
             Y.all("#particleCanvas").on("mouseup", this.onCursorRemove, this);
 
-            Y.one("#envoyer").on('click', this.sendTosave, this);
-            Y.one("#newpage").on('click', this.reset, this);
+            Y.one("#envoyer").after('click', this.sendTosave, this);
+            Y.one("#newpage").on('click', function() {
+                this.reset();
+                this.fire("newDream");
+            }, this);
             Y.one("#trash").on('click', this.reset, this);
             Y.one("#undo").on('click', this.undo, this);
         },
         sendTosave: function() {
-
             //var imgBgColor = drawColorBg();
-           var imgBgWhite = drawWhiteBg();
+            //var imgBgWhite = drawWhiteBg();
+            //window.open(this.canvasNode.toDataURL("image/png"));
 
-      //      window.open(drawWhiteBg());
-        //    window.open(this.canvasNode.toDataURL("image/png"));
             Y.io('/frontend/save', {
                 method: "POST",
-                context: this,
                 data: {
                     metadatas: Y.JSON.stringify({
                         event: Y.Stalker.slider.get("event")
                     }),
                     //imgNormal: imgBgWhite
                     imgNormal: this.canvasNode.toDataURL("image/png")
-                },
-                on: {
-                    success: function(tId, e) {
-                        this.clear();
-                     //   Y.Stalker.Pusher.getChannel().trigger('client-myevent', Y.JSON.parse(e.response));
-                    }
                 }
             });
             this.fire("saved");
+        },
+        onCursorUpdate: function(cursors) {
+            if (!this.get("allowEdition")) {                                    // Not in edit move -> move cam
+                if (cursors.length > 0 && cursors[0].path.length > 0) {
+                    var path = cursors[0].path[cursors[0].path.length - 1];
+                    var e = {
+                        clientX: path[0] * Y.DOM.winWidth(),
+                        clientY: path[1] * Y.DOM.winHeight()
+                    }
+                    Y.Stalker.slider.controls.setE(e);
+                    Y.one("#particleCanvas").simulate("mousemove", e);
+                }
+                //moveCam(cursors);
+                return;
+            }
+
+            color = defaultcolor;
+
+            //Pour chaque doigts on détecte son déplacement
+            for (var i = 0; i < cursors.length; i++) {
+                //Pour chaque nouveau doigt on crée un nouveau tableau dans lequel on va stocker la courbe que le doigt dessine
+                stockpoints[i] = stockpoints[i] || [];
+
+                var px = cursors[i].x;
+                var py = cursors[i].y;
+
+                //On contrôle si on se trouve à l'intérieur ou non de la surface de dessin. (Pour interdire à l'utilisateur de dessiner ailleurs)
+                if (px * nw < nw - controlPanelWidth) {
+                    stockpoints[i].push({
+                        x: px * nw,
+                        y: py * nh
+                    });
+
+                    drawLastSegment(ctx, stockpoints[i], i);
+                }
+            }
+            this.fire("update");
+        },
+        onCursorRemove: function(data) {
+            Y.log("Canvas.onCursorRemove()");
+            var tmp = [];
+            for (var i = 0; i < stockpoints.length; i++) {
+                if (stockpoints[i].length > 0) {
+                    tmp.push(stockpoints[i]);
+                }
+            }
+            savedCurves.push(tmp);
+            stockpoints = [];
+        },
+        reset: function() {
+            Y.log("Canvas.reset()");
+            savedCurves = [];
+            stockpoints = [];
+            this.clear();
+            this.fire("reset");
+        },
+        clear: function() {
+            Y.log("Canvas.clear()");
+
+            ctx.clearRect(0, 0, canvaswidth, canvasheight);
+
+            //compositeOperation = ctx.globalCompositeOperation;
+            //ctx.globalCompositeOperation = "destination-over";
+            ctx.fillStyle = "000";
+            ctx.fillRect(0, 0, canvaswidth, canvasheight);
+
+            color = defaultcolor;
+        },
+        undo: function() {
+            Y.log("Canvas.undo(#savecTouches: " + savedCurves.length + ", #current touch points: " + savedCurves[savedCurves.length - 1].length);
+
+            savedCurves.pop();
+            this.redraw();
+            this.fire("update");
+        },
+        redraw: function() {
+            this.clear();
+            //Redessin chacune des courbes avec la couleur (color) definie.
+            for (var j = 0; j < savedCurves.length; j++) {
+                for (var k = 0; k < savedCurves[j].length; k += 1) {
+                    drawPoints(ctx, savedCurves[j][k]);
+                }
+            }
         },
         /*
          * Manual camera position based on tuio inputs, NOT IN USE
          */
         moveCam: function(cursors) {
-//            Y.log("onCursorUpdate");
+            //Y.log("Canvas.moveCam()");
             function mult(a, b) {
                 a.x *= b;
                 a.y *= b;
@@ -187,7 +279,7 @@ YUI.add("stalker-canvas", function(Y) {
                         }
                     }
                 }
-//                    console.log("max", maxScale, Y.Stalker.slider.camera.position.z);
+                //console.log("max", maxScale, Y.Stalker.slider.camera.position.z);
                 if (Math.abs(maxScale * 1000) > 3) {
                     Y.Stalker.slider.camera.position.z = Math.min(Y.Stalker.slider.camera.position.z + (maxScale * 1000), 2000);
                 } else {
@@ -196,79 +288,6 @@ YUI.add("stalker-canvas", function(Y) {
                 }
 
             }
-        },
-        onCursorUpdate: function(cursors) {
-            if (!this.get("allowEdition")) {                                    // Not in edit move -> move cam
-                if (cursors.length > 0 && cursors[0].path.length > 0) {
-                    var path = cursors[0].path[cursors[0].path.length - 1];
-                    var e = {
-                        clientX: path[0] * Y.DOM.winWidth(),
-                        clientY: path[1] * Y.DOM.winHeight()
-                    }
-                    Y.Stalker.slider.controls.setE(e);
-                    Y.one("#particleCanvas").simulate("mousemove", e);
-                }
-                //moveCam(cursors);
-                return;
-            }
-
-            color = defaultcolor;
-
-            //Pour chaque doigts on dÃ©tecte son dÃ©placement
-            for (var i = 0; i < cursors.length; i++) {
-                //Pour chaque nouveau doigt on crÃ©e un nouveau tableau dans lequel on va stocker la courbe que le doigt dessine
-                stockpoints[i] = stockpoints[i] || [];
-
-                var px = cursors[i].x;
-                var py = cursors[i].y;
-
-                //On contrÃ´le si on se trouve Ã  l'intÃ©rieur ou non de la surface de dessin. (Pour interdire Ã  l'utilisateur de dessiner ailleurs)
-                if (px * nw < nw - controlPanelWidth) {
-                    stockpoints[i].push({
-                        x: px * nw,
-                        y: py * nh
-                    });
-
-                    drawLastSegment(ctx, stockpoints[i], i);
-                }
-            }
-            this.fire("update");
-        },
-        onCursorRemove: function(data) {
-            nbdoigts -= nbdoigts;
-            if (nbdoigts == 0) {
-                if (!this.get("allowEdition")) {
-
-                    Y.one("#particleCanvas").simulate("mouseup");
-                }
-                for (var i = 0; i < stockpoints.length; i++) {
-                    if (stockpoints[i].length > 0) {
-                        savedCurves.push(stockpoints[i]);
-                    }
-                }
-
-                stockpoints = [];
-            }
-        },
-        reset: function() {
-            Y.log("Canvas.reset()");
-            this.clear();
-            this.fire("reset");
-        },
-        clear: function() {
-            Y.log("Canvas.clear()");
-            clear();
-        },
-        undo: function() {
-            Y.log("Canvas.undo()");
-            ctx.clearRect(0, 0, canvaswidth, canvasheight);
-            savedCurves.pop();
-            //Redessin chacune des courbes avec la couleur (color) definie.
-            for (var j = 0; j < savedCurves.length; j++) {
-                var curvestodraw = savedCurves[j];
-                drawPoints(ctx, curvestodraw);
-            }
-            this.fire("update");
         }
     }, {
         ATTRS: {
@@ -278,67 +297,150 @@ YUI.add("stalker-canvas", function(Y) {
         }
     });
 
-    // clear both canvases!
-    function clear() {
-        ctx.clearRect(0, 0, canvaswidth, canvasheight);
-        savedCurves = [];
-        stockpoints = [];
-        color = defaultcolor;
-    }
-
-
     function drawLastSegment(ctx, points) {
         ctx.strokeStyle = color;
         ctx.lineWidth = 20;
         ctx.lineCap = 'round';
-
+        //Y.log("draw last");
         var current = points.length - 1,
-                currentPoint = points[current],
-                previousPoint = points[current - 1] || currentPoint,
-                ppreviousPoint = points[current - 2] || previousPoint,
-                prevInter = {
-            x: (ppreviousPoint.x + previousPoint.x) / 2,
-            y: (ppreviousPoint.y + previousPoint.y) / 2
-        },
-        curInter = {
-            x: (previousPoint.x + currentPoint.x) / 2,
-            y: (previousPoint.y + currentPoint.y) / 2
-        };
+                currentPoint = points[current];
 
         ctx.beginPath();
 
-        ctx.moveTo(prevInter.x, prevInter.y);
-        ctx.quadraticCurveTo(previousPoint.x, previousPoint.y, curInter.x, curInter.y);
+        switch (points.length) {
+            case 0:
+                break;
+            case 1:
+            case 2:
+                ctx.moveTo(currentPoint.x, currentPoint.y);
+                ctx.lineTo(currentPoint.x + 0.01, currentPoint.y);
+                break;
+            default:
+                var previousPoint = points[current - 1],
+                        ppreviousPoint = points[current - 2],
+                        prevInter = {
+                    x: (ppreviousPoint.x + previousPoint.x) / 2,
+                    y: (ppreviousPoint.y + previousPoint.y) / 2
+                },
+                curInter = {
+                    x: (previousPoint.x + currentPoint.x) / 2,
+                    y: (previousPoint.y + currentPoint.y) / 2
+                };
 
-        //ctx.moveTo(previousPoint.x, previousPoint.y);
-        //ctx.quadraticCurveTo( curInter.x, curInter.y, currentPoint.x, currentPoint.y);
+                ctx.moveTo(prevInter.x, prevInter.y);
+                ctx.quadraticCurveTo(previousPoint.x, previousPoint.y, curInter.x, curInter.y);
+                //        ctx.moveTo(previousPoint.x, previousPoint.y);
+                //        ctx.lineTo(currentPoint.x, currentPoint.y);
+                //        ctx.quadraticCurveTo( curInter.x, curInter.y, currentPoint.x, currentPoint.y);
+        }
+
+
 
         ctx.stroke();
         ctx.closePath();
     }
 
     //Permet de redessiner les courbes lorsqu'on applique des changement de background au canvas
+
+    var drawSmoothLine = function(surf, ctrl_points) {
+        var l = ctrl_points.length;
+        switch (l) {
+            case 0:
+            case 1: //no control points
+                break;
+            case 2: //line
+                surf.beginPath();
+                surf.moveTo(ctrl_points[0].x, ctrl_points[0].y);
+                surf.lineTo(ctrl_points[1].x, ctrl_points[1].y);
+                surf.stroke();
+                break;
+            case 3: //lets use the second point as the two middle control points
+                surf.beginPath();
+                surf.moveTo(ctrl_points[0].x, ctrl_points[0].y);
+                surf.bezierCurveTo(ctrl_points[1].x, ctrl_points[1].y, ctrl_points[1].x, ctrl_points[1].y, ctrl_points[2].x, ctrl_points[2].y);
+                surf.stroke();
+                break;
+            default: //lets draw a bezier with the first 4 points, and for the rest lets create a control point to keep the line smooth
+                surf.beginPath();
+                surf.moveTo(ctrl_points[0].x, ctrl_points[0].y);
+                var pnt_a = ctrl_points[1], pnt_b = ctrl_points[2], pnt_end = ctrl_points[3];
+                surf.bezierCurveTo(pnt_a.x, pnt_a.y, pnt_b.x, pnt_b.y, pnt_end.x, pnt_end.y);
+                ctrl_points = ctrl_points.slice(0);
+                l = ctrl_points.length;
+                pnt_b = ctrl_points[2];
+                var i = 5
+                for (; i < l; i += 2) {
+                    pnt_a = {x: pnt_end.x + (pnt_end.x - pnt_b.x), y: pnt_end.y + (pnt_end.y - pnt_b.y)};
+                    pnt_b = ctrl_points[i - 1];
+                    pnt_end = ctrl_points[i];
+                    surf.bezierCurveTo(pnt_a.x, pnt_a.y, pnt_b.x, pnt_b.y, pnt_end.x, pnt_end.y);
+                }
+                if (i == l) { //a last lonely point, lets use the calculated pnt_a as pnt_b
+                    pnt_a = {x: pnt_end.x + (pnt_end.x - pnt_b.x), y: pnt_end.y + (pnt_end.y - pnt_b.y)};
+                    pnt_b = pnt_a;
+                    pnt_end = ctrl_points[l - 1];
+                    surf.bezierCurveTo(pnt_a.x, pnt_a.y, pnt_b.x, pnt_b.y, pnt_end.x, pnt_end.y);
+                }
+                surf.stroke();
+                break;
+        }
+    };
+
     function drawPoints(ctx, points) {
         ctx.lineWidth = 20;
         ctx.lineCap = 'round';
         ctx.strokeStyle = color;
 
-        if (points.length < 6) {
-            var b = points[0];
-            ctx.beginPath(), ctx.arc(b.x, b.y, ctx.lineWidth / 2, 0, Math.PI * 2, !0), ctx.closePath(), ctx.fill();
-            return;
-        }
-        ctx.beginPath();
-        ctx.moveTo(points[0].x, points[0].y);
-        for (var i = 0; i < points.length - 1; i++) {
+        switch (points.length) {
+            case 0:                                                             //no control points
+                Y.log("no control points")
+                break;
+            case 1:
+//                var b = points[0];
+                Y.log("Smallpoint");
+                ctx.beginPath();
 
-            var c = (points[i].x + points[i + 1].x) / 2,
-                    d = (points[i].y + points[i + 1].y) / 2;
-            ctx.quadraticCurveTo(points[i].x, points[i].y, c, d);
+                ctx.moveTo(points[0].x, points[0].y);
+                ctx.lineTo(points[0].x + 0.01, points[0].y);
+                ctx.stroke();
+                ctx.closePath();
+//                ctx.arc(b.x, b.y, ctx.lineWidth / 2, 0, Math.PI * 2, !0);
+//                ctx.closePath(); ctx.fill();
+                break;
+            case 2: //line
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                ctx.lineTo(points[1].x, points[1].y);
+                ctx.stroke();
+                ctx.closePath();
+                break;
+            case 3: //lets use the second point as the two middle control points
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                ctx.quadraticCurveTo(points[1].x, points[1].y, points[1].x, points[1].y, points[2].x, points[2].y);
+                ctx.stroke();
+                ctx.closePath();
+
+                break;
+            default: //lets draw a bezier with the first 4 points, and for the rest lets create a control point to keep the line smooth
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                for (var i = 0; i < points.length -1; i++) {
+                    var c = (points[i].x + points[i + 1].x) / 2,
+                            d = (points[i].y + points[i + 1].y) / 2;
+                    ctx.quadraticCurveTo(points[i].x, points[i].y, c, d);
+                }
+                ctx.stroke();
+                ctx.closePath();
         }
 
-        ctx.stroke();
-        ctx.closePath();
+//        if (points.length < 6) {
+//            var b = points[0];
+//            Y.log("Smallpoint");
+//            ctx.beginPath(), ctx.arc(b.x, b.y, ctx.lineWidth / 2, 0, Math.PI * 2, !0), ctx.closePath(), ctx.fill();
+//            return;
+//        }
+
     }
 
     var compositeOperation;
