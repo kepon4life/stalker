@@ -42,6 +42,14 @@
     <%= javascript_include_tag "/frontend/js/web_slider.js" %>
 
     <script type="text/javascript">
+    var id_dream = null;
+    var url_to_service = window.location.origin + "/services/dreamsvalidated";
+    <% if @id_dream != nil %>
+        id_dream = <%= @id_dream %>
+        <% if !@dream_called_valid %>
+            url_to_service = window.location.origin + "/services/dreamsvalidated?requested=" + <%= @id_dream %>;
+        <% end %>
+    <% end %>
         YUI_config.groups.inputex.base = "frontend/js/libs/inputex/src/";
         YUI_config.groups.inputex.filter = "raw";
         YUI_config.stalkerbase = "frontend/";
@@ -64,16 +72,17 @@
                             slideshowRunning: true,
                             trackCam: true,
                             showLegend: true,
-                            showQr: false
+                            showQr: false,
+                            customStart: id_dream
                         });
                     slider.render();                                            // Render slider
-                    slider.loadAlbumFromService(window.location.origin + "/services/dreamsvalidated");// Load album
+                    slider.loadAlbumFromService(url_to_service);// Load album
 
                     //Y.one('#welcome').hide();
                     //$("#nowebgl").slider_web();
                 } else {
                     Y.one('#welcome').hide();
-                    $("#nowebgl").slider_web(-1);
+                    $("#nowebgl").slider_web(id_dream);
                     //Y.one('.loading').hide();
                     //Y.one('.fail').show();
                 }

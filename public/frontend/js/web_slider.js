@@ -294,7 +294,7 @@ YUI.add("stalker-webslider", function(Y) {
         var customStartTimeout;
         this.each(function() {
             init();
-            if(id < 0){
+            if(id == null){
                 loadAlbum(startImgSlider);
             }else{
                 var idimg = id.toString();

@@ -24,6 +24,33 @@ class FrontendController < ApplicationController
 	end
 
 	def web_slider
+		@id_dream = nil
+		@dream_called_in_moderation = nil
+		@dream_called_valid = nil
+		if params[:id] && Dream.exists?(params[:id])
+			dream = Dream.find(params[:id])
+			if dream.is_valid
+				@id_dream = params[:id]
+				@dream_called_in_moderation = false
+				@dream_called_valid = true
+			else
+				@dream_called_valid = false
+				if params[:token] && params[:token] == dream.token
+					@id_dream = params[:id]
+					if dream.is_valid.blank?
+						@dream_called_in_moderation = true
+					else
+						@dream_called_in_moderation = false
+					end
+				end
+			end
+		end
+
+
+
+
+
+
 		@events = Event.find(:all, :conditions => { :is_active => true })
 		respond_to do |format|
 			format.html
@@ -55,7 +82,6 @@ class FrontendController < ApplicationController
 	def show_dream
 
 		@dream = Dream.find(params[:id])
-		puts params[:token]
 		if(!@dream.is_valid && params[:token] != @dream.token)
 			@dream = nil
 		end

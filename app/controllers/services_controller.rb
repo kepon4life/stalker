@@ -6,7 +6,12 @@ class ServicesController < ApplicationController
 	end
 
 	def get_dreams_validated
-		dreams = Dream.where(:is_valid => true)
+		if params[:requested] && Dream.exists?(params[:requested])
+			dreams = Dream.where("is_valid=? OR id=?", true, params[:requested])
+		else
+			dreams = Dream.where(:is_valid => true)
+		end
+
 
 		render:json => dreams.to_json(:only => [:id,:created_at,:metadatas])
 	end
