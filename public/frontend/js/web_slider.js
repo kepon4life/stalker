@@ -38,6 +38,9 @@ YUI.add("stalker-webslider", function(Y) {
          *
          * @returns {undefined}
          */
+        initializer: function() {
+            Y.Stalker.webslider = this;                                            // Set up singleton
+        },
         renderUI: function() {
             this.once("webglInitialized", function() {
                 var channel = Y.Stalker.Pusher.getChanelDreamRequested();
@@ -67,12 +70,26 @@ YUI.add("stalker-webslider", function(Y) {
                         channel.trigger(PUSHER_EVENT_DREAM_REQUESTED, {"dreamId" : parseInt(actual_dream_id), "eventId" : event_selected_id });  
                     }
                 });
+                $("#sharefb").on("click",function(){
+                    shareOnFacebook();
+                })
             });
             previewStripHeightAdjust()
             Y.Stalker.WebSlider.superclass.renderUI.call(this);
         },
         populateAlbum: function(pictures) {
             populateAlbum(pictures);
+        },
+        selectFirstPicture: function() {
+            if(Y.Stalker.webslider.get("customStart") != null){
+                this.selectPicture($("#"+Y.Stalker.webslider.get("customStart")).index());
+                //Scroll to specific thumbnail
+                $('#preview-strip').animate({
+                    scrollTop: $("#"+Y.Stalker.webslider.get("customStart")).offset().top
+                }, 1000);
+            }else{
+                this.selectPicture(0);
+            }
         },
         selectPicture: function(index) {
             Y.Stalker.WebSlider.superclass.selectPicture.call(this,index);
@@ -91,7 +108,11 @@ YUI.add("stalker-webslider", function(Y) {
             }
         },
     }, {
-        ATTRS: {}
+        ATTRS: {
+            customStart: {
+                value: null
+            }
+        }
     });
     
     function dreamselected(index){
@@ -174,7 +195,7 @@ YUI.add("stalker-webslider", function(Y) {
 
             var date = new Date(Date.parse(info.created_at));
             li.attr("title",prettyDate(date));
-            li.attr('id',date.getDate())
+            li.attr('id',name)
             ul.append(li);
             li.hover(function(e) {
                 return;
@@ -254,11 +275,14 @@ YUI.add("stalker-webslider", function(Y) {
         $('#preview-strip ul').on("click","li",function(){
             dreamselected($(this).index());
         })
+        // if(Y.Stalker.webslider.get("customStart") != null){
+        //     $("#"+Y.Stalker.webslider.get("customStart")+" img")[0].click()
+        // }
     }
 
 });
 (function($) {
-    $.fn.slider_web = function() {
+    $.fn.slider_web = function(id) {
         DREAMS_SERVICE_URL = window.location.protocol+'//'+window.location.host + "/services/dreamsvalidated";
         FADEOUTTIME = 2000;
         FADINTIME = 2000;
@@ -268,10 +292,19 @@ YUI.add("stalker-webslider", function(Y) {
         var timeoutFirstImg;
         var timeout;
         var customStartTimeout;
-
         this.each(function() {
             init();
-            loadAlbum(startImgSlider);
+            if(id < 0){
+                loadAlbum(startImgSlider);
+            }else{
+                var idimg = id.toString();
+                loadAlbum(function(){
+                    customSliderStart($("#"+idimg));
+                    $('#preview-strip-nowebgl').animate({
+                    scrollTop: $("#"+idimg).offset().top
+                    }, 1000);
+                })
+            }
         });
 
         function init() {
@@ -280,10 +313,11 @@ YUI.add("stalker-webslider", function(Y) {
             $('body').append('<div id="detailsandshare"><div id="shares"><span id="sharefb"></span><a href="#myModal" role="button" data-toggle="modal"><span id="sharewall"></span></a></div><span class="details"></span></div>')
             $('body').append('<div id="simpleImgSlider"></div>')
             $('#sink').show();
-
             var pusher = new Pusher(PUSHER_API_KEY);
             channel = pusher.subscribe(PUSHER_CHANEL_DREAM_REQUESTED);
-
+            $("#sharefb").on("click",function(){
+                shareOnFacebook();
+            })
             previewStripHeightAdjust();
         }
 
@@ -334,6 +368,9 @@ YUI.add("stalker-webslider", function(Y) {
             var imgToDisplay = new Image();
             imgToDisplay.id = ($("li").index((imgClicked.parent())))
             imgToDisplay.src = PATH_TO_DREAMS + imgClicked.attr('id') + DREAM_EXTENSION;
+            var li = imgClicked.parent().get(0);
+            addPrettyDateToScroll(li.title)
+            showLegend(li.info)
             clearTimeout(timeout);
             clearTimeout(timeoutFirstImg);
             $("#simpleImgSlider").find('img').remove();
@@ -549,4 +586,27 @@ function comparePhotosDate(a,b) {
     if (da > db)
         return -1;
     return 0;
+}
+function shareOnFacebook(){
+
+    var imageToShare = $('.dreamselected img');
+    imageToShare = imageToShare[0].src;
+
+    FB.ui(
+      {
+       method: 'feed',
+       name: 'Stalker Exhibition. Draw your dreams',
+       caption: 'Un sous titre ici?!',
+       description: ( 'Description sur l\'expo?'),
+       link: 'http://193.134.221.115/web_slider',
+       picture: imageToShare,
+      },
+      function(response) {
+        if (response && response.post_id) {
+          alert('Post was published.');
+        } else {
+          alert('Post was not published.');
+        }
+      }
+    );
 }
