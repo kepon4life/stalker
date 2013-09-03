@@ -323,6 +323,24 @@ a:hover {
     width: 26px;
 }
 /** QR Styles **/
+
+.qrCrop{
+    margin-top:10px;
+    position: relative;
+    width: 170px;
+    height: 170px;
+    overflow: hidden;
+}
+
+.qrCrop img{
+    position: absolute;
+    left: -20px;
+    top: -20px;
+    min-width:210px;
+}
+
+
+
 .yui3-stalker-slider .qr{
     position: fixed;
     top: 0px;
@@ -341,6 +359,9 @@ a:hover {
     height: 400px;
     pointer-events: none;
 }
+
+
+
 /*
 .yui3-stalker-slider .qr span {
     margin-top: 15px;
@@ -392,3 +413,9 @@ a:hover {
     height: 97px;
     background: transparent url(../img/UI_pointer.png) no-repeat;
 }
+
+
+
+
+
+

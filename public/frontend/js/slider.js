@@ -948,10 +948,10 @@ YUI.add("stalker-slider", function(Y) {
                             //  '<span>AND WHAT IS <br />YOUR WISH dream? </span>'
                             '<img src="frontend/img/UI_wall_invite_150.png" style="padding: 10px 17px 0 0;"/><br />'
                             + '<div class="qr-mask"></div>'
-                            + '<img src="'
+                            + '<div class="qrCrop"><img src="'
                             //  + "http://chart.apis.google.com/chart?cht=qr&chs=130x130&chld=Q&choe=UTF-8&chl="
-                            + "http://qrickit.com/api/qr?fgdcolor=000000&bgdcolor=ffffff&qrsize=160&t=p&e=m&d="
-                            + encodeURIComponent(url) + '" />'
+                            + "http://qrickit.com/api/qr?fgdcolor=000000&bgdcolor=ffffff&qrsize=180&t=p&e=m&d="
+                            + encodeURIComponent(url) + '" /></div>'
                             //+ '<br />scan this QR or go to <br /><a target="_blank" href="' + url + '">' + url + "</a>");
                             //  + '<br />Scan this or go to<br /><a href="' + url + '">' + url + "</a> with your mobile to tell us your dream"
                             );
