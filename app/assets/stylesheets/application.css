@@ -95,6 +95,14 @@ div.dream div.decision.okPlus{
   background-image: url("/img/star.png");
 }
 
+div.dream span{
+  width: 100%;
+  float: left;
+  margin-top:-2px;
+  text-align:center;
+  font-size: 12px;
+}
+
 div.modal img{
   width:540px;
 }

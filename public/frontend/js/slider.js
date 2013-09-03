@@ -6,7 +6,7 @@ YUI.add("stalker-slider", function(Y) {
     YUI_config.stalkerbase = YUI_config.stalkerbase || "";
 
     var SHADERPATH = YUI_config.stalkerbase + "shader/",
-            PHONEDRAWPATH = window.location.origin + "/drawsmartphone",
+            PHONEDRAWPATH = window.location.origin + "/ds",
             //TIME_FOR_FADING = 3 + 1, // 3 + 2
             timeoutExplosion,
             strip_width,
@@ -942,7 +942,7 @@ YUI.add("stalker-slider", function(Y) {
             event: {
                 value: "Secret room",
                 setter: function(val) {
-                    var url = PHONEDRAWPATH + "?event=" + escape(val);
+                    var url = PHONEDRAWPATH + "?e=" + escape(val);
                     console.log("Rendering qr for link :", url);
                     this.get("contentBox").one(".qr").setHTML(
                             //  '<span>AND WHAT IS <br />YOUR WISH dream? </span>'
@@ -950,7 +950,7 @@ YUI.add("stalker-slider", function(Y) {
                             + '<div class="qr-mask"></div>'
                             + '<img src="'
                             //  + "http://chart.apis.google.com/chart?cht=qr&chs=130x130&chld=Q&choe=UTF-8&chl="
-                            + "http://qrickit.com/api/qr?fgdcolor=ffffff&bgdcolor=000000&qrsize=180&t=p&e=m&d="
+                            + "http://qrickit.com/api/qr?fgdcolor=000000&bgdcolor=ffffff&qrsize=160&t=p&e=m&d="
                             + encodeURIComponent(url) + '" />'
                             //+ '<br />scan this QR or go to <br /><a target="_blank" href="' + url + '">' + url + "</a>");
                             //  + '<br />Scan this or go to<br /><a href="' + url + '">' + url + "</a> with your mobile to tell us your dream"

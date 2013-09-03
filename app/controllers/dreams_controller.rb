@@ -106,8 +106,20 @@ class DreamsController < ApplicationController
 
   # GET /dreams/tag
   # GET /dreams/tag.json
-  def tag    
-    dreamsNotTagged = Dream.where(:is_valid => nil, :secret_room => nil).all
+  def tag
+
+    @event_name = "all"
+
+    if params[:event_id] && Event.exists?(params[:event_id])
+      dreamsNotTagged = Dream.where(:is_valid => nil, :secret_room => nil, :event_id => params[:event_id]).all
+      @event_name = Event.find(params[:event_id]).name
+    else
+      dreamsNotTagged = Dream.where(:is_valid => nil, :secret_room => nil).all
+    end
+
+      
+
+    @events = Event.all
 
     if(!cookies[:nbImgPerPage])
       cookies[:nbImgPerPage] = 12

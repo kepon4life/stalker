@@ -22,6 +22,7 @@ StalkerBackend::Application.routes.draw do
   match '/draw', :controller => "frontend", :action => "draw"
   match '/drawtable', :controller => "frontend", :action => "drawtable"
   match '/drawsmartphone', :controller => "frontend", :action => "drawsmartphone"
+  match '/ds', :controller => "frontend", :action => "drawsmartphone"
 
   resources :users, :dreams, :events
 

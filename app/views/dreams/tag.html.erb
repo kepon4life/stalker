@@ -7,7 +7,8 @@
 <% end %>
 <div id="content" class="container">
 	<div id="header-controls">
-		<h1>Tag dreams</h1>
+		<h1>Tag dreams </h1>
+		<h5><%= @event_name %></h5>
 		<div class="btn-toolbar" style="margin-left: 300px;">
 			<div class="btn-group">
 				<button class="btn dropdown-toggle" data-toggle="dropdown">Grouped selection <span class="caret"></span></button>
@@ -24,11 +25,27 @@
 			<button id="send" type="button" class="btn disabled">Send</button>
 		</div>
 		<div class="btn-toolbar"  style="margin-left: 600px;">
+			<div class="btn-group">
+				<button class="btn dropdown-toggle" data-toggle="dropdown">Select event <span class="caret"></span></button>
+			    <ul class="dropdown-menu">
+			    	<li><a href="/dreams/tag">All</a></li>
+			    	<li class="divider"></li>
+
+			    	<% @events.each_with_index do |event, index| %>
+			    		<li><a href="?event_id=<%= event.id %>"><%= event.name %></a></li>
+			    		<% if index < (@events.size - 1) %>
+			        		<li class="divider"></li>
+			        	<% end %>
+			    	<% end %>
+			    </ul>
+			</div>
+		</div>
+		<div class="btn-toolbar"  style="margin-left: 600px; display:none;">
 				<div class="btn-group">
 					<a class="btn bit" href="#"><i class="icon-th-large"></i></a>
 				    <a class="btn lot" href="#"><i class="icon-th"></i></a>
 				</div>
-			</div>              
+		</div>              
 	</div>
 
 
@@ -39,6 +56,10 @@
 				<div class="dream" id="dream_<%= dream.id.to_s %>">
 					<div class="decision"></div>
 					<a class="not_a_link" id="<%= PATH_TO_DREAMS + dream.id.to_s + DREAM_EXTENSION %>" alt="<%= dream.id.to_s %>"><img class="dream" src="<%= PATH_TO_DREAMS_THUMBNAILS + dream.id.to_s + DREAM_EXTENSION %>" alt="<%= dream.id.to_s %>" /></a>
+					
+						<% if dream.event != nil %>
+							<span><%= dream.event.name %></span>
+						<% end %>
 				</div>
 				
 			<% end%>
