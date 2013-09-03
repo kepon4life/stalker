@@ -78,13 +78,9 @@
                     slider.render();                                            // Render slider
                     slider.loadAlbumFromService(url_to_service);// Load album
 
-                    //Y.one('#welcome').hide();
-                    //$("#nowebgl").slider_web();
                 } else {
                     Y.one('#welcome').hide();
-                    $("#nowebgl").slider_web(id_dream);
-                    //Y.one('.loading').hide();
-                    //Y.one('.fail').show();
+                    $("#nowebgl").slider_web(id_dream,url_to_service);
                 }
             });
         });
