@@ -54,7 +54,7 @@
                     success: function(data) {
                         //triggered = privateChannel.trigger('client-myevent', data);
                         //console.log(data);
-                        var url = "dream/" + data.dream_id + "?token=" + data.token;
+                        var url = "web_slider?id=" + data.dream_id + "&token=" + data.token;
                         $('.msg-sent .text a').each(function( index, element ) {
                             $(element).attr("href", url);
                         });
