@@ -30,7 +30,11 @@
             <td>
               <img class="dream" class src="<%= PATH_TO_DREAMS_THUMBNAILS + dream.id.to_s + DREAM_EXTENSION %>" alt="<%= dream.id.to_s %>" />
             </td>
-            <td><%= dream.event.name %></td>
+            <td>
+              <% if dream.event != nil %>
+                <%= dream.event.name %>
+              <% end %>
+            </td>
             <td>
               <ul>
                 <%= dream.created_at.to_s(:standard) %>
