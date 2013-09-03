@@ -64,8 +64,7 @@
                             slideshowRunning: true,
                             trackCam: true,
                             showLegend: true,
-                            showQr: false,
-                            customStart: 8655
+                            showQr: false
                         });
                     slider.render();                                            // Render slider
                     slider.loadAlbumFromService(window.location.origin + "/services/dreamsvalidated");// Load album
@@ -74,7 +73,7 @@
                     //$("#nowebgl").slider_web();
                 } else {
                     Y.one('#welcome').hide();
-                    $("#nowebgl").slider_web(8655);
+                    $("#nowebgl").slider_web(-1);
                     //Y.one('.loading').hide();
                     //Y.one('.fail').show();
                 }
