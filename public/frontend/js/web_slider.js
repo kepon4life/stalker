@@ -238,6 +238,7 @@ YUI.add("stalker-webslider", function(Y) {
         }
 
         var indexOfDreamRequested;
+        nbThumbnailToLoad = 25;
         if(Y.Stalker.webslider.get("customStart")!= null){
             for (var i = 0; i < photo_album.length; i++) {
                 if(photo_album[i].id == Y.Stalker.webslider.get("customStart")){
@@ -245,9 +246,9 @@ YUI.add("stalker-webslider", function(Y) {
                     break;
                 }
             }
-            nbThumbnailToLoad = (indexOfDreamRequested+1)
-        }else{
-            nbThumbnailToLoad = 25; // number of thumbnail loaded at the beginning if no specific dream is requested
+            if(indexOfDreamRequested+1 > 25){
+                nbThumbnailToLoad = (indexOfDreamRequested+1)
+            }
         }
 
         indexThumbnail = 0; // useful to know which thumbnail (index) was the last thumnail loaded
@@ -292,8 +293,9 @@ YUI.add("stalker-webslider", function(Y) {
 
 });
 (function($) {
-    $.fn.slider_web = function(idDreamRequested) {
-        DREAMS_SERVICE_URL = window.location.protocol+'//'+window.location.host + "/services/dreamsvalidated";
+    $.fn.slider_web = function(idDreamRequested,serviceUrl) {
+        //DREAMS_SERVICE_URL = window.location.protocol+'//'+window.location.host + "/services/dreamsvalidated";
+        DREAMS_SERVICE_URL = serviceUrl;
         FADEOUTTIME = 2000;
         FADINTIME = 2000;
         PICTURETIME = 3000;
@@ -439,6 +441,7 @@ YUI.add("stalker-webslider", function(Y) {
             $('#preview-strip-nowebgl').append(ul);
 
             var indexOfDreamRequested;
+            nbThumbnailToLoad = 25;
             if(idDreamRequested!= null){
                 for (var i = 0; i < album.length; i++) {
                     if(album[i].name == idDreamRequested){
@@ -446,10 +449,9 @@ YUI.add("stalker-webslider", function(Y) {
                         break;
                     }
                 }
-                nbThumbnailToLoad = (indexOfDreamRequested+1)
-                console.log(indexOfDreamRequested)
-            }else{
-                nbThumbnailToLoad = 25; // number of thumbnail loaded at the beginning if no specific dream is requested
+                if(indexOfDreamRequested+1 > 25){
+                    nbThumbnailToLoad = (indexOfDreamRequested+1)
+                }
             }
 
             indexThumbnail = 0; // useful to know which thumbnail (index) was the last thumnail loaded
