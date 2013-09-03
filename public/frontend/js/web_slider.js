@@ -84,9 +84,9 @@ YUI.add("stalker-webslider", function(Y) {
             if(Y.Stalker.webslider.get("customStart") != null){
                 this.selectPicture($("#"+Y.Stalker.webslider.get("customStart")).index());
                 //Scroll to specific thumbnail
-                $('#preview-strip').animate({
-                    scrollTop: $("#"+Y.Stalker.webslider.get("customStart")).offset().top
-                }, 1000);
+            $('#preview-strip').animate({
+                scrollTop: $("#"+Y.Stalker.webslider.get("customStart")).offset().top
+            }, 1000);
             }else{
                 this.selectPicture(0);
             }
@@ -236,7 +236,20 @@ YUI.add("stalker-webslider", function(Y) {
                 t.css('top', (80 - h) / 2 + 'px');
             });
         }
-        nbThumbnailToLoad = 25; // number of thumbnail loaded at the beginning
+
+        var indexOfDreamRequested;
+        if(Y.Stalker.webslider.get("customStart")!= null){
+            for (var i = 0; i < photo_album.length; i++) {
+                if(photo_album[i].id == Y.Stalker.webslider.get("customStart")){
+                    indexOfDreamRequested = i;
+                    break;
+                }
+            }
+            nbThumbnailToLoad = (indexOfDreamRequested+1)
+        }else{
+            nbThumbnailToLoad = 25; // number of thumbnail loaded at the beginning if no specific dream is requested
+        }
+
         indexThumbnail = 0; // useful to know which thumbnail (index) was the last thumnail loaded
         $('.dreamslist').waypoint({
             context: "#preview-strip",
@@ -275,14 +288,11 @@ YUI.add("stalker-webslider", function(Y) {
         $('#preview-strip ul').on("click","li",function(){
             dreamselected($(this).index());
         })
-        // if(Y.Stalker.webslider.get("customStart") != null){
-        //     $("#"+Y.Stalker.webslider.get("customStart")+" img")[0].click()
-        // }
     }
 
 });
 (function($) {
-    $.fn.slider_web = function(id) {
+    $.fn.slider_web = function(idDreamRequested) {
         DREAMS_SERVICE_URL = window.location.protocol+'//'+window.location.host + "/services/dreamsvalidated";
         FADEOUTTIME = 2000;
         FADINTIME = 2000;
@@ -294,10 +304,10 @@ YUI.add("stalker-webslider", function(Y) {
         var customStartTimeout;
         this.each(function() {
             init();
-            if(id == null){
+            if(idDreamRequested == null){
                 loadAlbum(startImgSlider);
             }else{
-                var idimg = id.toString();
+                var idimg = idDreamRequested.toString();
                 loadAlbum(function(){
                     customSliderStart($("#"+idimg));
                     $('#preview-strip-nowebgl').animate({
@@ -428,7 +438,20 @@ YUI.add("stalker-webslider", function(Y) {
             ul = $('<ul class="dreamslist"/>');
             $('#preview-strip-nowebgl').append(ul);
 
-            nbThumbnailToLoad = 25; // number of thumbnail loaded at the beginning
+            var indexOfDreamRequested;
+            if(idDreamRequested!= null){
+                for (var i = 0; i < album.length; i++) {
+                    if(album[i].name == idDreamRequested){
+                        indexOfDreamRequested = i;
+                        break;
+                    }
+                }
+                nbThumbnailToLoad = (indexOfDreamRequested+1)
+                console.log(indexOfDreamRequested)
+            }else{
+                nbThumbnailToLoad = 25; // number of thumbnail loaded at the beginning if no specific dream is requested
+            }
+
             indexThumbnail = 0; // useful to know which thumbnail (index) was the last thumnail loaded
             $('.dreamslist').waypoint({
                 context: "#preview-strip-nowebgl",
