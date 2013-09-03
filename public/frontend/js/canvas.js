@@ -3,6 +3,7 @@
  *
  */
 YUI.add("stalker-canvas", function(Y) {
+
     YUI_config.stalkerbase = YUI_config.stalkerbase || "";
 
     var canvas, ctx, canvaswidth, canvasheight,
@@ -23,6 +24,7 @@ YUI.add("stalker-canvas", function(Y) {
                 + '<!--<canvas id="mycanvasbis" width="600" height="600"></canvas>-->'
                 + '</div>',
         renderUI: function() {
+
             Y.Stalker.canvas = this;
 
             nw = Y.DOM.winWidth() - 5;
@@ -42,7 +44,6 @@ YUI.add("stalker-canvas", function(Y) {
 
             ctx = canvas.getContext('2d');
             color = defaultcolor;
-
             this.clear();
         },
         bindUI: function() {
@@ -135,11 +136,8 @@ YUI.add("stalker-canvas", function(Y) {
             Y.io('/frontend/save', {
                 method: "POST",
                 data: {
-                    metadatas: Y.JSON.stringify({
-                        event: Y.Stalker.slider.get("event")
-                    }),
-                    //imgNormal: imgBgWhite
-                    imgNormal: this.canvasNode.toDataURL("image/png")
+                        event_id : 0,//getURLParameter("event"),
+                        imgNormal: this.canvasNode.toDataURL("image/png")
                 }
             });
             this.fire("saved");

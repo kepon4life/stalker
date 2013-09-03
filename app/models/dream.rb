@@ -1,8 +1,7 @@
 class Dream < ActiveRecord::Base
-  attr_accessible :metadatas, :is_valid, :secret_room, :category_ids, :created_at, :token
-  has_and_belongs_to_many :categories
+  attr_accessible :metadatas, :is_valid, :secret_room, :category_ids, :created_at, :token, :event_id
   before_create :generate_token
-  validates :metadatas, :presence => true
+  belongs_to :event
 
 
   protected

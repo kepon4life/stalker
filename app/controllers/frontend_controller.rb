@@ -65,10 +65,21 @@ class FrontendController < ApplicationController
 		end
 	end
 
+
+	#event_id = 0 si provient de drawtable. Sinon de l'event_id du QR Code
 	def save
-		if params[:metadatas] && params[:imgNormal]
-			@dream = Dream.new(:metadatas => params[:metadatas])
-			@dream.metadatas = params[:metadatas]
+		if params[:event_id] && params[:imgNormal]
+
+			@dream = Dream.new()
+
+			if params[:event_id] != ""
+				if Event.exists?(params[:event_id])
+					@dream.event_id = params[:event_id]
+				elsif params[:event_id] == "0"
+					@dream.event_id = Event.where(name: "La maison d'ailleurs").first.id
+				end
+			end
+
 			imgNormal = Base64.decode64(params[:imgNormal].gsub("data:image/png;base64", ""));
 
 			if @dream.save
@@ -76,11 +87,13 @@ class FrontendController < ApplicationController
 					image = MiniMagick::Image.read(imgNormal)
 					image.resize "256x160"
 					image.write  "public" + PATH_TO_DREAMS_THUMBNAILS + @dream.id.to_s + DREAM_EXTENSION
-					Pusher[PUSHER_CHANEL_DREAM_CREATED].trigger(PUSHER_EVENT_DREAM_CREATED, {:imgUrl => @dream.id.to_s + DREAM_EXTENSION, :metadatas =>  @dream.metadatas})
+					Pusher[PUSHER_CHANEL_DREAM_CREATED].trigger(PUSHER_EVENT_DREAM_CREATED, {:imgUrl => @dream.id.to_s + DREAM_EXTENSION, :event_id =>  @dream.event_id.to_s})
 					render :json => {:imgUrl => @dream.id.to_s + DREAM_EXTENSION, :token => @dream.token, :dream_id => @dream.id.to_s}
 				else
 					render :json => {:imgUrl => "PAS OK"}
 				end
+			else
+				render :json => {:imgUrl => "PAS OK"}
 			end
 
 		else

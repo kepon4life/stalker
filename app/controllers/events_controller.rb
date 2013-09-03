@@ -1,5 +1,6 @@
 class EventsController < ApplicationController
 
+  http_basic_authenticate_with :name => APPLICATION_ADMIN_USERNAME, :password => APPLICATION_ADMIN_PASSWORD
 
   # GET /events
   # GET /events.json

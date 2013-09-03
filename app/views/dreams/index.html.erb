@@ -17,6 +17,7 @@
       <thead>
         <tr>
           <th>Dream</th>
+          <th>Event</th>
           <th><a href="?sort=<%= @sort=="asc"? "desc" : "asc" %>&valid=<%= @is_valid %>&special=<%= @secret_room %>"><i class="icon-arrow-<%= @sort=="asc"? "up" : "down" %>"></i>Date (click to sort)</a></th>
           <th>Change status</th>
           <th></th>
@@ -28,6 +29,8 @@
           <tr>
             <td>
               <img class="dream" class src="<%= PATH_TO_DREAMS_THUMBNAILS + dream.id.to_s + DREAM_EXTENSION %>" alt="<%= dream.id.to_s %>" />
+            </td>
+            <td><%= dream.event.name %></td>
             <td>
               <ul>
                 <%= dream.created_at.to_s(:standard) %>

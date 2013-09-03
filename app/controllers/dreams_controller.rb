@@ -6,7 +6,7 @@ class DreamsController < ApplicationController
   Pusher.key = PUSHER_API_KEY
   Pusher.secret = PUSHER_API_SECRET
   
-  http_basic_authenticate_with :name => "admin", :password => "st4lk3r2013"
+  http_basic_authenticate_with :name => APPLICATION_ADMIN_USERNAME, :password => APPLICATION_ADMIN_PASSWORD
 
   # GET /dreams
   # GET /dreams.json
@@ -245,6 +245,7 @@ class DreamsController < ApplicationController
     end
 
     for i in 0..nb_of_dreams_to_add-1
+      event_id = Event.first(:offset => rand(Event.count)).id
       year = Time.now.year - rand(2)
       month = rand(12) + 1
       day = rand(31) + 1
@@ -255,7 +256,7 @@ class DreamsController < ApplicationController
       end
       random_number = rand(0..nb_of_dreams_to_copy-1)
       file = Dir.glob("public/tests/dreams/*.png")[random_number]
-      dream = Dream.new(:is_valid => [true, false].sample, :secret_room => [true, false].sample, :metadatas => "{'datas':null}", :created_at => date)
+      dream = Dream.new(:event_id => event_id,:is_valid => [true, false].sample, :secret_room => [true, false].sample, :metadatas => "{'datas':null}", :created_at => date)
       dream.save
       FileUtils.copy_file(file, "public" + PATH_TO_DREAMS + dream.id.to_s + DREAM_EXTENSION, preserve = false, dereference = true)
       FileUtils.copy_file("public/tests/dreams-small/" + file.split("/")[3] , "public" + PATH_TO_DREAMS_THUMBNAILS + dream.id.to_s + DREAM_EXTENSION, preserve = false, dereference = true) 

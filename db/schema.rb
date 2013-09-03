@@ -11,27 +11,28 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130118120616) do
+ActiveRecord::Schema.define(:version => 20130902134417) do
 
   create_table "dreams", :force => true do |t|
     t.boolean  "is_valid"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
     t.binary   "metadatas"
     t.boolean  "secret_room"
     t.string   "token"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.integer  "event_id"
   end
 
   create_table "events", :force => true do |t|
     t.string   "name"
     t.boolean  "display_only_accepted"
     t.boolean  "is_active"
-    t.string   "image_file_name"
-    t.string   "image_content_type"
-    t.string   "image_file_size"
-    t.string   "image_updated_at"
     t.datetime "created_at",            :null => false
     t.datetime "updated_at",            :null => false
+    t.string   "image_file_name"
+    t.string   "image_content_type"
+    t.integer  "image_file_size"
+    t.datetime "image_updated_at"
   end
 
 end
