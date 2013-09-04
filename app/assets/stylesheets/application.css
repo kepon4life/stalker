@@ -63,7 +63,7 @@ div.dream{
 float: left;
 cursor: pointer;
 width: 200px;
-height: 130px;
+height: 140px;
 margin-left: 5px;
 margin-right: 5px;
 margin-bottom: 10px;
@@ -98,7 +98,6 @@ div.dream div.decision.okPlus{
 div.dream span{
   width: 100%;
   float: left;
-  margin-top:-2px;
   text-align:center;
   font-size: 12px;
 }

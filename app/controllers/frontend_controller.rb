@@ -92,6 +92,9 @@ class FrontendController < ApplicationController
 	end
 
 
+	
+
+
 	#event_id = 0 si provient de drawtable. Sinon de l'event_id du QR Code
 	def save
 		if params[:event_id] && params[:imgNormal]
@@ -106,10 +109,10 @@ class FrontendController < ApplicationController
 				end
 			end
 
-			imgNormal = Base64.decode64(params[:imgNormal].gsub("data:image/png;base64", ""));
+			imgNormal = treat_image_sended(Base64.decode64(params[:imgNormal].gsub("data:image/png;base64", "")));
 
 			if @dream.save
-				if file_put_contents("public" + PATH_TO_DREAMS + @dream.id.to_s + DREAM_EXTENSION, imgNormal)
+				if imgNormal.write "public" + PATH_TO_DREAMS + @dream.id.to_s + DREAM_EXTENSION
 					image = MiniMagick::Image.read(imgNormal)
 					image.resize "364x200"
 					image.write  "public" + PATH_TO_DREAMS_THUMBNAILS + @dream.id.to_s + DREAM_EXTENSION
@@ -125,6 +128,32 @@ class FrontendController < ApplicationController
 		else
 			render :json => {:imgUrl => "PAS OK"}
 		end
+	end
+
+	def treat_image_sended(img)
+		
+		image = MiniMagick::Image.read(img)
+
+		bgImage = MiniMagick::Image.open "public/frontend/img/dream_bg.png"
+
+		pos_x = 0
+		pos_y = 0
+		
+		if image[:width] > image[:height]
+			image.resize bgImage[:width].to_s+"x"
+			pos_y = ((bgImage[:height] - image[:height]) / 2)
+		else
+			image.resize "x"+bgImage[:height].to_s
+			pos_x = ((bgImage[:width] - image[:width]) / 2)
+		end
+
+		result = bgImage.composite(image) do |c|
+  			c.compose "Over" # OverCompositeOp
+  			c.geometry "+"+pos_x.to_s+"+"+pos_y.to_s # copy second_image onto first_image from (20, 20)
+		end
+
+		return result
+		
 	end
 
 	def file_put_contents( name, *contents )
