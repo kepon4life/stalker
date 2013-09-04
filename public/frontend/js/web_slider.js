@@ -321,17 +321,12 @@ YUI.add("stalker-webslider", function(Y) {
            || navigator.userAgent.match(/Windows Phone/i)
            || navigator.userAgent.match(/MSIE ([0-9]{1,}[\.0-9]{0,})/i)
            ) {
-                $("#preview-strip-nowebgl").find(".handle-tooltip-inner").hide();
-                $('#preview-strip-nowebgl').bind("touchstart",function(){
+                $('#preview-strip-nowebgl').bind("touchmove",function(){
                 $(".handle-tooltip-inner").fadeIn(100)
                 }).bind("touchend",function(){
                     $(".handle-tooltip-inner").fadeOut(100)
                 })
             }
-
-            // $('#preview-strip-nowebgl').bind("scrollstart",function(){
-            //     console.log("scrollstart")
-            // });
         }
 
         function loadAlbum(callback) {
