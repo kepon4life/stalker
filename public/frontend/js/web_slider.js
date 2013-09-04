@@ -131,27 +131,6 @@ YUI.add("stalker-webslider", function(Y) {
         var autofire;
         var laste;
         currently_playing = -1;
-        function mousemove(e) {
-            if (!e)
-                e = laste;
-            else
-                laste = e;
-            var toMove;
-            var margins = 100;
-            strip_width = strip.width();
-            if (e.clientX < margins) {
-                toMove = -10;
-            } else if ((strip_width - e.clientX) < margins) {
-                toMove = 10;
-            }
-            if (toMove)
-                strip.scrollLeft(strip.scrollLeft() + toMove);
-        }
-        strip.on('mouseout', function(e) {
-            clearInterval(autofire);
-        }).on('scroll', function(e) {
-            checks();
-        });
         function checks() {
             var ins = [], outs = [];
             $('#preview-strip>ul>li').each(function(a, b) {
@@ -330,7 +309,29 @@ YUI.add("stalker-webslider", function(Y) {
             $("#sharefb").on("click",function(){
                 shareOnFacebook();
             })
+            
             previewStripHeightAdjust();
+
+            if( navigator.userAgent.match(/Android/i)
+           || navigator.userAgent.match(/webOS/i)
+           || navigator.userAgent.match(/iPhone/i)
+           || navigator.userAgent.match(/iPad/i)
+           || navigator.userAgent.match(/iPod/i)
+           || navigator.userAgent.match(/BlackBerry/i)
+           || navigator.userAgent.match(/Windows Phone/i)
+           || navigator.userAgent.match(/MSIE ([0-9]{1,}[\.0-9]{0,})/i)
+           ) {
+                $("#preview-strip-nowebgl").find(".handle-tooltip-inner").hide();
+                $('#preview-strip-nowebgl').bind("touchstart",function(){
+                $(".handle-tooltip-inner").fadeIn(100)
+                }).bind("touchend",function(){
+                    $(".handle-tooltip-inner").fadeOut(100)
+                })
+            }
+
+            // $('#preview-strip-nowebgl').bind("scrollstart",function(){
+            //     console.log("scrollstart")
+            // });
         }
 
         function loadAlbum(callback) {
@@ -525,6 +526,18 @@ YUI.add("stalker-webslider", function(Y) {
             var tooltip = '<div id="dateThumbnail" class="handle-tooltip"><div class="handle-tooltip-inner"></div></div>'
             $('.handle4').html(tooltip)
 
+             if( navigator.userAgent.match(/Android/i)
+           || navigator.userAgent.match(/webOS/i)
+           || navigator.userAgent.match(/iPhone/i)
+           || navigator.userAgent.match(/iPad/i)
+           || navigator.userAgent.match(/iPod/i)
+           || navigator.userAgent.match(/BlackBerry/i)
+           || navigator.userAgent.match(/Windows Phone/i)
+           || navigator.userAgent.match(/MSIE ([0-9]{1,}[\.0-9]{0,})/i)
+           ) {
+                $(".handle-tooltip-inner").hide();
+            }
+
         }
 
         $("#preview-strip-nowebgl").on("click","li",function(e){
@@ -532,7 +545,6 @@ YUI.add("stalker-webslider", function(Y) {
             showLegend(node.info)
         })
         
-
         
         $("#shares").on("click", "#sharewall", function(e){
             actual_dream_id = $('#preview-strip li.dreamselected img').attr("alt");
@@ -578,10 +590,12 @@ YUI.add("stalker-webslider", function(Y) {
 }(jQuery));
 
 function previewStripHeightAdjust(){
+    if($(window).width() >767){
         var winH = $(window).height()-40;
         $('#preview-strip').height(winH)
         $('#preview-strip-nowebgl').height(winH)
     }
+}
 
 $(window).resize(function(){
     previewStripHeightAdjust();

@@ -125,3 +125,13 @@
     color: white;
     opacity: 1;
 }
+@media all and (max-device-width: 768px){
+    .handle-tooltip-inner{
+        font-weight: bold;
+        opacity: 1;
+    }
+    .track4{
+        opacity: 1;
+    }
+}
+    
