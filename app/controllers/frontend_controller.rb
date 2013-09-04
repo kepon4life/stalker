@@ -134,7 +134,7 @@ class FrontendController < ApplicationController
 		
 		image = MiniMagick::Image.read(img)
 
-		bgImage = MiniMagick::Image.open "public/frontend/img/dream_bg.png"
+		bgImage = MiniMagick::Image.open "/public/frontend/img/dream_bg.png"
 
 		pos_x = 0
 		pos_y = 0
