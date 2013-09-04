@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130902134417) do
+ActiveRecord::Schema.define(:version => 20130904082323) do
 
   create_table "dreams", :force => true do |t|
     t.boolean  "is_valid"
@@ -21,7 +21,6 @@ ActiveRecord::Schema.define(:version => 20130902134417) do
     t.boolean  "secret_room"
     t.string   "token"
     t.integer  "event_id"
-
   end
 
   create_table "events", :force => true do |t|
@@ -34,7 +33,7 @@ ActiveRecord::Schema.define(:version => 20130902134417) do
     t.string   "image_content_type"
     t.integer  "image_file_size"
     t.datetime "image_updated_at"
-
+    t.string   "description"
   end
 
 end

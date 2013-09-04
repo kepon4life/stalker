@@ -20,6 +20,12 @@
     </div>
   </div>
   <div class="control-group">
+    <%= f.label :description, :class => "control-label" %>
+    <div class="controls">
+      <%= f.text_field :description %>
+    </div>
+  </div>
+  <div class="control-group">
     <%= f.label :is_active, "Is active", :class => "control-label" %>
     <div class="controls">
       <%= f.check_box :is_active, :id => "form-events-is_active" %>
