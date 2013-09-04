@@ -289,12 +289,30 @@ YUI.add("stalker-webslider", function(Y) {
                 loadAlbum(startImgSlider);
             }else{
                 var idimg = idDreamRequested.toString();
-                loadAlbum(function(){
-                    customSliderStart($("#"+idimg));
-                    $('#preview-strip-nowebgl').animate({
-                    scrollTop: $("#"+idimg).offset().top
-                    }, 1000);
-                })
+                if(navigator.userAgent.match(/Android/i)
+                   || navigator.userAgent.match(/webOS/i)
+                   || navigator.userAgent.match(/iPhone/i)
+                   || navigator.userAgent.match(/iPad/i)
+                   || navigator.userAgent.match(/iPod/i)
+                   || navigator.userAgent.match(/BlackBerry/i)
+                   || navigator.userAgent.match(/Windows Phone/i)
+                   || navigator.userAgent.match(/MSIE ([0-9]{1,}[\.0-9]{0,})/i)){
+                    loadAlbum(function(){
+                        customSliderStart($("#"+idimg));
+                        $('#preview-strip-nowebgl').animate({
+                        scrollTop: $("#"+idimg).offset().top
+                        }, 1000,function(){$(".handle-tooltip-inner").hide()});
+                    })
+
+                }else{
+                    loadAlbum(function(){
+                        customSliderStart($("#"+idimg));
+                        $('#preview-strip-nowebgl').animate({
+                        scrollTop: $("#"+idimg).offset().top
+                        }, 1000);
+                    })
+                }
+                
             }
         });
 
@@ -324,7 +342,7 @@ YUI.add("stalker-webslider", function(Y) {
                 $('#preview-strip-nowebgl').bind("touchmove",function(){
                 $(".handle-tooltip-inner").fadeIn(100)
                 }).bind("touchend",function(){
-                    $(".handle-tooltip-inner").fadeOut(100)
+                    $(".handle-tooltip-inner").fadeOut(200)
                 })
             }
         }
@@ -519,19 +537,7 @@ YUI.add("stalker-webslider", function(Y) {
                 }
             });
             var tooltip = '<div id="dateThumbnail" class="handle-tooltip"><div class="handle-tooltip-inner"></div></div>'
-            $('.handle4').html(tooltip)
-
-             if( navigator.userAgent.match(/Android/i)
-           || navigator.userAgent.match(/webOS/i)
-           || navigator.userAgent.match(/iPhone/i)
-           || navigator.userAgent.match(/iPad/i)
-           || navigator.userAgent.match(/iPod/i)
-           || navigator.userAgent.match(/BlackBerry/i)
-           || navigator.userAgent.match(/Windows Phone/i)
-           || navigator.userAgent.match(/MSIE ([0-9]{1,}[\.0-9]{0,})/i)
-           ) {
-                $(".handle-tooltip-inner").hide();
-            }
+            $('.handle4').html(tooltip);
 
         }
 
