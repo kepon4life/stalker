@@ -43,13 +43,24 @@
 
     <script type="text/javascript">
     var id_dream = null;
+    var dream_called_in_moderation = null;
+    var dream_called_valid = null;
     var url_to_service = window.location.origin + "/services/dreamsvalidated";
     <% if @id_dream != nil %>
+        dream_called_in_moderation = <%= @dream_called_in_moderation %>
+        dream_called_valid = <%= @dream_called_valid %>
         id_dream = <%= @id_dream %>
         <% if !@dream_called_valid %>
             url_to_service = window.location.origin + "/services/dreamsvalidated?requested=" + <%= @id_dream %>;
         <% end %>
+        alert("WEB SLIDER Appeler avec un rêve en paramètre : \n"
+          + "Id : " + id_dream + "\n"
+          + "Dream is not moderated : " + dream_called_in_moderation + "\n"
+          + "Dream is valid : " + dream_called_valid);
     <% end %>
+
+    
+
         YUI_config.groups.inputex.base = "frontend/js/libs/inputex/src/";
         YUI_config.groups.inputex.filter = "raw";
         YUI_config.stalkerbase = "frontend/";
