@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/thoughtbot/paperclip.git
-  revision: c594c2495cfd1f36611574c3dbf5f4d2cd199aea
+  revision: 7bf50e12848fbe7d70a013405425940303bb4112
   specs:
     paperclip (3.5.1)
       activemodel (>= 3.0.0)
@@ -71,7 +71,7 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
-    mime-types (1.24)
+    mime-types (1.25)
     mini_magick (3.6.0)
       subexec (~> 0.2.1)
     multi_json (1.7.9)
