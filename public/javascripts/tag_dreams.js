@@ -5,6 +5,48 @@ var images = new Object();
 
 
 $(document).ready(function () {
+	$("#tag_dreams").on("mouseover", ".valid", function(){
+
+		$(this).css('background-image', 'url("/img/validate_bg.png")');
+	})
+
+	$("#tag_dreams").on("mouseout", ".valid", function(){
+
+		$(this).css('background-image', '');
+	})
+
+	$("#tag_dreams").on("mouseover", ".zoom", function(){
+
+		$(this).css('background-image', 'url("/img/zoom_bg.png")');
+	})
+
+	$("#tag_dreams").on("mouseout", ".zoom", function(){
+
+		$(this).css('background-image', '');
+	})
+
+	$("#tag_dreams").on("click", ".zoom", function(){
+
+	    window.open($(this).siblings("a").attr("id"), 'nom_interne_de_la_fenetre', config='height=800, width=1280, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no');
+	})
+
+
+	//lorsque l'on clique sur une image, son état change
+	$("#tag_dreams").on("click", ".valid", function(){
+		if($(this).parent().children("div.decision").hasClass("ok")){
+			imgIsOkPlus($(this).parent());
+			toggleSendButton();
+		} else if($(this).parent().children("div.decision").hasClass("nok")){
+			imgIsOk($(this).parent());
+			toggleSendButton();
+		} else if($(this).parent().children("div.decision").hasClass("okPlus")){
+			imgIsUnatributed($(this).parent());
+			toggleSendButton();
+		} else{
+			imgIsNok($(this).parent());
+			toggleSendButton();
+		}
+	});
 
 
 	//on initialise les 2 boutons permettant de modifier le nb de dessins affichés
@@ -75,27 +117,10 @@ $(document).ready(function () {
 
 
 
-	$(document).on("dblclick", ".not_a_link", function(){
-    	window.open(this.id, 'nom_interne_de_la_fenetre', config='height=700, width=700, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no');
-	});
+	
 
 
-	//lorsque l'on clique sur une image, son état change
-	$(document).on("click", "div.dream", function(){
-		if($(this).children("div.decision").hasClass("ok")){
-			imgIsOkPlus($(this));
-			toggleSendButton();
-		} else if($(this).children("div.decision").hasClass("nok")){
-			imgIsOk($(this));
-			toggleSendButton();
-		} else if($(this).children("div.decision").hasClass("okPlus")){
-			imgIsUnatributed($(this));
-			toggleSendButton();
-		} else{
-			imgIsNok($(this));
-			toggleSendButton();
-		}
-	});
+	
 
 
 	$("button#send").click(function(){

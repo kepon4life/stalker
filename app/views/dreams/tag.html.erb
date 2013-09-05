@@ -1,6 +1,27 @@
 <% content_for :javascript_includes do %>
 	<%= javascript_include_tag "/javascripts/jquery.cookies.js" %>
   	<%= javascript_include_tag "/javascripts/tag_dreams.js" %>
+  	<style>
+
+  	div.dream div.zoom{
+		z-index: 1;
+		width: 25%;
+		min-height: 100%;
+		float: left;
+		margin-top: -125px;
+		position: relative;
+	}
+
+	div.dream div.valid{
+		z-index: 1;
+		width: 75%;
+		min-height: 100%;
+		float: left;
+		margin-top: -125px;
+		position: relative;
+
+	}
+  	</style>
 <% end %>
 <% content_for :header_content do %>
 	<%= render 'layouts/header_admin' %>
@@ -56,7 +77,8 @@
 				<div class="dream" id="dream_<%= dream.id.to_s %>">
 					<div class="decision"></div>
 					<a class="not_a_link" id="<%= PATH_TO_DREAMS + dream.id.to_s + DREAM_EXTENSION %>" alt="<%= dream.id.to_s %>"><img class="dream" src="<%= PATH_TO_DREAMS_THUMBNAILS + dream.id.to_s + DREAM_EXTENSION %>" alt="<%= dream.id.to_s %>" /></a>
-					
+					<div class="zoom"></div>
+					<div class="valid"></div>
 						<% if dream.event != nil %>
 							<span><%= dream.event.name %></span>
 						<% end %>
