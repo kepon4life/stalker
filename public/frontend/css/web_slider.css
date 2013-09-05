@@ -178,7 +178,7 @@
     border-radius: 5px;
     font-size: 17px;
     width: 110px;
-    height:140px;
+    height:190px;
     padding-top:10px;
     text-align: center;
     text-decoration: none;
@@ -197,6 +197,21 @@
     display: inline-block;
     padding-right: 12px;
 
+}
+
+#myModal #walls_btn .wall_btn p.title{
+    max-height: 45px;
+    min-height: 45px;
+    text-align: bottom;
+}
+
+#myModal #walls_btn .wall_btn p.description{
+    font-size: 12px;
+}
+
+#myModal #walls_btn .wall_btn a{
+    color:#333;
+    font-size: 14px;
 }
 
 #myModal #walls_btn .wall_btn img{

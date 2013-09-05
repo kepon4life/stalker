@@ -35,7 +35,7 @@
     <script type="text/javascript">
         var events = new Array();
         <% @events.each do |event| %>
-            events.push({name:"<%= event.name %>", id: <%= event.id %>, image: "<%= event.image_file_name %>"});
+            events.push({name:"<%= event.name %>", id: <%= event.id %>, image: "<%= event.image_file_name %>", description: "<%= event.description %>", address: "<%= event.address %>"});
         <% end %>
     </script>
 

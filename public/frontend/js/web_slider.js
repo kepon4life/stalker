@@ -15,7 +15,7 @@ YUI.add("stalker-webslider", function(Y) {
 
     var walls_btn = '<div id="walls_btn">';
     for(var i= 0; i < events.length; i++){
-        walls_btn += '<div class="wall_btn"><img alt="'+events[i]["id"]+'" src="events/'+events[i]["image"]+'" /><p>'+events[i]["name"]+'</p></div>';
+        walls_btn += '<div class="wall_btn"><p class="title">'+events[i]["name"]+'</p><img alt="'+events[i]["id"]+'" src="events/'+events[i]["image"]+'" /><p class="description">'+events[i]["description"]+'</p><a target="_blank" href="https://www.google.ch/maps/preview#!q='+events[i]["address"]+'">where?</a></div>';
     }
     walls_btn += '</div>'
 
