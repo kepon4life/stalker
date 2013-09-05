@@ -109,9 +109,11 @@ class FrontendController < ApplicationController
 
 			if @dream.save
 				if imgNormal.write "public" + PATH_TO_DREAMS + @dream.id.to_s + DREAM_EXTENSION
+					FileUtils::chmod(0444, "public" + PATH_TO_DREAMS + @dream.id.to_s + DREAM_EXTENSION)
 					image = MiniMagick::Image.read(imgNormal)
 					image.resize "364x200"
 					image.write  "public" + PATH_TO_DREAMS_THUMBNAILS + @dream.id.to_s + DREAM_EXTENSION
+
 					Pusher[PUSHER_CHANEL_DREAM_CREATED].trigger(PUSHER_EVENT_DREAM_CREATED, {:imgUrl => @dream.id.to_s + DREAM_EXTENSION, :event_id =>  @dream.event_id.to_s})
 					render :json => {:imgUrl => @dream.id.to_s + DREAM_EXTENSION, :token => @dream.token, :dream_id => @dream.id.to_s}
 				else
