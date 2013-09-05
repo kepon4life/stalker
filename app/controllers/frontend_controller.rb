@@ -92,7 +92,7 @@ class FrontendController < ApplicationController
 	end
 
 	#event_id = 0 si provient de drawtable. Sinon de l'event_id du QR Code
-	def save
+	def save_old
 		if params[:event_id] && params[:imgNormal]
 
 			@dream = Dream.new()
@@ -130,7 +130,7 @@ class FrontendController < ApplicationController
 
 
 	#event_id = 0 si provient de drawtable. Sinon de l'event_id du QR Code
-	def save2
+	def save
 		if params[:event_id] && params[:imgNormal]
 
 			@dream = Dream.new()
