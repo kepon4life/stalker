@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css">
 <%= stylesheet_link_tag '/frontend/css/slider.css'  %>
+<%= stylesheet_link_tag '/frontend/css/jquery.mCustomScrollbar.css'%>
 <%= stylesheet_link_tag '/frontend/css/web_slider.css'  %>
 
 <%= stylesheet_link_tag '/frontend/css/slider-range-dreams.css'  %>
@@ -27,7 +28,7 @@
     <%= javascript_include_tag "/frontend/js/libs/enscroll-0.4.2.min.js"%>
     <%= javascript_include_tag "/frontend/js/libs/waypoints.min.js"%>
     <script src="http://js.pusher.com/1.12/pusher.min.js"></script>
-
+    <%= javascript_include_tag "/frontend/js/libs/jquery.mCustomScrollbar.min.js"%>
     <%= javascript_include_tag "/frontend/js/pusher.js" %>
     <%= javascript_include_tag "/frontend/js/slider.js" %>
 
@@ -91,7 +92,18 @@
 
                 } else {
                     Y.one('#welcome').hide();
-                    $("#nowebgl").slider_web(id_dream,url_to_service);
+                    if(navigator.userAgent.match(/Android/i)
+                   || navigator.userAgent.match(/webOS/i)
+                   || navigator.userAgent.match(/iPhone/i)
+                   || navigator.userAgent.match(/iPad/i)
+                   || navigator.userAgent.match(/iPod/i)
+                   || navigator.userAgent.match(/BlackBerry/i)
+                   || navigator.userAgent.match(/Windows Phone/i)
+                   || navigator.userAgent.match(/MSIE ([0-9]{1,}[\.0-9]{0,})/i)){
+                        $("#nowebgl").slider_web_mobile(id_dream,url_to_service);
+                    }else{
+                        $("#nowebgl").slider_web(id_dream,url_to_service);
+                    }
                 }
             });
         });

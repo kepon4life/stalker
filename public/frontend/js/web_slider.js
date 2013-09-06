@@ -590,6 +590,301 @@ YUI.add("stalker-webslider", function(Y) {
 
 }(jQuery));
 
+(function($) {
+    $.fn.slider_web_mobile = function(idDreamRequested,serviceUrl) {
+        //DREAMS_SERVICE_URL = window.location.protocol+'//'+window.location.host + "/services/dreamsvalidated";
+        DREAMS_SERVICE_URL = serviceUrl;
+        FADEOUTTIME = 2000;
+        FADINTIME = 2000;
+        PICTURETIME = 3000;
+        var timerDateInfo = null; 
+        var dreamsAlbum = [];
+        var isLoaded = false; // Allow to know if the gallery is loded and the slider ready to start
+        var timeoutFirstImg;
+        var timeout;
+        var customStartTimeout;
+        var indexThumbnail = 0;// useful to know which thumbnail (index) was the last thumnail loaded
+        var nbThumbnailToLoad = 12;
+        this.each(function() {
+            init();
+            var totalScrollOffsetH=$(".totalScrollOffset").height();
+
+            $('#preview-strip-nowebgl').mCustomScrollbar({
+                scrollInertia: 0,
+                autoDraggerLength: false,
+                callbacks:{
+                        onTotalScroll:function(){
+                            if(indexThumbnail < dreamsAlbum.length){
+                                if ((indexThumbnail + nbThumbnailToLoad) > dreamsAlbum.length) { // Useful when we have less thumbnails to load than nbThumbnailToLoad
+                                nbThumbnailToLoad = (dreamsAlbum.length - indexThumbnail);
+                                }
+                                for (var i = 0; i < nbThumbnailToLoad; i++) {
+                                    createThumbnail(dreamsAlbum,indexThumbnail + i);
+                                }
+                                indexThumbnail = indexThumbnail + nbThumbnailToLoad;
+                                
+                            }
+                        },
+                        whileScrolling:function(){
+                            $.waypoints("refresh")
+                        },
+                        onScroll: function(){
+                            clearTimeout(timerDateInfo);
+                            $('#detailsandshare').css('z-index','0')
+                            $('#dateThumbnail').show()
+                            timerDateInfo = setTimeout(function(){$('#dateThumbnail').fadeOut(1000);$('#detailsandshare').css('z-index','14')},2000);
+                        }
+                    }
+            });
+
+            if(idDreamRequested == null){
+                loadAlbum(startImgSlider); // Normal start
+            }else{
+                var idimg = idDreamRequested.toString();
+
+                loadAlbum(function(){
+                    customSliderStart($("#"+idimg));
+                    $("#preview-strip-nowebgl").mCustomScrollbar("scrollTo","#"+idimg);
+                })
+                
+            }
+        });
+
+        function init() {
+
+            $('body').append('<div id="sink"><div id="nav-bar"><div id="status"></div></div><div id="preview-image"></div><div id="preview-strip"></div><div id="preview-strip-nowebgl"></div></div>')
+            $('body').append('<div id="detailsandshare"><div id="shares"><span id="sharefb"></span><a href="#myModal" role="button" data-toggle="modal"><span id="sharewall"></span></a></div><span class="details"></span></div>')
+            $('body').append('<div id="simpleImgSlider"></div>')
+            $('#sink').show();
+            $('#preview-strip').hide();
+            var pusher = new Pusher(PUSHER_API_KEY);
+            channel = pusher.subscribe(PUSHER_CHANEL_DREAM_REQUESTED);
+            $("#sharefb").on("click",function(){
+                shareOnFacebook();
+            })
+            
+            previewStripHeightAdjust();
+
+        }
+
+        function loadAlbum(callback) {
+            $.getJSON(DREAMS_SERVICE_URL, function(data) {
+                $.each(data, function(key, val) {
+                    var photo = val.id;
+                    dreamsAlbum.push({
+                        name: photo,
+                        thumbnail_url: PATH_TO_DREAMS_THUMBNAILS + photo + DREAM_EXTENSION,
+                        created_at: val.created_at
+                    });
+                })
+                dreamsAlbum.sort(comparePhotosDate);
+                populateAlbum(dreamsAlbum);
+                callback();
+            })
+        }
+
+        function startImgSlider() {
+            console.log("startImgSlider")
+            $("#simpleImgSlider img").remove();
+            var li = $(".dreamslist li").get(0)
+            addPrettyDateToScroll(li.title)
+            dreamselected(0)
+
+            showLegend(li.info)
+            var nameImg = ($(".dreamslist img").get(0).id);
+            console.log(nameImg)
+            var img = new Image();
+            img.src = PATH_TO_DREAMS + nameImg + DREAM_EXTENSION;
+            img.id = 0;
+            console.log("img.src "+img.src)
+            img.onload = function() {
+                console.log("loaded")
+                $("#simpleImgSlider").append(img)
+            }
+            timeoutFirstImg = setTimeout(function() {
+                loadingNextImg(0);
+            }, PICTURETIME)
+        }
+
+        function customSliderStart(imgClicked) {
+
+            dreamselected($("li").index((imgClicked.parent())))
+
+            clearTimeout(customStartTimeout)
+            var imgToDisplay = new Image();
+            imgToDisplay.id = ($("li").index((imgClicked.parent())))
+            imgToDisplay.src = PATH_TO_DREAMS + imgClicked.attr('id') + DREAM_EXTENSION;
+            var li = imgClicked.parent().get(0);
+            addPrettyDateToScroll(li.title)
+            showLegend(li.info)
+            clearTimeout(timeout);
+            clearTimeout(timeoutFirstImg);
+            $("#simpleImgSlider").find('img').remove();
+
+            imgToDisplay.onload = function() {
+                $("#simpleImgSlider").append(imgToDisplay)
+                customStartTimeout = setTimeout(function() {
+                    loadingNextImg(imgToDisplay.id);
+                }, PICTURETIME)
+            }
+        }
+
+        function loadingNextImg(indexCurrentImg) {
+            if (indexCurrentImg < dreamsAlbum.length - 1) {
+                indexCurrentImg = parseInt(indexCurrentImg);
+                var indexNextImg = indexCurrentImg + 1;
+                var nameImg = ($(".dreamslist img").get(indexNextImg).id);
+                var src = PATH_TO_DREAMS + nameImg + DREAM_EXTENSION;
+                $("#simpleImgSlider").append("<img id='" + indexNextImg + "' src='" + src + "' style='display: none;'/>");
+                $("#" + indexNextImg).bind("load", function() {
+                        timeout = setTimeout(function() {
+                        fadeout(indexCurrentImg, indexNextImg);
+                    }, PICTURETIME)
+                })
+            } else {
+                var indexNextImg = 0;
+                var nameImg = ($(".dreamslist img").get(indexNextImg).id);
+                var src = PATH_TO_DREAMS + nameImg + DREAM_EXTENSION;
+                $("#simpleImgSlider").append("<img id='" + indexNextImg + "' src='" + src + "' style='display: none;'/>");
+                $("#" + indexNextImg).bind("load", function() {
+                    timeout = setTimeout(function() {
+                        fadeout(indexCurrentImg, indexNextImg);
+                    }, PICTURETIME)
+                })
+            }
+
+        }
+
+        function fadeout(idLastImg, idImgToDisplay){
+            $("#" + idLastImg).fadeOut(FADEOUTTIME, function() {
+                $("#" + idLastImg).remove();
+                if (idImgToDisplay < 0) { // An idImgToDisplay negative means that the next image is not loaded
+                    init();
+                } else {
+                    $("#" + idImgToDisplay).fadeIn(FADINTIME, function() {
+                        loadingNextImg(idImgToDisplay);
+                    });
+                    dreamselected(idImgToDisplay)
+                }
+            })
+        }
+
+        function populateAlbum(album) {
+            $('#preview-strip-nowebgl').find('.dreamslist').remove();
+            ul = $('<ul class="dreamslist"/>');
+            $('.mCSB_container').append(ul);
+
+            var indexOfDreamRequested;
+
+            if(idDreamRequested!= null){
+                for (var i = 0; i < album.length; i++) {
+                    if(album[i].name == idDreamRequested){
+                        indexOfDreamRequested = i;
+                        break;
+                    }
+                }
+                if(indexOfDreamRequested+1 > nbThumbnailToLoad){
+                    nbThumbnailToLoad = (indexOfDreamRequested+1)
+                }
+            }
+            
+            for (var i = 0; i < nbThumbnailToLoad; i++) {
+                createThumbnail(album, indexThumbnail + i);
+            }
+            indexThumbnail = indexThumbnail + nbThumbnailToLoad;
+
+            /*Init value info for scroll*/
+            var tooltip = '<div id="dateThumbnail" class="handle-tooltip"><div class="handle-tooltip-inner"></div></div>'
+            $('.mCSB_dragger_bar').html(tooltip)
+            addPrettyDateToScroll($(".dreamslist li").get(0).title);
+            
+        }
+
+        function createThumbnail(photo_album, index) {
+                ul = $('.dreamslist');
+                var info = photo_album[index],
+                        name = info.name,
+                        thumbnail_url = info.thumbnail_url,
+                        img = new Image();
+
+                img.src = thumbnail_url;
+                info.index = index;
+                img.id = name;
+
+                if (name) {
+                    img.alt = name;
+                }
+
+                var li = $('<li/>').append(img);
+
+
+                var date = new Date(Date.parse(info.created_at));
+                li.attr("title",prettyDate(date));
+
+                li[0].info = photo_album[index];
+                ul.append(li);
+                $('#preview-strip-nowebgl').mCustomScrollbar("update");
+
+                $(li).waypoint({
+                    handler: function() {
+                        addPrettyDateToScroll($(this).attr("title"))
+                    }
+                });
+                
+        }
+
+        $('body').on('click', '.dreamslist li', function() {
+            customSliderStart($(this).find('img'));
+        })
+
+        $('body').on('click', '.dreamslist li',function(e){
+            var node = e.currentTarget;
+            showLegend(node.info)
+        })
+              
+        $("#shares").on("click", "#sharewall", function(e){
+            actual_dream_id = $('#preview-strip li.dreamselected img').attr("alt");
+        });
+        
+        $("#walls_btn").on("click",".wall_btn",function(e){
+            $('#walls_btn').find('.wall_btn').each(function() {
+                if($(this).hasClass("selected")){
+                    $(this).removeClass("selected");
+                }
+            });
+            $(this).addClass("selected");
+        });
+        
+        $(".modal-footer").on("click", "#modal_ok_btn", function(e){
+            var event_selected_id = $(".wall_btn.selected img").attr("alt");
+            if(event_selected_id != null){
+                channel.trigger(PUSHER_EVENT_DREAM_REQUESTED, {"dreamId" : parseInt(actual_dream_id), "eventId" : event_selected_id });  
+            }
+        });
+
+        function showLegend (pictureCfg) {
+            var metas,
+                detailsNode = $("#detailsandshare .details"),
+                date = new Date(Date.parse(pictureCfg.created_at));
+                detailsNode.text(prettyDate(date));
+            try {
+                metas = Y.JSON.parse(pictureCfg.metadatas);
+                detailsNode.append("<br />" + metas.event);
+            } catch (e) {
+                // GOTCHA
+            }
+        }
+
+        function dreamselected(index){
+        $('#preview-strip-nowebgl ul .dreamselected').removeClass("dreamselected");
+            var c = $('#preview-strip-nowebgl ul>li').get(index);
+            c.className = c.className + "dreamselected";
+        }
+
+    }   
+
+}(jQuery));
+
 function previewStripHeightAdjust(){
     if($(window).width() >767){
         var winH = $(window).height()-40;

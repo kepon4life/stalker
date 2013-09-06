@@ -73,18 +73,34 @@
     height: 40px;
     top: 19.5px;
 }
-#simpleImgSlider{
+/*#simpleImgSlider{
     position: absolute;
-    width: auto;
-    height: 100%;
-    margin-left: 100px;
-    left: 0;
+    left: 110px;
     right: 0;
-}
-#simpleImgSlider img{
     max-width: 100%;
     max-height: 100%;
 }
+#simpleImgSlider img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+    height: auto;
+    width: 100%;
+}*/
+#simpleImgSlider{
+        position: absolute;
+        left: 110px;
+        right: 0;
+        max-width: 80%;
+        max-height: 80%;
+    }
+    #simpleImgSlider img{
+        position: relative;
+        display: block;
+        /*margin: auto;*/
+    }
 .overlay {
     position: fixed;
     width: 100%;
@@ -336,9 +352,9 @@
         left: 95px;
         font-size: 10px;
         font-family: 'Pathway Gothic One';
+        z-index: 14;
         text-align: right;
         color: white;
-        z-index: 20000;
         height: 42px;
         line-height: 1.2em;
         padding-top: 5px;
@@ -369,17 +385,50 @@
         margin-bottom: 5px;
         opacity: 1;
     }
+     #sink #preview-strip-nowebgl {
+     width: 210px;
+     height: 100%;
+     overflow: auto;
+     position: fixed;
+     top: 0;
+     left: 0;
+     z-index: 13;
+     background: rgba(0, 0, 0, 0);
+     white-space: nowrap;
+     border-top: none;
+     -webkit-transition: all 0.2s ease-out;
+ }
     #stalkerlogo{
         display: none;
     }
-    #simpleImgSlider img{
+    #simpleImgSlider{
         position: absolute;
+        left: 110px;
+        right: 0;
         max-width: 100%;
         max-height: 100%;
-        top: 15%;
-        left: 0;
-        display: block;
-        margin-top: auto;
-        margin-bottom: auto;
+        top: 30%;
     }
+    #simpleImgSlider img{
+        position: relative;
+        display: block;
+        /*margin: auto;*/
+        top:-30%;
+    }
+    .mCSB_draggerContainer .mCSB_dragger_bar #dateThumbnail .handle-tooltip-inner{
+        z-index: 2;
+    }
+}
+.mCSB_draggerContainer .mCSB_dragger_bar #dateThumbnail .handle-tooltip-inner{
+        z-index: 2;
+    }
+.mCSB_container{
+    margin-right: 0px;
+}
+.mCSB_scrollTools{
+    right: auto;
+    left: 90px;
+}
+.mCSB_scrollTools .mCSB_dragger{
+    height: 55px;
 }
