@@ -355,6 +355,19 @@
     height: 44px;
     margin-left: 0px;
 }
+.mCSB_draggerContainer .mCSB_dragger_bar #dateThumbnail .handle-tooltip-inner{
+        z-index: 2;
+    }
+.mCSB_container{
+    margin-right: 0px;
+}
+.mCSB_scrollTools{
+    right: auto;
+    left: 90px;
+}
+.mCSB_scrollTools .mCSB_dragger{
+    height: 55px;
+}
 @media all and (max-device-width: 768px){
     .details{
         display: none;
@@ -434,17 +447,4 @@
     #fillogo,#comemlogo,#heiglogo{
         display: none;
     }
-}
-.mCSB_draggerContainer .mCSB_dragger_bar #dateThumbnail .handle-tooltip-inner{
-        z-index: 2;
-    }
-.mCSB_container{
-    margin-right: 0px;
-}
-.mCSB_scrollTools{
-    right: auto;
-    left: 90px;
-}
-.mCSB_scrollTools .mCSB_dragger{
-    height: 55px;
 }
