@@ -22,7 +22,7 @@
     top: 0;
     left: 0;
     z-index: 13;
-    background: rgba(0, 0, 0, 0.5);
+    /*background: rgba(0, 0, 0, 0.5);*/
     white-space: nowrap;
     border-top: none;
     -webkit-transition: all 0.2s ease-out;
@@ -90,11 +90,10 @@
     width: 100%;
 }*/
 #simpleImgSlider{
-        position: absolute;
-        left: 110px;
-        right: 0;
-        max-width: 80%;
-        max-height: 80%;
+        margin-left: 110px;
+        max-width: 900px;
+        max-height: 900px;
+        background-color: black;
     }
     #simpleImgSlider img{
         position: relative;
@@ -423,7 +422,7 @@
      white-space: nowrap;
      border-top: none;
      -webkit-transition: all 0.2s ease-out;
- }
+    }
     #stalkerlogo{
         display: none;
     }
@@ -434,6 +433,7 @@
         max-width: 100%;
         max-height: 100%;
         top: 30%;
+        margin-left: 0;
     }
     #simpleImgSlider img{
         position: relative;

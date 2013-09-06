@@ -763,6 +763,7 @@ YUI.add("stalker-webslider", function(Y) {
                 } else {
                     $("#" + idImgToDisplay).fadeIn(FADINTIME, function() {
                         loadingNextImg(idImgToDisplay);
+                        this.style.removeAttribute('filter');
                     });
                     dreamselected(idImgToDisplay)
                 }

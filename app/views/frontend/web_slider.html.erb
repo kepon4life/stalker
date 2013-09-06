@@ -45,13 +45,13 @@
     var id_dream = null;
     var dream_called_in_moderation = null;
     var dream_called_valid = null;
-    var url_to_service = window.location.origin + "/services/dreamsvalidated";
+    var url_to_service = window.location.protocol +'//'+window.location.host + "/services/dreamsvalidated";
     <% if @id_dream != nil %>
         dream_called_in_moderation = <%= @dream_called_in_moderation %>
         dream_called_valid = <%= @dream_called_valid %>
         id_dream = <%= @id_dream %>
         <% if !@dream_called_valid %>
-            url_to_service = window.location.origin + "/services/dreamsvalidated?requested=" + <%= @id_dream %>;
+            url_to_service = window.location.protocol+'//'+window.location.host + "/services/dreamsvalidated?requested=" + <%= @id_dream %>;
         <% end %>
         alert("WEB SLIDER Appeler avec un rêve en paramètre : \n"
           + "Id : " + id_dream + "\n"
@@ -97,8 +97,7 @@
                    || navigator.userAgent.match(/iPad/i)
                    || navigator.userAgent.match(/iPod/i)
                    || navigator.userAgent.match(/BlackBerry/i)
-                   || navigator.userAgent.match(/Windows Phone/i)
-                   || navigator.userAgent.match(/MSIE ([0-9]{1,}[\.0-9]{0,})/i)){
+                   || navigator.userAgent.match(/Windows Phone/i)){
                         $("#nowebgl").slider_web_mobile(id_dream,url_to_service);
                     }else{
                         $("#nowebgl").slider_web(id_dream,url_to_service);
