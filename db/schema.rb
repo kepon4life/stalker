@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130904085628) do
+ActiveRecord::Schema.define(:version => 20130909125432) do
 
   create_table "dreams", :force => true do |t|
     t.boolean  "is_valid"
@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(:version => 20130904085628) do
     t.datetime "image_updated_at"
     t.string   "description"
     t.string   "address"
+    t.string   "address_url"
   end
 
 end

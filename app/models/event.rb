@@ -1,5 +1,5 @@
 class Event < ActiveRecord::Base
-  attr_accessible :name, :display_only_accepted, :is_active, :image, :description, :address
+  attr_accessible :name, :display_only_accepted, :is_active, :image, :description, :address, :address_url
   validates :name, :presence => true
   validates :image, :presence => true
   validates :description, :presence => true

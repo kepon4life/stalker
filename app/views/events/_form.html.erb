@@ -11,11 +11,13 @@
           
           geocoder = new google.maps.Geocoder();
           var mapOptions = {
-            center: new google.maps.LatLng(-33.8688, 151.2195),
+            center: new google.maps.LatLng(46.7833, 6.65),
             zoom: 13,
             mapTypeId: google.maps.MapTypeId.ROADMAP
           };
           var input = /** @type {HTMLInputElement} */(document.getElementById('event_address'));
+
+          var input_address_url = /** @type {HTMLInputElement} */(document.getElementById('event_address_url'));
 
           map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
 
@@ -42,6 +44,11 @@
             marker.setVisible(false);
             input.className = '';
             var place = autocomplete.getPlace();
+
+            input_address_url.value = place.url;
+
+            console.log(place);
+
             if (!place.geometry) {
                 // Inform the user that the place was not found and return.
                 input.className = 'notfound';
@@ -130,6 +137,7 @@
     <%= f.label :address, :class => "control-label" %>
     <div class="controls">
       <%= f.text_field :address %>
+      <%= f.hidden_field :address_url %>
     </div>
   </div>
   <div id="map-canvas" style="width:400px; height:300px;"></div>
