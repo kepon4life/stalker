@@ -7,22 +7,18 @@
 
 var actual_dream_id = 0;
 
+var pusher = new Pusher(PUSHER_API_KEY);
+var channel = pusher.subscribe(PUSHER_CHANEL_DREAM_REQUESTED);
 
 YUI.add("stalker-webslider", function(Y) {
     YUI_config.stalkerbase = YUI_config.stalkerbase || "";
 
     var strip_width;
 
-    var walls_btn = '<div id="walls_btn">';
-    for(var i= 0; i < events.length; i++){
-        walls_btn += '<div class="wall_btn"><p class="title">'+events[i]["name"]+'</p><img alt="'+events[i]["id"]+'" src="events/'+events[i]["image"]+'" /><p class="description">'+events[i]["description"]+'</p><a target="_blank" href="'+events[i]["address_url"]+'">where?</a></div>';
-    }
-    walls_btn += '</div>'
 
     Y.namespace("Stalker").WebSlider = Y.Base.create("stalker-slider", Y.Stalker.Slider, [], {
         CONTENT_TEMPLATE: '<div>'
-                + '<div id="detailsandshare"><div id="shares"><span id="sharefb"></span><a href="#myModal" role="button" data-toggle="modal"><span id="sharewall"></span></a></div><span class="details"></span></div>'
-                + '<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-header"><img src="frontend/img/projo_big.png" />Projeter sur la paroi</div><div class="modal-body"><p>Choisir le type de paroi:</p>'+walls_btn+'</div><div class="modal-footer"><button data-dismiss="modal"><span id="modal_back_btn"></button></span><button data-dismiss="modal"><span id="modal_ok_btn"></span></button></div></div>'
+                + renderSharingBtns()
                 + '<div class="qr"></div>'
                 + '<div id="sink">'
                 + '<div id="nav-bar">'
@@ -43,7 +39,6 @@ YUI.add("stalker-webslider", function(Y) {
         },
         renderUI: function() {
             this.once("webglInitialized", function() {
-                var channel = Y.Stalker.Pusher.getChanelDreamRequested();
                 $('#preview-strip').enscroll({
                     verticalTrackClass: 'track4',
                     verticalHandleClass: 'handle4',
@@ -298,23 +293,10 @@ YUI.add("stalker-webslider", function(Y) {
 
         function init() {
 
-
-
-
-            var walls_btn = '<div id="walls_btn">';
-                for(var i= 0; i < events.length; i++){
-                walls_btn += '<div class="wall_btn"><p class="title">'+events[i]["name"]+'</p><img alt="'+events[i]["id"]+'" src="events/'+events[i]["image"]+'" /><p class="description">'+events[i]["description"]+'</p><a target="_blank" href="'+events[i]["address_url"]+'">where?</a></div>';
-            }
-            walls_btn += '</div>';
-
-
             $('body').append('<div id="sink"><div id="nav-bar"><div id="status"></div></div><div id="preview-image"></div><div id="preview-strip"></div><div id="preview-strip-nowebgl"></div></div>');
-            $('body').append('<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-header"><img src="frontend/img/projo_big.png" />Projeter sur la paroi</div><div class="modal-body"><p>Choisir le type de paroi:</p>'+walls_btn+'</div><div class="modal-footer"><button data-dismiss="modal"><span id="modal_back_btn"></button></span><button data-dismiss="modal"><span id="modal_ok_btn"></span></button></div></div>');
-            $('body').append('<div id="detailsandshare"><div id="shares"><span id="sharefb"></span><a href="#myModal" role="button" data-toggle="modal"><span id="sharewall"></span></a></div><span class="details"></span></div>');
+            $('body').append(renderSharingBtns());
             $('body').append('<div id="simpleImgSlider"></div>');
             $('#sink').show();
-            var pusher = new Pusher(PUSHER_API_KEY);
-            channel = pusher.subscribe(PUSHER_CHANEL_DREAM_REQUESTED);
             $("#sharefb").on("click",function(){
                 shareOnFacebook();
             })
@@ -627,22 +609,12 @@ YUI.add("stalker-webslider", function(Y) {
 
         function init() {
 
-            var walls_btn = '<div id="walls_btn">';
-                for(var i= 0; i < events.length; i++){
-                walls_btn += '<div class="wall_btn"><p class="title">'+events[i]["name"]+'</p><img alt="'+events[i]["id"]+'" src="events/'+events[i]["image"]+'" /><p class="description">'+events[i]["description"]+'</p><a target="_blank" href="'+events[i]["address_url"]+'">where?</a></div>';
-            }
-            walls_btn += '</div>';
-
-
             $('body').append('<div id="sink"><div id="nav-bar"><div id="status"></div></div><div id="preview-image"></div><div id="preview-strip"></div><div id="preview-strip-nowebgl"></div></div>');
-            $('body').append('<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-header"><img src="frontend/img/projo_big.png" />Projeter sur la paroi</div><div class="modal-body"><p>Choisir le type de paroi:</p>'+walls_btn+'</div><div class="modal-footer"><button data-dismiss="modal"><span id="modal_back_btn"></button></span><button data-dismiss="modal"><span id="modal_ok_btn"></span></button></div></div>');
-            $('body').append('<div id="detailsandshare"><div id="shares"><span id="sharefb"></span><a href="#myModal" role="button" data-toggle="modal"><span id="sharewall"></span></a></div><span class="details"></span></div>');
+            $('body').append(renderSharingBtns());
             $('body').append('<div id="simpleImgSlider"></div>');
             
             $('#sink').show();
             $('#preview-strip').hide();
-            var pusher = new Pusher(PUSHER_API_KEY);
-            channel = pusher.subscribe(PUSHER_CHANEL_DREAM_REQUESTED);
 
             $("#sharefb").on("click",function(){
                 shareOnFacebook();
@@ -930,7 +902,7 @@ function shareOnFacebook(){
 }
 
 
-function shareOnWall(){
+function shareOnWall(){    
     var event_selected_id = $(".wall_btn.selected img").attr("alt");
     if(event_selected_id != null){
         channel.trigger(PUSHER_EVENT_DREAM_REQUESTED, {"dreamId" : parseInt(actual_dream_id), "eventId" : event_selected_id });  
@@ -945,4 +917,17 @@ function selectWall(e){
         }
     });
     $(e).addClass("selected");
+}
+
+
+function renderSharingBtns(){
+    var walls_btn = '<div id="walls_btn">';
+
+    for(var i= 0; i < events.length; i++){
+        walls_btn += '<div class="wall_btn"><p class="title">'+events[i]["name"]+'</p><img alt="'+events[i]["id"]+'" src="events/'+events[i]["image"]+'" /><p class="description">'+events[i]["description"]+'</p><a target="_blank" href="'+events[i]["address_url"]+'">where?</a></div>';
+    }
+    walls_btn += '</div>'
+
+    return '<div id="detailsandshare"><div id="shares"><span id="sharefb"></span><a href="#myModal" role="button" data-toggle="modal"><span id="sharewall"></span></a></div><span class="details"></span></div>'
+         + '<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-header"><img src="frontend/img/projo_big.png" />Projeter sur la paroi</div><div class="modal-body"><p>Choisir le type de paroi:</p>'+walls_btn+'</div><div class="modal-footer"><button data-dismiss="modal"><span id="modal_back_btn"></button></span><button data-dismiss="modal"><span id="modal_ok_btn"></span></button></div></div>';
 }
