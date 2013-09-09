@@ -234,22 +234,6 @@
 }
 
 
-
-
-
-
-.modal { 
-    position: fixed; 
-    top: 3%; 
-    right: 3%; 
-    left: 3%; 
-    width: auto; 
-    margin: 0; 
-}
-.modal-body { 
-    height: 60%; 
-}
-
 @media (max-width: 480px) {
 
         .modal {
@@ -257,6 +241,11 @@
             position: fixed; /* Display modal in the centre of your screen */
             overflow-y: scroll; /*  Ensure that the modal is scroll-able */
             -webkit-overflow-scrolling: touch; /* Avoid having to use 2 finger scroll on iOS    */
+            top: 3%; 
+            right: 3%; 
+            left: 3%; 
+            width: auto; 
+            margin: 0; 
         }
         .modal.fade.in{
             top: 5px; /* Use more screen real estate */
