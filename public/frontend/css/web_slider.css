@@ -73,33 +73,17 @@
     height: 40px;
     top: 19.5px;
 }
-/*#simpleImgSlider{
-    position: absolute;
-    left: 110px;
-    right: 0;
-    max-width: 100%;
-    max-height: 100%;
-}
-#simpleImgSlider img{
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: auto;
-    margin-bottom: auto;
-    height: auto;
-    width: 100%;
-}*/
 #simpleImgSlider{
         margin-left: 110px;
         max-width: 900px;
         max-height: 900px;
         background-color: black;
     }
-    #simpleImgSlider img{
-        position: relative;
-        display: block;
-        /*margin: auto;*/
-    }
+#simpleImgSlider img{
+    position: relative;
+    display: block;
+    /*margin: auto;*/
+}
 .overlay {
     position: fixed;
     width: 100%;
@@ -367,7 +351,7 @@
 .mCSB_scrollTools .mCSB_dragger{
     height: 55px;
 }
-@media all and (max-device-width: 768px){
+@media only screen and (max-width: 768px){
     .details{
         display: none;
     }
@@ -404,6 +388,20 @@
         cursor: pointer;
         background-repeat: no-repeat;
     }
+    #sharefb:hover{
+        background: url("../img/fb_smart.png");
+        width:41px;
+        height: 41px;
+        cursor: pointer;
+        background-repeat: no-repeat;
+    }
+    #sharewall:hover{
+        background: url("../img/projo_smart.png");
+        width:41px;
+        height: 41px;
+        cursor: pointer;
+        background-repeat: no-repeat;
+    }
     #maisonlogo{
         width: 80px;
         height: 33px;
@@ -414,7 +412,7 @@
      width: 210px;
      height: 100%;
      overflow: auto;
-     position: fixed;
+     position: static;
      top: 0;
      left: 0;
      z-index: 13;
@@ -433,11 +431,13 @@
         max-width: 100%;
         max-height: 100%;
         top: 30%;
+        z-index: -1;
         margin-left: 0;
     }
     #simpleImgSlider img{
         position: relative;
         display: block;
+        z-index: -1;
         /*margin: auto;*/
         top:-30%;
     }
@@ -446,5 +446,13 @@
     }
     #fillogo,#comemlogo,#heiglogo{
         display: none;
+    }
+}
+@media screen and (orientation:landscape) {
+    #simpleImgSlider{
+        top: auto;
+    }
+    #simpleImgSlider img{
+        top:auto;
     }
 }

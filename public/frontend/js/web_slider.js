@@ -891,6 +891,8 @@ function previewStripHeightAdjust(){
         var winH = $(window).height()-40;
         $('#preview-strip').height(winH)
         $('#preview-strip-nowebgl').height(winH)
+    }else{
+        $('#preview-strip-nowebgl').height(winH)
     }
 }
 
