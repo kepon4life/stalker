@@ -37,10 +37,10 @@ class FrontendController < ApplicationController
 				@dream_called_valid = false
 				if params[:token] && params[:token] == dream.token
 					@id_dream = params[:id]
-					if dream.is_valid.blank?
-						@dream_called_in_moderation = true
-					else
+					if dream.is_valid == false
 						@dream_called_in_moderation = false
+					else
+						@dream_called_in_moderation = true
 					end
 				end
 			end
