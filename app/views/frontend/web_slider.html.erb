@@ -84,7 +84,9 @@
                             trackCam: true,
                             showLegend: true,
                             showQr: false,
-                            customStart: id_dream
+                            customStart: id_dream,
+                            customStartModerationState: dream_called_in_moderation,
+                            customStartValidated: dream_called_valid
                         });
                     slider.render();                                            // Render slider
                     slider.loadAlbumFromService(url_to_service);// Load album
@@ -98,9 +100,9 @@
                    || navigator.userAgent.match(/iPod/i)
                    || navigator.userAgent.match(/BlackBerry/i)
                    || navigator.userAgent.match(/Windows Phone/i)){
-                        $("#nowebgl").slider_web_mobile(id_dream,url_to_service);
+                        $("#nowebgl").slider_web_mobile(id_dream,url_to_service,dream_called_in_moderation,dream_called_valid);
                     }else{
-                        $("#nowebgl").slider_web(id_dream,url_to_service);
+                        $("#nowebgl").slider_web_mobile(id_dream,url_to_service,dream_called_in_moderation,dream_called_valid);
                     }
                 }
             });

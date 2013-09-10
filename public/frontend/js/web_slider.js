@@ -73,7 +73,18 @@ YUI.add("stalker-webslider", function(Y) {
         },
         selectFirstPicture: function() {
             if(Y.Stalker.webslider.get("customStart") != null){
+
+                if(Y.Stalker.webslider.get("customStartModerationState")){
+                    $("#"+Y.Stalker.webslider.get("customStart")).addClass("moderate")
+                }else{
+                    if(!(Y.Stalker.webslider.get("customStartValidated"))){
+                        $("#"+Y.Stalker.webslider.get("customStart")).removeClass("moderate")
+                        $("#"+Y.Stalker.webslider.get("customStart")).addClass("notvalid")
+                    }
+                }
+
                 this.selectPicture($("#"+Y.Stalker.webslider.get("customStart")).index());
+
                 //Scroll to specific thumbnail
             $('#preview-strip').animate({
                 scrollTop: $("#"+Y.Stalker.webslider.get("customStart")).offset().top
@@ -102,14 +113,39 @@ YUI.add("stalker-webslider", function(Y) {
         ATTRS: {
             customStart: {
                 value: null
-            }
+            },
+            customStartModerationState: {
+                value: null
+            },
+            customStartValidated: {
+                value: null 
+            },
         }
     });
     
     function dreamselected(index){
+        var idDreamSelected = $('#preview-strip>ul>li').get(index).id
+        if($("#"+idDreamSelected).hasClass("moderate")){
+            $("#sharefb").hide();
+            $('#sharewall').hide();
+            $('#moderatetext').show();
+            $("#notvalidatetext").hide();
+        }else{
+            if($("#"+idDreamSelected).hasClass("notvalid")){
+                $("#sharefb").hide();
+                $('#sharewall').hide();
+                $('#moderatetext').hide();
+                $("#notvalidatetext").show();
+            }else{
+                $("#sharefb").show();
+                $('#sharewall').show();
+                $('#moderatetext').hide()
+                $('#notvalidatetext').hide()
+            }      
+        }
+
         $('#preview-strip ul .dreamselected').removeClass("dreamselected");
-            var c = $('#preview-strip>ul>li').get(index);
-            c.className = c.className + "dreamselected";
+        $("#"+idDreamSelected).addClass("dreamselected");
     }
     var start = true;
     function populateAlbum(the_album) {
@@ -263,7 +299,7 @@ YUI.add("stalker-webslider", function(Y) {
 
 });
 (function($) {
-    $.fn.slider_web = function(idDreamRequested,serviceUrl) {
+    $.fn.slider_web = function(idDreamRequested,serviceUrl,dreamRequestedIsUnderModeration,dreamRequestedIsValid) {
         //DREAMS_SERVICE_URL = window.location.protocol+'//'+window.location.host + "/services/dreamsvalidated";
         DREAMS_SERVICE_URL = serviceUrl;
         FADEOUTTIME = 2000;
@@ -356,7 +392,14 @@ YUI.add("stalker-webslider", function(Y) {
 
         function customSliderStart(liClicked) {
 
-            console.log(liClicked.index())
+            if(dreamRequestedIsUnderModeration){
+                liClicked.addClass("moderate")
+            }else{
+                if(!(dreamRequestedIsValid)){
+                    liClicked.removeClass("moderate")
+                    liClicked.addClass("notvalid")
+                }
+            }
             dreamselected(liClicked.index())
 
             clearTimeout(customStartTimeout)
@@ -533,9 +576,28 @@ YUI.add("stalker-webslider", function(Y) {
         }
 
         function dreamselected(index){
-        $('#preview-strip-nowebgl ul .dreamselected').removeClass("dreamselected");
-            var c = $('#preview-strip-nowebgl>ul>li').get(index);
-            c.className = c.className + "dreamselected";
+            var idDreamSelected = $('#preview-strip-nowebgl>ul>li').get(index).id
+            if($("#"+idDreamSelected).hasClass("moderate")){
+                $("#sharefb").hide();
+                $('#sharewall').hide();
+                $('#moderatetext').show();
+                $("#notvalidatetext").hide();
+            }else{
+                if($("#"+idDreamSelected).hasClass("notvalid")){
+                    $("#sharefb").hide();
+                    $('#sharewall').hide();
+                    $('#moderatetext').hide();
+                    $("#notvalidatetext").show();
+                }else{
+                    $("#sharefb").show();
+                    $('#sharewall').show();
+                    $('#moderatetext').hide()
+                    $('#notvalidatetext').hide()
+                }      
+            }
+
+            $('#preview-strip-nowebgl ul .dreamselected').removeClass("dreamselected");
+            $("#"+idDreamSelected).addClass("dreamselected");
         }
 
 
@@ -545,7 +607,7 @@ YUI.add("stalker-webslider", function(Y) {
 }(jQuery));
 
 (function($) {
-    $.fn.slider_web_mobile = function(idDreamRequested,serviceUrl) {
+    $.fn.slider_web_mobile = function(idDreamRequested,serviceUrl,dreamRequestedIsUnderModeration,dreamRequestedIsValid) {
         //DREAMS_SERVICE_URL = window.location.protocol+'//'+window.location.host + "/services/dreamsvalidated";
         DREAMS_SERVICE_URL = serviceUrl;
         FADEOUTTIME = 2000;
@@ -653,7 +715,7 @@ YUI.add("stalker-webslider", function(Y) {
         }
 
         function startImgSlider() {
-            console.log("startImgSlider")
+
             $("#simpleImgSlider img").remove();
             var li = $(".dreamslist li").get(0)
             addPrettyDateToScroll(li.title)
@@ -675,7 +737,14 @@ YUI.add("stalker-webslider", function(Y) {
 
         function customSliderStart(liClicked) {
 
-            console.log(liClicked.index())
+            if(dreamRequestedIsUnderModeration){
+                liClicked.addClass("moderate")
+            }else{
+                if(!(dreamRequestedIsValid)){
+                    liClicked.removeClass("moderate")
+                    liClicked.addClass("notvalid")
+                }
+            }
             dreamselected(liClicked.index())
 
             clearTimeout(customStartTimeout)
@@ -809,12 +878,6 @@ YUI.add("stalker-webslider", function(Y) {
             showLegend(node.info)
         })
               
-        
-        
-        
-        
-        
-
         function showLegend (pictureCfg) {
             var metas,
                 detailsNode = $("#detailsandshare .details"),
@@ -829,9 +892,29 @@ YUI.add("stalker-webslider", function(Y) {
         }
 
         function dreamselected(index){
-        $('#preview-strip-nowebgl ul .dreamselected').removeClass("dreamselected");
-            var c = $('#preview-strip-nowebgl ul>li').get(index);
-            c.className = c.className + "dreamselected";
+            console.log(index)
+            var idDreamSelected = $('#preview-strip-nowebgl ul>li').get(index).id
+            if($("#"+idDreamSelected).hasClass("moderate")){
+                $("#sharefb").hide();
+                $('#sharewall').hide();
+                $('#moderatetext').show();
+                $("#notvalidatetext").hide();
+            }else{
+                if($("#"+idDreamSelected).hasClass("notvalid")){
+                    $("#sharefb").hide();
+                    $('#sharewall').hide();
+                    $('#moderatetext').hide();
+                    $("#notvalidatetext").show();
+                }else{
+                    $("#sharefb").show();
+                    $('#sharewall').show();
+                    $('#moderatetext').hide()
+                    $('#notvalidatetext').hide()
+                }      
+            }
+
+            $('#preview-strip-nowebgl ul .dreamselected').removeClass("dreamselected");
+            $("#"+idDreamSelected).addClass("dreamselected");
         }
 
     }   
@@ -928,6 +1011,6 @@ function renderSharingBtns(){
     }
     walls_btn += '</div>'
 
-    return '<div id="detailsandshare"><div id="shares"><span id="sharefb"></span><a href="#myModal" role="button" data-toggle="modal"><span id="sharewall"></span></a></div><span class="details"></span></div>'
+    return '<div id="detailsandshare"><div id="shares"><span id="sharefb"></span><a href="#myModal" role="button" data-toggle="modal"><span id="sharewall"></span></a><span id="moderatetext">En cours de validation</span><span id="notvalidatetext">Dessin desaprouvé</span></div><span class="details"></span></div>'
          + '<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-header"><img src="frontend/img/projo_big.png" />Projeter sur la paroi</div><div class="modal-body"><p>Choisir le type de paroi:</p>'+walls_btn+'</div><div class="modal-footer"><button data-dismiss="modal"><span id="modal_back_btn"></button></span><button data-dismiss="modal"><span id="modal_ok_btn"></span></button></div></div>';
 }
