@@ -107,6 +107,7 @@
                 }
             });
         });
+
     </script>
 
 <% end %>
@@ -133,6 +134,34 @@
      js.src = "//connect.facebook.net/en_US/all.js";
      fjs.parentNode.insertBefore(js, fjs);
    }(document, 'script', 'facebook-jssdk'));
+
+  function shareOnFacebook(){
+
+    var imageToShare = $('.dreamselected img');
+    imageToShare = imageToShare[0].src;
+
+    var share_message_name = "<%= @msg_name %>";
+    var share_message_caption = "<%= @msg_description %>"
+    var share_message_description = "<%= @msg_caption %>"    
+
+    FB.ui(
+      {
+       method: 'feed',
+       name: share_message_name,
+       caption: share_message_caption,
+       description: share_message_description,
+       link: 'http://193.134.221.115/web_slider',
+       picture: imageToShare,
+      },
+      function(response) {
+        if (response && response.post_id) {
+          console.log('Post was published.');
+        } else {
+          console.log('Post was not published.');
+        }
+      }
+    );
+}
 </script>
 <div class="overlay" id="welcome">
     <div class="wrap">

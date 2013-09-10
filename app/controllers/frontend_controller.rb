@@ -47,9 +47,17 @@ class FrontendController < ApplicationController
 		end
 
 
-
-
-
+		I18n.locale = request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first
+  		case I18n.locale
+	  		when :en
+	  			@msg_name = "Discover about what people dream"
+	  			@msg_caption   = 'Stalker | Experimenting The Zone'
+	  			@msg_description   = 'La nouvelle exposition de la Maison d\'Ailleurs, co-production de la HEIG-VD. 15.09.2013 – 02.03.2014'
+	  		else
+	  			@msg_name = "Découvrez de quoi les gens rêvent"
+	  			@msg_caption   = 'Stalker | Experimenter la Zone'
+	  			@msg_description   = 'The new exhibition of the Maison d\'Ailleurs, co-produced by the HEIG-VD. 15.09.2013 – 02.03.2014'
+  		end
 
 		@events = Event.find(:all, :conditions => { :is_active => true })
 		respond_to do |format|

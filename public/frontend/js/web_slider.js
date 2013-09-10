@@ -966,30 +966,6 @@ function comparePhotosDate(a,b) {
         return -1;
     return 0;
 }
-function shareOnFacebook(){
-
-    var imageToShare = $('.dreamselected img');
-    imageToShare = imageToShare[0].src;
-
-    FB.ui(
-      {
-       method: 'feed',
-       name: 'Stalker Exhibition. Draw your dreams',
-       caption: 'Un sous titre ici?!',
-       description: ( 'Description sur l\'expo?'),
-       link: 'http://193.134.221.115/web_slider',
-       picture: imageToShare,
-      },
-      function(response) {
-        if (response && response.post_id) {
-          alert('Post was published.');
-        } else {
-          alert('Post was not published.');
-        }
-      }
-    );
-}
-
 
 function shareOnWall(){    
     var event_selected_id = $(".wall_btn.selected img").attr("alt");
