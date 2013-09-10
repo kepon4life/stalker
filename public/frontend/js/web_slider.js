@@ -73,7 +73,6 @@ YUI.add("stalker-webslider", function(Y) {
         },
         selectFirstPicture: function() {
             if(Y.Stalker.webslider.get("customStart") != null){
-
                 if(Y.Stalker.webslider.get("customStartModerationState")){
                     $("#"+Y.Stalker.webslider.get("customStart")).addClass("moderate")
                 }else{
@@ -306,6 +305,7 @@ YUI.add("stalker-webslider", function(Y) {
         FADINTIME = 2000;
         PICTURETIME = 3000;
         var dreamsAlbum = [];
+        var nbDreamsLoaded;
         var isLoaded = false; // Allow to know if the gallery is loded and the slider ready to start
         var timeoutFirstImg;
         var timeout;
@@ -392,12 +392,14 @@ YUI.add("stalker-webslider", function(Y) {
 
         function customSliderStart(liClicked) {
 
-            if(dreamRequestedIsUnderModeration){
-                liClicked.addClass("moderate")
-            }else{
-                if(!(dreamRequestedIsValid)){
-                    liClicked.removeClass("moderate")
-                    liClicked.addClass("notvalid")
+            if(liClicked.attr("id") == idDreamRequested){
+                if(dreamRequestedIsUnderModeration){
+                    liClicked.addClass("moderate")
+                }else{
+                    if(!(dreamRequestedIsValid)){
+                        liClicked.removeClass("moderate")
+                        liClicked.addClass("notvalid")
+                    }
                 }
             }
             dreamselected(liClicked.index())
@@ -494,6 +496,7 @@ YUI.add("stalker-webslider", function(Y) {
                             createThumbnail(album, indexThumbnail + i);
                         }
                     }
+                    console.log($('#preview-strip-nowebgl>ul>li').length)
                     indexThumbnail = indexThumbnail + nbThumbnailToLoad;
                     if (indexThumbnail < album.length) {
                         $('.dreamslist').waypoint("enable")
@@ -737,12 +740,14 @@ YUI.add("stalker-webslider", function(Y) {
 
         function customSliderStart(liClicked) {
 
-            if(dreamRequestedIsUnderModeration){
-                liClicked.addClass("moderate")
-            }else{
-                if(!(dreamRequestedIsValid)){
-                    liClicked.removeClass("moderate")
-                    liClicked.addClass("notvalid")
+            if(liClicked.attr("id") == idDreamRequested){
+                if(dreamRequestedIsUnderModeration){
+                    liClicked.addClass("moderate")
+                }else{
+                    if(!(dreamRequestedIsValid)){
+                        liClicked.removeClass("moderate")
+                        liClicked.addClass("notvalid")
+                    }
                 }
             }
             dreamselected(liClicked.index())
