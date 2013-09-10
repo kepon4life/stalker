@@ -14,7 +14,7 @@ YUI.add("stalker-webslider", function(Y) {
     YUI_config.stalkerbase = YUI_config.stalkerbase || "";
 
     var strip_width;
-
+    var nbDreamsLoaded;
 
     Y.namespace("Stalker").WebSlider = Y.Base.create("stalker-slider", Y.Stalker.Slider, [], {
         CONTENT_TEMPLATE: '<div>'
@@ -93,6 +93,9 @@ YUI.add("stalker-webslider", function(Y) {
             }
         },
         selectPicture: function(index) {
+            if(index > nbDreamsLoaded - 1){
+                index = 0
+            }
             Y.Stalker.WebSlider.superclass.selectPicture.call(this,index);
             dreamselected(index);
         },
@@ -270,6 +273,7 @@ YUI.add("stalker-webslider", function(Y) {
                         createThumbnail(photo_album, indexThumbnail + i);
                     }
                 }
+                nbDreamsLoaded = $('#preview-strip>ul>li').length
                 indexThumbnail = indexThumbnail + nbThumbnailToLoad;
                 if (indexThumbnail < photo_album.length) {
                     $('.dreamslist').waypoint("enable")
@@ -370,7 +374,6 @@ YUI.add("stalker-webslider", function(Y) {
         }
 
         function startImgSlider() {
-            console.log("startImgSlider")
             $("#simpleImgSlider img").remove();
             var li = $(".dreamslist li").get(0)
             addPrettyDateToScroll(li.title)
@@ -381,7 +384,6 @@ YUI.add("stalker-webslider", function(Y) {
             var img = new Image();
             img.src = PATH_TO_DREAMS + nameImg + DREAM_EXTENSION;
             img.id = 0;
-            console.log("img.src "+img.src)
             img.onload = function() {
                 $("#simpleImgSlider").append(img)
             }
@@ -424,7 +426,7 @@ YUI.add("stalker-webslider", function(Y) {
         }
 
         function loadingNextImg(indexCurrentImg) {
-            if (indexCurrentImg < dreamsAlbum.length - 1) {
+            if (indexCurrentImg < nbDreamsLoaded - 1) {
                 indexCurrentImg = parseInt(indexCurrentImg);
                 var indexNextImg = indexCurrentImg + 1;
                 var nameImg = ($(".dreamslist img").get(indexNextImg).parentNode.id);
@@ -496,7 +498,7 @@ YUI.add("stalker-webslider", function(Y) {
                             createThumbnail(album, indexThumbnail + i);
                         }
                     }
-                    console.log($('#preview-strip-nowebgl>ul>li').length)
+                    nbDreamsLoaded = $('#preview-strip-nowebgl>ul>li').length
                     indexThumbnail = indexThumbnail + nbThumbnailToLoad;
                     if (indexThumbnail < album.length) {
                         $('.dreamslist').waypoint("enable")
@@ -624,6 +626,7 @@ YUI.add("stalker-webslider", function(Y) {
         var customStartTimeout;
         var indexThumbnail = 0;// useful to know which thumbnail (index) was the last thumnail loaded
         var nbThumbnailToLoad = 12;
+        var nbDreamsLoaded;
         this.each(function() {
             init();
             var totalScrollOffsetH=$(".totalScrollOffset").height();
@@ -641,7 +644,7 @@ YUI.add("stalker-webslider", function(Y) {
                                     createThumbnail(dreamsAlbum,indexThumbnail + i);
                                 }
                                 indexThumbnail = indexThumbnail + nbThumbnailToLoad;
-                                
+                                nbDreamsLoaded = $('#preview-strip-nowebgl ul>li').length
                             }
                         },
                         whileScrolling:function(){
@@ -662,7 +665,6 @@ YUI.add("stalker-webslider", function(Y) {
                 var idimg = idDreamRequested.toString();
 
                 loadAlbum(function(){
-                    console.log($("#"+idimg))
                     customSliderStart($("#"+idimg));
                     $("#preview-strip-nowebgl").mCustomScrollbar("scrollTo","#"+idimg,{
                         scrollInertia:3000
@@ -729,7 +731,6 @@ YUI.add("stalker-webslider", function(Y) {
             var img = new Image();
             img.src = PATH_TO_DREAMS + nameImg + DREAM_EXTENSION;
             img.id = 0;
-            console.log("img.src "+img.src)
             img.onload = function() {
                 $("#simpleImgSlider").append(img)
             }
@@ -772,7 +773,7 @@ YUI.add("stalker-webslider", function(Y) {
         }
 
         function loadingNextImg(indexCurrentImg) {
-            if (indexCurrentImg < dreamsAlbum.length - 1) {
+            if (indexCurrentImg < nbDreamsLoaded - 1) {
                 indexCurrentImg = parseInt(indexCurrentImg);
                 var indexNextImg = indexCurrentImg + 1;
                 var nameImg = ($(".dreamslist img").get(indexNextImg).parentNode.id);
@@ -834,6 +835,7 @@ YUI.add("stalker-webslider", function(Y) {
                 createThumbnail(album, indexThumbnail + i);
             }
             indexThumbnail = indexThumbnail + nbThumbnailToLoad;
+            nbDreamsLoaded = $('#preview-strip-nowebgl ul>li').length
 
             /*Init value info for scroll*/
             var tooltip = '<div id="dateThumbnail" class="handle-tooltip"><div class="handle-tooltip-inner"></div></div>'
@@ -897,7 +899,6 @@ YUI.add("stalker-webslider", function(Y) {
         }
 
         function dreamselected(index){
-            console.log(index)
             var idDreamSelected = $('#preview-strip-nowebgl ul>li').get(index).id
             if($("#"+idDreamSelected).hasClass("moderate")){
                 $("#sharefb").hide();
