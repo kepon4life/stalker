@@ -398,8 +398,13 @@
 #shares{
     position: absolute;
     top: 0;
+    color: white;
+    width: 82px;
+    text-align: left;
     padding-top: 5px;
     padding-left: 5px;
+    font-size: 14px;
+    line-height: 15px;
 }
 #sharefb{
     background: url("../img/fb.png") 0 -31px;
@@ -482,6 +487,10 @@
         background-image: none;
         letter-spacing: 1px;
         opacity: 1;
+    }
+    #shares{
+        width: auto;
+        text-align: left;
     }
     #sharefb{
         background: url("../img/fb_smart.png");
