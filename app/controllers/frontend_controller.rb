@@ -111,7 +111,7 @@ class FrontendController < ApplicationController
 				if Event.exists?(params[:event_id])
 					@dream.event_id = params[:event_id]
 				elsif params[:event_id] == "0"
-					@dream.event_id = Event.where(name: "La maison d'ailleurs").first.id
+					@dream.event_id = 0
 				end
 			end
 

@@ -753,6 +753,7 @@ YUI.add("stalker-slider", function(Y) {
          */
         renderCustomization: function() {
             var choices = new Array();
+            choices.push({label: "Nuage de fils", value: 0});
             for(var i= 0; i < events.length; i++){
                 choices.push({label: events[i]["name"], value: events[i]["id"]});
             }
