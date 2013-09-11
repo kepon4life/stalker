@@ -529,8 +529,12 @@ YUI.add("stalker-webslider", function(Y) {
 
                 var li = $('<li/>').append(img);
                 li.attr('id',name)
-
-                var date = new Date(Date.parse(info.created_at));
+                var date = info.created_at
+                date = date.split("+")
+                date = date[0].split("T")
+                thedate = date[0].split("-");
+                thetime = date[1].split(":");
+                date = new Date(thedate[0],thedate[1]-1,thedate[2],thetime[0],thetime[1],thetime[2]);
                 li.attr("title",prettyDate(date));
 
                 li[0].info = photo_album[index];
@@ -861,7 +865,12 @@ YUI.add("stalker-webslider", function(Y) {
                 var li = $('<li/>').append(img);
                 li.attr('id',name)
 
-                var date = new Date(Date.parse(info.created_at));
+                var date = info.created_at
+                date = date.split("+")
+                date = date[0].split("T")
+                thedate = date[0].split("-");
+                thetime = date[1].split(":");
+                date = new Date(thedate[0],thedate[1]-1,thedate[2],thetime[0],thetime[1],thetime[2]);
                 li.attr("title",prettyDate(date));
 
                 li[0].info = photo_album[index];
@@ -956,8 +965,22 @@ function addPrettyDateToScroll(date){
 }
 
 function comparePhotosDate(a,b) {
-    var da = new Date(a.created_at);
-    var db = new Date(b.created_at);
+    // var da = new Date(a.created_at);
+    // var db = new Date(b.created_at);
+        var date = a.created_at
+    date = date.split("+")
+    date = date[0].split("T")
+    thedate = date[0].split("-");
+    thetime = date[1].split(":");
+    var datea = new Date(thedate[0],thedate[1]-1,thedate[2],thetime[0],thetime[1],thetime[2]);
+    date = b.created_at
+    date = date.split("+")
+    date = date[0].split("T")
+    thedate = date[0].split("-");
+    thetime = date[1].split(":");
+    var dateb = new Date(thedate[0],thedate[1]-1,thedate[2],thetime[0],thetime[1],thetime[2]);
+    var da = new Date(datea);
+    var db = new Date(dateb);
     da = da.getTime();
     db = db.getTime();
     if (da < db)
