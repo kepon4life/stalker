@@ -7757,7 +7757,7 @@
         __extends(BrushWidthOptionTool, _super);
         function BrushWidthOptionTool(opts) {
             this.opts = opts;
-            this.strokeWidth = 20;
+            this.strokeWidth = 10;
         }
         BrushWidthOptionTool.prototype.optionsContents = function() {
             var $brushWidthVal, $el, $input, _this = this;
