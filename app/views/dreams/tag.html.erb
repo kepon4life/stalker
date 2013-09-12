@@ -80,9 +80,13 @@
 					<a class="not_a_link" id="<%= PATH_TO_DREAMS + dream.id.to_s + DREAM_EXTENSION %>" alt="<%= dream.id.to_s %>"><img class="dream" src="<%= PATH_TO_DREAMS_THUMBNAILS + dream.id.to_s + DREAM_EXTENSION %>" alt="<%= dream.id.to_s %>" /></a>
 					<div class="zoom"></div>
 					<div class="valid"></div>
-						<% if dream.event != nil %>
-							<span><%= dream.event.name %></span>
-						<% end %>
+					<% if dream.event != nil %>
+						<span><%= dream.event.name %></span>
+					<% elsif dream.event_id == 0 %>
+						<span>Table intéractive</span>
+					<% else %>
+						<span>Drawsmartphone without event</span>
+					<% end %>
 				</div>
 				
 			<% end%>
