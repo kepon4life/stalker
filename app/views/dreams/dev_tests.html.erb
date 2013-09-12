@@ -2,7 +2,7 @@
   <%= render 'layouts/header_admin' %>
 <% end %>
 <div id="content" class="container">
-  <h1>Dev Tests</h1>
+  <h1>Stats</h1>
 
   <p>There is <b><%= @dreams_tot %></b> dreams in total</p>
   <ul>
@@ -21,12 +21,14 @@
   
 
   <br />
-  <button class="btn btn-large btn-danger" type="button" onclick="location.href='drestroy_all'">Clean db</button>
-  <br /><br />
-  <form name="populate_dreams" action="populate" method="post">
-    <input type="text" value="1000" name="nb_of_dreams_to_add" style="height: 34px; vertical-align: top; margin-right: 20px; width:100px; font-size:30px;"/>
-    <input type="submit" class="btn btn-large" value="Populate db" />
-  </form>
+  <div style="display:none;">
+    <button class="btn btn-large btn-danger" type="button" onclick="location.href='drestroy_all'">Clean db</button>
+    <br /><br />
+    <form name="populate_dreams" action="populate" method="post">
+      <input type="text" value="1000" name="nb_of_dreams_to_add" style="height: 34px; vertical-align: top; margin-right: 20px; width:100px; font-size:30px;"/>
+      <input type="submit" class="btn btn-large" value="Populate db" />
+    </form>
+  </div>
 
 
 
