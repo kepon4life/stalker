@@ -617,7 +617,6 @@ YUI.add("stalker-webslider", function(Y) {
 
 (function($) {
     $.fn.slider_web_mobile = function(idDreamRequested,serviceUrl,dreamRequestedIsUnderModeration,dreamRequestedIsValid) {
-        //DREAMS_SERVICE_URL = window.location.protocol+'//'+window.location.host + "/services/dreamsvalidated";
         DREAMS_SERVICE_URL = serviceUrl;
         FADEOUTTIME = 2000;
         FADINTIME = 2000;
@@ -965,8 +964,6 @@ function addPrettyDateToScroll(date){
 }
 
 function comparePhotosDate(a,b) {
-    // var da = new Date(a.created_at);
-    // var db = new Date(b.created_at);
     var date = a.created_at
     date = date.split("+")
     date = date[0].split("T")
