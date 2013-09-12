@@ -113,7 +113,11 @@ class DreamsController < ApplicationController
     if params[:event_id] && Event.exists?(params[:event_id])
       dreamsNotTagged = Dream.where(:is_valid => nil, :secret_room => nil, :event_id => params[:event_id]).all
       @event_name = Event.find(params[:event_id]).name
-    else
+    elsif params[:event_id] == "0"
+      puts "Helllooo"
+      dreamsNotTagged = Dream.where(:is_valid => nil, :secret_room => nil, :event_id => 0).all
+      @event_name = "Table interactive"
+    else  
       dreamsNotTagged = Dream.where(:is_valid => nil, :secret_room => nil).all
     end
 
