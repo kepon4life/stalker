@@ -967,7 +967,7 @@ function addPrettyDateToScroll(date){
 function comparePhotosDate(a,b) {
     // var da = new Date(a.created_at);
     // var db = new Date(b.created_at);
-        var date = a.created_at
+    var date = a.created_at
     date = date.split("+")
     date = date[0].split("T")
     thedate = date[0].split("-");
