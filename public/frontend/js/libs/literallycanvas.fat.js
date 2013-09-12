@@ -7757,7 +7757,7 @@
         __extends(BrushWidthOptionTool, _super);
         function BrushWidthOptionTool(opts) {
             this.opts = opts;
-            this.strokeWidth = 20;
+            this.strokeWidth = 10;
         }
         BrushWidthOptionTool.prototype.optionsContents = function() {
             var $brushWidthVal, $el, $input, _this = this;
@@ -7835,7 +7835,9 @@
         Pencil.prototype.begin = function(x, y, lc) {
             this.color = lc.primaryColor;
             this.currentShape = this.makeShape();
-            return this.currentShape.addPoint(this.makePoint(x, y, lc));
+            this.currentShape.addPoint(this.makePoint(x, y, lc))
+            this.currentShape.addPoint(this.makePoint(x+0.01, y+0.01, lc));
+            return lc.update(this.currentShape);
         };
         Pencil.prototype["continue"] = function(x, y, lc) {
             this.currentShape.addPoint(this.makePoint(x, y, lc));

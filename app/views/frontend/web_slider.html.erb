@@ -28,6 +28,7 @@
     <%= javascript_include_tag "/frontend/js/libs/waypoints.min.js"%>
     <script src="http://js.pusher.com/1.12/pusher.min.js"></script>
     <%= javascript_include_tag "/frontend/js/libs/jquery.mCustomScrollbar.min.js"%>
+    <%= javascript_include_tag "/frontend/js/libs/moment.js"%>
     <%= javascript_include_tag "/frontend/js/pusher.js" %>
     <%= javascript_include_tag "/frontend/js/slider.js" %>
 
@@ -102,7 +103,7 @@
                    || navigator.userAgent.match(/Windows Phone/i)){
                         $("#nowebgl").slider_web_mobile(id_dream,url_to_service,dream_called_in_moderation,dream_called_valid);
                     }else{
-                        $("#nowebgl").slider_web(id_dream,url_to_service,dream_called_in_moderation,dream_called_valid);
+                        $("#nowebgl").slider_web_mobile(id_dream,url_to_service,dream_called_in_moderation,dream_called_valid);
                     }
                 }
             });
