@@ -139,6 +139,7 @@
 
     var imageToShare = $('.dreamselected img');
     imageToShare = imageToShare[0].src;
+    var idImgToShare = $('.dreamselected').attr("id");
 
     var share_message_name = "<%= @msg_name %>";
     var share_message_caption = "<%= @msg_description %>"
@@ -150,7 +151,7 @@
        name: share_message_name,
        caption: share_message_caption,
        description: share_message_description,
-       link: 'http://193.134.221.115/web_slider',
+       link: 'http://http://193.134.221.115/web_slider?id='+idImgToShare,
        picture: imageToShare,
       },
       function(response) {
