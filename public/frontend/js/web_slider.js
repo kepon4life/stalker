@@ -197,6 +197,7 @@ YUI.add("stalker-webslider", function(Y) {
             if (name) {
                 img.alt = name;
             }
+            img.src = thumbnail_url;
             var li = $('<li/>').append(img);
 
             li[0].info = photo_album[index];
@@ -215,17 +216,9 @@ YUI.add("stalker-webslider", function(Y) {
                     left: o.left + 'px',
                     bottom: b + 'px'
                 }).show();
-            }).mouseout(function(e) {
-                $('#preview-image').hide();
-            }).on('smartload', smartload);
+            })
             var hasActivated = false;
             var scaleImages = true;
-            function smartload() {
-                if (hasActivated)
-                    return;
-                img.src = thumbnail_url;
-                hasActivated = true;
-            }
             $(img).load(function(e) {
                 var t = $(this).show();
                 var w = img.width, h = img.height, asp = w / h, target = 80;
