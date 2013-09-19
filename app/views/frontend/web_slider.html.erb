@@ -53,10 +53,6 @@
         <% if !@dream_called_valid %>
             url_to_service = window.location.protocol+'//'+window.location.host + "/services/dreamsvalidated?requested=" + <%= @id_dream %>;
         <% end %>
-        alert("WEB SLIDER Appeler avec un rêve en paramètre : \n"
-          + "Id : " + id_dream + "\n"
-          + "Dream is not moderated : " + dream_called_in_moderation + "\n"
-          + "Dream is valid : " + dream_called_valid);
     <% end %>
 
         

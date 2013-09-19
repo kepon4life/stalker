@@ -12,6 +12,19 @@ Pusher.secret = PUSHER_API_SECRET
 class FrontendController < ApplicationController
 
 	def slider
+		@service_url = "dreamsvalidated"
+		@show_qr = true
+		@show_legend = true
+
+		if params.has_key?(:where)
+			if params[:where].to_s == "room"
+				@service_url = "dreamssecretroom"
+				@show_qr = false
+				@show_legend = false
+			# elsif params[:where].to_s == "wall"
+
+			end
+		end
 		@events = Event.find(:all, :conditions => { :is_active => true })
 		respond_to do |format|
 			format.html

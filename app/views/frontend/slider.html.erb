@@ -47,23 +47,27 @@
             Y.on("domready", function() {
                 if (Y.hasWebgl()) {
                     Y.one('#welcome').hide();
-
+                    var show_qr = true;
+                    var show_legend = true;
+                    if("<%= @show_qr %>" == "false"){
+                        var show_qr = false;
+                    }
+                    if("<%= @show_legend %>" == "false"){
+                        var show_legend = false;
+                    }
                     var getURLParameter = function(name) {
                             var param = (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search) || [, null])[1]
                             return param ? decodeURI(param) : param;
                         },
-                            showQr = getURLParameter("qr"),
-                            showLegend = getURLParameter("legend"),
                             slider = new Y.Stalker.Slider({
                             //textureWidth: (window.location.hash.length > 1) ? +window.location.hash.substring(1) : 256, // 64, 128, 256, 512, 1024, 2048
                             textureWidth: 256,                                  // 64, 128, 256, 512, 1024, 2048
                             slideshowRunning: true,
-                            showLegend: showLegend !== "0",
-                            showQr: showQr !== "0"
+                            showLegend: show_legend,
+                            showQr: show_qr
                         });
                     slider.render();                                            // Render slider
-                    slider.loadAlbumFromService(window.location.origin + "/services/"
-                        + (getURLParameter("service") || "dreamsvalidated"));// Load album
+                    slider.loadAlbumFromService(window.location.origin + "/services/<%= @service_url %>");// Load album
                     //dreamssecretroom
 
                     if (window.Pusher && window.PUSHER_API_KEY) {
