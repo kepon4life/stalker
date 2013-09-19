@@ -923,8 +923,10 @@ YUI.add("stalker-slider", function(Y) {
 
                     if (val) {
                         this.get("contentBox").one(".details").show();
+                        Y.all(".logo").show();
                     } else {
                         this.get("contentBox").one(".details").hide();
+                        Y.all(".logo").hide();
                     }
                     return val;
                 }
