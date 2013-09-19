@@ -55,8 +55,8 @@ class ServicesController < ApplicationController
 	end
 
 	def get_dreams_for_secret_room
-		dreams = Dream.where(:secret_room => true)
-		render :json => dreams.to_json(:only => [:id, :metadatas, :created_at])
+		dreams = Dream.where(:is_valid => true, :secret_room => true)
+		render:json => dreams.to_json(:only => [:id,:created_at,:metadatas])		
 	end
 
 

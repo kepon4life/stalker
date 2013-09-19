@@ -104,7 +104,7 @@ YUI.add("stalker-slider", function(Y) {
                 }
             });
 
-            Y.one('doc').on('key', function(e) {                                // Debug mode on § click
+            Y.one('doc').on('key', function(e) {                                // Debug mode on Â§ click
                 $("#sink").toggle();
             }, "32");
 
@@ -771,6 +771,10 @@ YUI.add("stalker-slider", function(Y) {
                         label: "Show QR",
                         type: "boolean"
                     }, {
+                        name: "showLegend",
+                        label: "Show legend & logo",
+                        type: "boolean"
+                    }, {
                         type: "select",
                         name: "textureWidth",
                         label: "Grid width",
@@ -923,8 +927,10 @@ YUI.add("stalker-slider", function(Y) {
 
                     if (val) {
                         this.get("contentBox").one(".details").show();
+                        Y.all(".logo").show();
                     } else {
                         this.get("contentBox").one(".details").hide();
+                        Y.all(".logo").hide();
                     }
                     return val;
                 }
