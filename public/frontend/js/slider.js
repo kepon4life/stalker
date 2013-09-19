@@ -771,6 +771,10 @@ YUI.add("stalker-slider", function(Y) {
                         label: "Show QR",
                         type: "boolean"
                     }, {
+                        name: "showLegend",
+                        label: "Show legend & logo",
+                        type: "boolean"
+                    }, {
                         type: "select",
                         name: "textureWidth",
                         label: "Grid width",
