@@ -51,7 +51,7 @@
 			    <ul class="dropdown-menu">
 			    	<li><a href="/dreams/tag">All</a></li>
 			    	<li class="divider"></li>
-			    	<li><a href="?event_id=0">Table intéractive</a></li>
+			    	<li><a href="?event_id=0">Table interactive</a></li>
 			    	<li class="divider"></li>
 			    	<% @events.each_with_index do |event, index| %>
 			    		<li><a href="?event_id=<%= event.id %>"><%= event.name %></a></li>
@@ -83,7 +83,7 @@
 					<% if dream.event != nil %>
 						<span><%= dream.event.name %></span>
 					<% elsif dream.event_id == 0 %>
-						<span>Table intéractive</span>
+						<span>Table interactive</span>
 					<% else %>
 						<span>Drawsmartphone without event</span>
 					<% end %>
