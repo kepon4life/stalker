@@ -1,8 +1,11 @@
 /*
 * Stalker webSlider
 */
-#sink {
+body{
     width: 100%;
+}
+#sink {
+    width: 10%;
     height: 100%;
 }
 #sink #preview-strip {

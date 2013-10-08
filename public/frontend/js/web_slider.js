@@ -56,6 +56,13 @@ YUI.add("stalker-webslider", function(Y) {
                 $("#walls_btn").on("click",".wall_btn",function(e){
                     selectWall(this);
                 });
+                $("body .handle4").mousedown(function(){
+                    $("#sink").css("width","100%")
+                })
+                $("#sink").mouseup(function(){
+                    console.log("MY MOUSE UP")
+                    $("#sink").css("width","20%")
+                })
 
                 $(".modal-footer").on("click", "#modal_ok_btn", function(e){
                     shareOnWall();
