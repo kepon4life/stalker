@@ -425,6 +425,45 @@ a:hover {
     background: transparent url(../img/UI_pointer.png) no-repeat;
 }
 
+.mainlogo {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: transparent url(../img/UI_logo_wall.png) no-repeat;
+    width:300px;
+    height:96px;
+}
+#stalkerlogo{
+    position: absolute;
+    z-index: 100;
+    top: 0;
+    right: 0;
+    margin-right: 10px;
+    margin-top: 15px;
+    opacity: 0.8;
+}
+.logos{
+    position: absolute;
+    z-index: 100;
+    margin-right: 10px;
+    margin-bottom: 15px;
+    opacity: 0.65;
+    right: 0;
+    border-bottom: 1px solid #FFF;
+}
+#maisonlogo{
+    bottom: 0;
+    border-bottom: none;
+}
+#fillogo{
+    bottom:74px;
+}
+#comemlogo{
+    bottom:141px;
+}
+#heiglogo{
+    bottom:191px;
+}
 
 
 

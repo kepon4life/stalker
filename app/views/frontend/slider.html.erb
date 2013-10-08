@@ -1,17 +1,6 @@
 <% @title="Stalker - Slider" %>
 <% content_for :stylesheet_includes do %>
   <%= stylesheet_link_tag '/frontend/css/slider.css'  %>
-
-    <style type="text/css">
-        .logo {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: transparent url(frontend/img/UI_logo_wall.png) no-repeat;
-            width:300px;
-            height:96px;
-        }
-    </style>
 <% end %>
 <% content_for :javascript_includes_in_head do %>
   <script>window["_GOOG_TRANS_EXT_VER"] = "1";</script>
@@ -116,7 +105,7 @@
 
 <% end %>
 
-<div class="logo"></div>
+<div class="logo mainlogo"></div>
 <div class="overlay" id="welcome">
     <div class="wrap">
         <div class="messagebox">
@@ -130,3 +119,7 @@
         </div>
     </div>
 </div>
+<img id="heiglogo" class="logos" alt="HEIG-VD" src="frontend/img/logo_HEIG.png">
+<img id="comemlogo" class="logos" alt="COMEM" src="frontend/img/logo_comem.png">
+<img id="fillogo"  class="logos" alt="Filière Ingénierie des Médias" src="frontend/img/logo_filiere_ing-media.png">
+<img id="maisonlogo" class="logos" alt="Maison d'ailleurs" src="frontend/img/logo-maison.png">
