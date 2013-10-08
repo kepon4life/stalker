@@ -353,7 +353,7 @@ a:hover {
 
 .yui3-stalker-slider .qr{
     position: fixed;
-    top: 0px;
+    bottom: 10px;
     right: 0px;
     font-size: 10px;
     text-align: right;
@@ -464,7 +464,19 @@ a:hover {
 #heiglogo{
     bottom:191px;
 }
-
+#fillogo.sliderwall{
+    top:74px;
+}
+#comemlogo.sliderwall{
+    top:141px;
+}
+#heiglogo.sliderwall{
+    top:191px;
+}
+#maisonlogo.sliderwall{
+    top: 0;
+    border-bottom: none;
+}
 
 
 
