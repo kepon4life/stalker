@@ -15,14 +15,15 @@ class FrontendController < ApplicationController
 		@service_url = "dreamsvalidated"
 		@show_qr = true
 		@show_legend = true
-
+		@meta_refresh = false
 		if params.has_key?(:where)
 			if params[:where].to_s == "room"
 				@service_url = "dreamssecretroom"
 				@show_qr = false
 				@show_legend = false
 			# elsif params[:where].to_s == "wall"
-
+			else
+				@meta_refresh = true
 			end
 		end
 		@events = Event.find(:all, :conditions => { :is_active => true })
