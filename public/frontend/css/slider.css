@@ -326,6 +326,7 @@ a:hover {
 
 .qrBg{
     margin-top:20px;
+    margin-right: 17px;
     position: relative;
     width: 170px;
     height: 170px;
@@ -465,17 +466,18 @@ a:hover {
     bottom:191px;
 }
 #fillogo.sliderwall{
-    top:74px;
+    top:191px;
+    border-bottom: none;
 }
 #comemlogo.sliderwall{
     top:141px;
 }
 #heiglogo.sliderwall{
-    top:191px;
+    top:74px;
 }
 #maisonlogo.sliderwall{
     top: 0;
-    border-bottom: none;
+    border-bottom: 1px solid #FFF;
 }
 
 
