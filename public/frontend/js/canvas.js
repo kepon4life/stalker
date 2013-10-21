@@ -68,15 +68,15 @@ YUI.add("stalker-canvas", function(Y) {
                 } else {
                     Y.one("#draw-tool2").get("children").each(simulateEvent);
                 }
-                if (!this.get("allowEdition") && nbdoigts === 1) {              // Not in edit move -> move cam
+              //  if (!this.get("allowEdition") && nbdoigts === 1) {              // Not in edit move -> move cam
+                 if (!this.get("allowEdition") && nbdoigts === 1) {              // Not in edit move -> move cam
                     var e = {
                         clientX: e.x * Y.DOM.winWidth(),
                         clientY: e.y * Y.DOM.winHeight()
-                    }
+                    };
                     //Y.Stalker.slider.controls.setE(e);
                     Y.one("#particleCanvas").simulate("mousedown", e);
                     //moveCam(cursors);
-                    return;
                 }
             }, this));
             //Tuio.cursor_update == dÃ©placement du doigts sur la surface
@@ -90,7 +90,8 @@ YUI.add("stalker-canvas", function(Y) {
 
             tuio.cursor_remove(Y.bind(function() {
                 nbdoigts -= 1;
-                if (!inputPrevented && nbdoigts === 0) {
+                if (!inputPrevented && nbdoigts <= 0) {
+                    nbdoigts = 0;
                     //Y.log("Canva.on")
                     if (!this.get("allowEdition")) {
                         Y.one("#particleCanvas").simulate("mouseup");
@@ -141,6 +142,7 @@ YUI.add("stalker-canvas", function(Y) {
                 }
             });
             this.fire("saved");
+            nbdoigts = 0;
         },
         onCursorUpdate: function(cursors) {
             if (!this.get("allowEdition")) {                                    // Not in edit move -> move cam
@@ -149,8 +151,8 @@ YUI.add("stalker-canvas", function(Y) {
                     var e = {
                         clientX: path[0] * Y.DOM.winWidth(),
                         clientY: path[1] * Y.DOM.winHeight()
-                    }
-                    Y.Stalker.slider.controls.setE(e);
+                    };
+//                    Y.Stalker.slider.controls.setE(e);
                     Y.one("#particleCanvas").simulate("mousemove", e);
                 }
                 //moveCam(cursors);
