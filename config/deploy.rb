@@ -37,6 +37,12 @@ namespace :vlad do
     run "ln -s #{shared_path}/events/ #{current_path}/public/events"
   end
 
+  desc "Remove useless folders"
+  remote_task :remove_useless_folders do
+    run "rm -r #{current_path}/nbproject"
+    run "rm -r #{current_path}/autoreloadextension"
+  end
+
   desc "Full deployment cycle"
   remote_task :deploy => %w(
     vlad:clean_scm_repo
@@ -45,5 +51,6 @@ namespace :vlad do
     vlad:precompile_assets
     vlad:add_simlink_to_dreams_folders
     vlad:refresh_passenger
+    vlad:remove_useless_folders
   )
 end
