@@ -1,0 +1,18 @@
+{
+    "manifest_version": 2,
+    "name": "Stalker crash auto reload",
+    "version": "1.0",
+    "browser_action": {
+        "default_icon": "icon.png",
+        "default_title": "Crash this page",
+        "default_popup_old": "test.html",
+        "popup_old": "test.html"
+    },
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "permissions": [
+        "tabs", "http://*/*", "https://*/*", "experimental"
+    ]
+}

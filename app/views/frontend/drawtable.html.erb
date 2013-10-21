@@ -23,7 +23,7 @@
     <!-- Canvas dependencies -->
     <script src="/frontend/js/libs/tuiojs.js" type="text/javascript"></script>
     <script src="/frontend/js/libs/connect.js" type="text/javascript"></script>
-    
+
     <script type="text/javascript">
         var events = new Array();
     </script>
@@ -169,6 +169,9 @@
                         //canvas.reset();
                         canvas.set("allowEdition", false);
                         slider.set("trackCam", true);
+
+                        Y.one("#particleCanvas").simulate("mouseup");
+                        slider.resetCamera();
                         //slider.set("trackCam", true);
                         hideUI();
                         Y.later(1000, slider, slider.startImploding);
