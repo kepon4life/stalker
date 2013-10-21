@@ -107,8 +107,8 @@
                 });
                 screenSaver.on("drawingEnd", function () {                      // When the drawing is complete
                      Y.log("ScreenSaver.drawingEnd");
-                     Y.later(100, slider, slider.startImploding);               // explode it
                      resetIdleTimer();
+                     Y.later(500, slider, slider.startImploding);               // explode it
                 });
                 screenSaver.render();
 

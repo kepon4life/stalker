@@ -202,8 +202,7 @@ YUI.add("stalker-slider", function(Y) {
         },
         startImploding: function() {
             Y.log("Slider.startImploding");
-            //implode = true;
-            //startExplodingTime = Date.now();
+            startExplodingTime = Date.now();
 
             home = false;
             positionShader.uniforms.tPositions2.texture = positionShader.uniforms.tPositions.texture;
@@ -754,7 +753,7 @@ YUI.add("stalker-slider", function(Y) {
         renderCustomization: function() {
             var choices = new Array();
             choices.push({label: "Nuage de fils", value: 0});
-            for(var i= 0; i < events.length; i++){
+            for (var i = 0; i < events.length; i++) {
                 choices.push({label: events[i]["name"], value: events[i]["id"]});
             }
             var params = new Y.inputEx.Group({
@@ -765,7 +764,7 @@ YUI.add("stalker-slider", function(Y) {
                         type: "select",
                         name: "event",
                         label: "Event",
-                        choices:choices,
+                        choices: choices,
                         value: 2
                     }, {
                         name: "showQr",
@@ -965,7 +964,7 @@ YUI.add("stalker-slider", function(Y) {
                             //+ '<br />scan this QR or go to <br /><a target="_blank" href="' + url + '">' + url + "</a>");
                             //  + '<br />Scan this or go to<br /><a href="' + url + '">' + url + "</a> with your mobile to tell us your dream"
                             );
-                    setCookie("defaultEvent",val,365)
+                    setCookie("defaultEvent", val, 365)
                     return val;
                 }
             },
@@ -1035,50 +1034,50 @@ YUI.add("stalker-slider", function(Y) {
             }
         }
     });
-    
+
     function checkCookie()
     {
-    var defaultEvent=getCookie("defaultEvent");
-    if (defaultEvent!=null && defaultEvent!="")
-      {
-        return true
-      }
-    else 
-      {
-        return false
-      }
+        var defaultEvent = getCookie("defaultEvent");
+        if (defaultEvent != null && defaultEvent != "")
+        {
+            return true
+        }
+        else
+        {
+            return false
+        }
     }
     function getCookie(c_name)
     {
-    var c_value = document.cookie;
-    var c_start = c_value.indexOf(" " + c_name + "=");
-    if (c_start == -1)
-      {
-      c_start = c_value.indexOf(c_name + "=");
-      }
-    if (c_start == -1)
-      {
-      c_value = null;
-      }
-    else
-      {
-      c_start = c_value.indexOf("=", c_start) + 1;
-      var c_end = c_value.indexOf(";", c_start);
-      if (c_end == -1)
-      {
-    c_end = c_value.length;
+        var c_value = document.cookie;
+        var c_start = c_value.indexOf(" " + c_name + "=");
+        if (c_start == -1)
+        {
+            c_start = c_value.indexOf(c_name + "=");
+        }
+        if (c_start == -1)
+        {
+            c_value = null;
+        }
+        else
+        {
+            c_start = c_value.indexOf("=", c_start) + 1;
+            var c_end = c_value.indexOf(";", c_start);
+            if (c_end == -1)
+            {
+                c_end = c_value.length;
+            }
+            c_value = unescape(c_value.substring(c_start, c_end));
+        }
+        c_value = +c_value;
+        return c_value;
     }
-    c_value = unescape(c_value.substring(c_start,c_end));
-    }
-    c_value = +c_value;
-    return c_value;
-    }
-    function setCookie(c_name,value,exdays)
+    function setCookie(c_name, value, exdays)
     {
-        var exdate=new Date();
+        var exdate = new Date();
         exdate.setDate(exdate.getDate() + exdays);
-        var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
-        document.cookie=c_name + "=" + c_value;
+        var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+        document.cookie = c_name + "=" + c_value;
     }
 
     function populateAlbum(the_album) {
