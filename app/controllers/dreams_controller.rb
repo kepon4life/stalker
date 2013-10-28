@@ -318,21 +318,7 @@ class DreamsController < ApplicationController
 
 
   def dev_tests
-
-    count_dreams_tagged_accepted_special = Dream.where(:is_valid => true, :secret_room => true).count()
-    count_dreams_tagged_just_accepted = Dream.where(:is_valid => true, :secret_room => false).count()
-    count_dreams_tagged_unaccepted = Dream.where(:is_valid => false, :secret_room => false).count()
-
-    @dreams_tot = Dream.count()
-
-    @dreams_untagged = Dream.where(:is_valid => nil, :secret_room => nil).count()
-    @dreams_tagged = count_dreams_tagged_accepted_special + count_dreams_tagged_just_accepted  + count_dreams_tagged_unaccepted
-    @dreams_tagged_accepted = count_dreams_tagged_accepted_special + count_dreams_tagged_just_accepted
-    @dreams_tagged_accepted_special = count_dreams_tagged_accepted_special
-    @dreams_tagged_just_accepted = count_dreams_tagged_just_accepted
-    @dreams_tagged_unaccepted = count_dreams_tagged_unaccepted
-
-    @dreams = Dream.all
+    @dreams = Dream
     @events = Event.all
 
     respond_to do |format|
