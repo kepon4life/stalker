@@ -319,7 +319,7 @@ class DreamsController < ApplicationController
 
   def dev_tests
     @dreams = Dream
-    @events = Event.all
+    @events = Event
 
     respond_to do |format|
         format.html # tag.html.erb
