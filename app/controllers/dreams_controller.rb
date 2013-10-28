@@ -15,10 +15,22 @@ class DreamsController < ApplicationController
     @sort = "desc"
     @secret_room = true
     @is_valid = true
+    @event_id = "all" 
+    @event_name = "all"
 
-    if(!params[:sort] && !params[:special] && !params[:valid])
+    if params[:event_id] && Event.exists?(params[:event_id])
+      @event_name = Event.find(params[:event_id]).name
+    elsif params[:event_id] == "0"
+      @event_name = "Table interactive"
+    end
+
+    if(!params[:sort] && !params[:special] && !params[:valid] && !params[:event_id])
       if(cookies[:sort] && cookies[:sort] == "asc")
         @sort = "asc"
+      end
+
+      if(cookies[:event_id] && cookies[:event_id] == "all")
+        @event_id = "all"
       end
 
       if(cookies[:special] && cookies[:special] == "false")
@@ -37,6 +49,13 @@ class DreamsController < ApplicationController
         cookies[:sort] = "desc"
       end
 
+      if params[:event_id] == "all"
+        @event_id = "all"
+        cookies[:event_id] = "all"
+      else
+        cookies[:event_id] = params[:event_id]
+      end
+
       if params[:special] == "false"
         @secret_room = false
         cookies[:special] = false
@@ -52,8 +71,14 @@ class DreamsController < ApplicationController
       end  
     end
 
-    @dreams = Kaminari.paginate_array(Dream.order("id "+@sort).where(:is_valid => @is_valid, :secret_room => @secret_room)).page(params[:page]).per(12)
+    puts cookies[:event_id]
 
+    @events = Event.all
+    if cookies[:event_id] == "all"
+      @dreams = Kaminari.paginate_array(Dream.order("id "+@sort).where(:is_valid => @is_valid, :secret_room => @secret_room)).page(params[:page]).per(12)
+    else
+      @dreams = Kaminari.paginate_array(Dream.order("id "+@sort).where(:event_id => cookies[:event_id], :is_valid => @is_valid, :secret_room => @secret_room)).page(params[:page]).per(12)
+    end
     respond_to do |format|
       format.html # index.html.erb
       format.json { render :json => @dreams }

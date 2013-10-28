@@ -5,9 +5,9 @@
           	<div class="nav-collapse collapse navbar-responsive-collapse">
 			    <ul class="nav" id="mainNav">
 			    	<li><%= link_to "Tag", :controller => "dreams", :action => "tag" %></li>
-			    	<li><%= link_to "Special dreams", :controller => "dreams", :action => "index", :sort => "asc", :valid => true, :special => true %></li>
-			    	<li><%= link_to "Accepted dreams", :controller => "dreams", :action => "index", :sort => "asc", :valid => true, :special => false %></li>
-			    	<li><%= link_to "Unaccepted dreams", :controller => "dreams", :action => "index", :sort => "asc", :valid => false, :special => false %></li>
+			    	<li><%= link_to "Special dreams", :controller => "dreams", :action => "index", :sort => "asc", :valid => true, :special => true, :event_id => "all" %></li>
+			    	<li><%= link_to "Accepted dreams", :controller => "dreams", :action => "index", :sort => "asc", :valid => true, :special => false, :event_id => "all"  %></li>
+			    	<li><%= link_to "Unaccepted dreams", :controller => "dreams", :action => "index", :sort => "asc", :valid => false, :special => false, :event_id => "all"  %></li>
 			    	<li><%= link_to "Events", :controller => "events", :action => "index" %></li>
 			    	<li><%= link_to "Stats", :controller => "dreams", :action => "dev_tests" %></li>
 			    </ul>

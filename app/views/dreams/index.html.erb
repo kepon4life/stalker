@@ -3,13 +3,32 @@
 <% end %>
 <div id="content" class="container">
   <h1>Listing dreams</h1>
+  <h5><%= @event_name %></h5>
   <div style="text-align:center;">
     <div class="btn-group" style="margin: 0 auto 20px auto;">
-      <a class="btn <%= (@is_valid && @secret_room)? 'active' : '' %>" href="?sort=<%= @sort %>&valid=true&special=true"><img src="/img/star.png" alt="star" /> Special dreams</a>
-      <a class="btn <%= (@is_valid && !@secret_room)? 'active' : '' %>" href="?sort=<%= @sort %>&valid=true&special=false"><img src="/img/check.png" alt="ok" /> Accepted dreams</a>
-      <a class="btn <%= (!@is_valid && !@secret_room)? 'active' : '' %>" href="?sort=<%= @sort %>&valid=false&special=false"><img src="/img/delete.png" alt="delete" /> Unaccepted dreams</a>
+      <a class="btn <%= (@is_valid && @secret_room)? 'active' : '' %>" href="?sort=<%= @sort %>&valid=true&special=true&event_id=<%= @event_id %>"><img src="/img/star.png" alt="star" /> Special dreams</a>
+      <a class="btn <%= (@is_valid && !@secret_room)? 'active' : '' %>" href="?sort=<%= @sort %>&valid=true&special=false&event_id=<%= @event_id %>"><img src="/img/check.png" alt="ok" /> Accepted dreams</a>
+      <a class="btn <%= (!@is_valid && !@secret_room)? 'active' : '' %>" href="?sort=<%= @sort %>&valid=false&special=false&event_id=<%= @event_id %>"><img src="/img/delete.png" alt="delete" /> Unaccepted dreams</a>
     </div>
+
   </div>
+  <div class="btn-toolbar"  style="margin-left: 800px;">
+      <div class="btn-group">
+        <button class="btn dropdown-toggle" data-toggle="dropdown">Select event <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li><a href="?sort=<%= @sort %>&valid=<%= @is_valid %>&special=<%= @secret_room %>&event_id=all">All</a></li>
+            <li class="divider"></li>
+            <li><a href="?sort=<%= @sort %>&valid=<%= @is_valid %>&special=<%= @secret_room %>&event_id=0">Table interactive</a></li>
+            <li class="divider"></li>
+            <% @events.each_with_index do |event, index| %>
+              <li><a href="?sort=<%= @sort %>&valid=<%= @is_valid %>&special=<%= @secret_room %>&event_id=<%= event.id %>"><%= event.name %></a></li>
+              <% if index < (@events.size - 1) %>
+                  <li class="divider"></li>
+                <% end %>
+            <% end %>
+          </ul>
+      </div>
+    </div>
   <% if not @dreams.empty?  %>
   
 
@@ -18,7 +37,7 @@
         <tr>
           <th>Dream</th>
           <th>Event</th>
-          <th><a href="?sort=<%= @sort=="asc"? "desc" : "asc" %>&valid=<%= @is_valid %>&special=<%= @secret_room %>"><i class="icon-arrow-<%= @sort=="asc"? "up" : "down" %>"></i>Date (click to sort)</a></th>
+          <th><a href="?sort=<%= @sort=="asc"? "desc" : "asc" %>&valid=<%= @is_valid %>&special=<%= @secret_room %>&event_id=<%= @event_id %>"><i class="icon-arrow-<%= @sort=="asc"? "up" : "down" %>"></i>Date (click to sort)</a></th>
           <th>Change status</th>
           <th></th>
         </tr>
