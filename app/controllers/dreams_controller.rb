@@ -15,13 +15,16 @@ class DreamsController < ApplicationController
     @sort = "desc"
     @secret_room = true
     @is_valid = true
-    @event_id = "all" 
     @event_name = "all"
 
     if params[:event_id] && Event.exists?(params[:event_id])
       @event_name = Event.find(params[:event_id]).name
+      @event_id = params[:event_id]
     elsif params[:event_id] == "0"
       @event_name = "Table interactive"
+      @event_id = 0 
+    else
+      @event_id = "all" 
     end
 
     if(!params[:sort] && !params[:special] && !params[:valid] && !params[:event_id])
