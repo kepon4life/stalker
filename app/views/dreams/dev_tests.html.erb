@@ -18,9 +18,9 @@
     <tbody>
       <tr>
         <td>Table interactive</td>
-        <td><%= @dreams.where(:id=>0, :is_valid=>true, :secret_room=>true).count %></td>
-        <td><%= @dreams.where(:id=>0, :is_valid=>true, :secret_room=>false).count %></td>
-        <td><%= @dreams.where(:id=>0, :is_valid=>false, :secret_room=>false).count %></td>
+        <td><%= @dreams.where(:event_id=>0, :is_valid=>true, :secret_room=>true).count %></td>
+        <td><%= @dreams.where(:event_id=>0, :is_valid=>true, :secret_room=>false).count %></td>
+        <td><%= @dreams.where(:event_id=>0, :is_valid=>false, :secret_room=>false).count %></td>
       </tr>
       <% @events.each_with_index do |event, index| %>
         <tr>
