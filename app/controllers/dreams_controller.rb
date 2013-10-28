@@ -17,6 +17,8 @@ class DreamsController < ApplicationController
     @is_valid = true
     @event_name = "all"
 
+
+
     if params[:event_id] && Event.exists?(params[:event_id])
       @event_name = Event.find(params[:event_id]).name
       @event_id = params[:event_id]
@@ -329,6 +331,9 @@ class DreamsController < ApplicationController
     @dreams_tagged_accepted_special = count_dreams_tagged_accepted_special
     @dreams_tagged_just_accepted = count_dreams_tagged_just_accepted
     @dreams_tagged_unaccepted = count_dreams_tagged_unaccepted
+
+    @dreams = Dream.all
+    @events = Event.all
 
     respond_to do |format|
         format.html # tag.html.erb

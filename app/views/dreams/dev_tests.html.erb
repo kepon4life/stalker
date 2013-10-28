@@ -17,6 +17,30 @@
       <li>There is <b><%= @dreams_tagged_unaccepted %></b> dreams unaccepted</li>
     </ul>
   </ul>
+  <p>&nbsp;</p>
+  <h2>By events</h2>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Event</th>
+        <th><img src="/img/star.png"/></th>
+        <th><img src="/img/check.png"/></th>
+        <th><img src="/img/delete.png"/></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @events.each_with_index do |event, index| %>
+        <tr>
+          <td><%= event.name %></td>
+          <td><%= event.dreams.where(:is_valid=>true, :secret_room=>true).count %></td>
+          <td><%= event.dreams.where(:is_valid=>true, :secret_room=>false).count %></td>
+          <td><%= event.dreams.where(:is_valid=>false, :secret_room=>false).count %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  
 
   
 
