@@ -4,19 +4,44 @@
 <div id="content" class="container">
   <h1>Stats</h1>
 
-  <p>There is <b><%= @dreams_tot %></b> dreams in total</p>
-  <ul>
-    <li>There is <b><%= @dreams_untagged %></b> dreams untagged</li>
-    <li>There is <b><%= @dreams_tagged %></b> dreams tagged</li>
-    <ul>
-      <li>There is <b><%= @dreams_tagged_accepted %></b> dreams accepted</li>
-      <ul>
-        <li>There is <b><%= @dreams_tagged_accepted_special %></b> special dreams</li>
-        <li>There is <b><%= @dreams_tagged_just_accepted %></b> just accepted dreams</li>
-      </ul>
-      <li>There is <b><%= @dreams_tagged_unaccepted %></b> dreams unaccepted</li>
-    </ul>
-  </ul>
+  <p>There is <b><%= @dreams.count %></b> dreams in total (<%= @dreams.where(:is_valid => nil, :secret_room => nil).count %> untagged)</p>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Event</th>
+        <th><img src="/img/star.png"/></th>
+        <th><img src="/img/check.png"/></th>
+        <th><img src="/img/delete.png"/></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Table interactive</td>
+        <td><%= @dreams.where(:event_id=>0, :is_valid=>true, :secret_room=>true).count %></td>
+        <td><%= @dreams.where(:event_id=>0, :is_valid=>true, :secret_room=>false).count %></td>
+        <td><%= @dreams.where(:event_id=>0, :is_valid=>false, :secret_room=>false).count %></td>
+      </tr>
+      <% @events.all.each do |event| %>
+        <tr>
+          <td><%= event.name %></td>
+          <td><%= event.dreams.where(:is_valid=>true, :secret_room=>true).count %></td>
+          <td><%= event.dreams.where(:is_valid=>true, :secret_room=>false).count %></td>
+          <td><%= event.dreams.where(:is_valid=>false, :secret_room=>false).count %></td>
+        </tr>
+      <% end %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td>All</td>
+        <td><%= @dreams.where(:is_valid=>true, :secret_room=>true).count %></td>
+        <td><%= @dreams.where(:is_valid=>true, :secret_room=>false).count %></td>
+        <td><%= @dreams.where(:is_valid=>false, :secret_room=>false).count %></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  
 
   
 

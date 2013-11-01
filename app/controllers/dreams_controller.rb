@@ -15,10 +15,27 @@ class DreamsController < ApplicationController
     @sort = "desc"
     @secret_room = true
     @is_valid = true
+    @event_name = "all"
 
-    if(!params[:sort] && !params[:special] && !params[:valid])
+
+
+    if params[:event_id] && Event.exists?(params[:event_id])
+      @event_name = Event.find(params[:event_id]).name
+      @event_id = params[:event_id]
+    elsif params[:event_id] == "0"
+      @event_name = "Table interactive"
+      @event_id = 0 
+    else
+      @event_id = "all" 
+    end
+
+    if(!params[:sort] && !params[:special] && !params[:valid] && !params[:event_id])
       if(cookies[:sort] && cookies[:sort] == "asc")
         @sort = "asc"
+      end
+
+      if(cookies[:event_id] && cookies[:event_id] == "all")
+        @event_id = "all"
       end
 
       if(cookies[:special] && cookies[:special] == "false")
@@ -37,6 +54,13 @@ class DreamsController < ApplicationController
         cookies[:sort] = "desc"
       end
 
+      if params[:event_id] == "all"
+        @event_id = "all"
+        cookies[:event_id] = "all"
+      else
+        cookies[:event_id] = params[:event_id]
+      end
+
       if params[:special] == "false"
         @secret_room = false
         cookies[:special] = false
@@ -52,8 +76,14 @@ class DreamsController < ApplicationController
       end  
     end
 
-    @dreams = Kaminari.paginate_array(Dream.order("id "+@sort).where(:is_valid => @is_valid, :secret_room => @secret_room)).page(params[:page]).per(12)
+    puts cookies[:event_id]
 
+    @events = Event.all
+    if cookies[:event_id] == "all"
+      @dreams = Kaminari.paginate_array(Dream.order("id "+@sort).where(:is_valid => @is_valid, :secret_room => @secret_room)).page(params[:page]).per(12)
+    else
+      @dreams = Kaminari.paginate_array(Dream.order("id "+@sort).where(:event_id => cookies[:event_id], :is_valid => @is_valid, :secret_room => @secret_room)).page(params[:page]).per(12)
+    end
     respond_to do |format|
       format.html # index.html.erb
       format.json { render :json => @dreams }
@@ -288,19 +318,8 @@ class DreamsController < ApplicationController
 
 
   def dev_tests
-
-    count_dreams_tagged_accepted_special = Dream.where(:is_valid => true, :secret_room => true).count()
-    count_dreams_tagged_just_accepted = Dream.where(:is_valid => true, :secret_room => false).count()
-    count_dreams_tagged_unaccepted = Dream.where(:is_valid => false, :secret_room => false).count()
-
-    @dreams_tot = Dream.count()
-
-    @dreams_untagged = Dream.where(:is_valid => nil, :secret_room => nil).count()
-    @dreams_tagged = count_dreams_tagged_accepted_special + count_dreams_tagged_just_accepted  + count_dreams_tagged_unaccepted
-    @dreams_tagged_accepted = count_dreams_tagged_accepted_special + count_dreams_tagged_just_accepted
-    @dreams_tagged_accepted_special = count_dreams_tagged_accepted_special
-    @dreams_tagged_just_accepted = count_dreams_tagged_just_accepted
-    @dreams_tagged_unaccepted = count_dreams_tagged_unaccepted
+    @dreams = Dream
+    @events = Event
 
     respond_to do |format|
         format.html # tag.html.erb
