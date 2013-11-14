@@ -6,7 +6,7 @@
 
   <p>There is <b><%= @dreams.count %></b> dreams in total (<%= @dreams.where(:is_valid => nil, :secret_room => nil).count %> untagged)</p>
 
-  <p>There is <b><%= @dreams.last.id - @dreams.first.id + 1 - @dreams.count %></b> dreams removed</p>
+  <p>There is <b><%= (@dreams.last.id - (@dreams.first.id - 1)) - @dreams.count %></b> dreams removed</p>
   <table class="table table-bordered">
     <thead>
       <tr>
