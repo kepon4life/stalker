@@ -5,6 +5,10 @@
   <h1>Stats</h1>
 
   <p>There is <b><%= @dreams.count %></b> dreams in total (<%= @dreams.where(:is_valid => nil, :secret_room => nil).count %> untagged)</p>
+  <p>Dreams.last.id : <%= @dreams.last.id %> - </p>
+  <p>(Dreams.first.id : <%= @dreams.first.id %> - 1) - </p>
+  <p>Dreams.count : <%= @dreams.count %></p>
+
 
   <p>There is <b><%= (@dreams.last.id - (@dreams.first.id - 1)) - @dreams.count %></b> dreams removed</p>
   <table class="table table-bordered">
