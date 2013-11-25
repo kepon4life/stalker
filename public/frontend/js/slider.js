@@ -180,6 +180,7 @@ YUI.add("stalker-slider", function(Y) {
             });
         },
         selectPicture: function(index) {
+            console.log(new Date())
             Y.log("Selecting picture:" + index);
             $('#preview-strip>ul>li>img')[index].click();
         },
