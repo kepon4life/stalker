@@ -41,7 +41,7 @@
             }, 500);
 
             // $('.clear-button').parent().prepend('<div class="button send-button">Send</div>');
-            $('.send-button').on("click", function() {
+            $('.send-button').one("click", function() {
                 var canvas = $('.literally').canvasForExport();
                 //$('body').empty().append(canvas);
                 $.ajax({
