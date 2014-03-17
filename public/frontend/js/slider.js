@@ -956,8 +956,7 @@ YUI.add("stalker-slider", function(Y) {
                     console.log("Rendering qr for link :", url);
                     this.get("contentBox").one(".qr").setHTML(
                             //  '<span>AND WHAT IS <br />YOUR WISH dream? </span>'
-                            '<img src="frontend/img/UI_wall_invite_150.png" style="padding: 10px 17px 0 0;"/><br />'
-                            + '<div class="qr-mask"></div>'
+                            '<div class="qr-mask"></div>'
                             + '<div class="qrBg"><div class="qrCrop"><img src="'
                             //  + "http://chart.apis.google.com/chart?cht=qr&chs=130x130&chld=Q&choe=UTF-8&chl="
                             + "http://qrickit.com/api/qr?fgdcolor=000000&bgdcolor=ffffff&qrsize=180&t=p&e=m&d="

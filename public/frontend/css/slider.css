@@ -452,30 +452,23 @@ a:hover {
     right: 0;
     border-bottom: 1px solid #FFF;
 }
-#maisonlogo{
+#fillogo{
     bottom: 0;
     border-bottom: none;
 }
-#fillogo{
+#comemlogo{
     bottom:74px;
 }
-#comemlogo{
+#heiglogo{
     bottom:141px;
 }
-#heiglogo{
-    bottom:191px;
-}
 #fillogo.sliderwall{
-    top:191px;
-    border-bottom: none;
+    top:125px;
 }
 #comemlogo.sliderwall{
-    top:141px;
-}
-#heiglogo.sliderwall{
     top:74px;
 }
-#maisonlogo.sliderwall{
+#heiglogo.sliderwall{
     top: 0;
     border-bottom: 1px solid #FFF;
 }
